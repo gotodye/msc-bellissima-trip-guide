@@ -1,0 +1,54 @@
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { VitePWA } from 'vite-plugin-pwa';
+
+export default defineConfig({
+  plugins: [
+    react(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      // Pre-cache all built assets (JS, CSS, HTML)
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        // Runtime-cache external images (settour + unsplash)
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/photo\.settour\.com\.tw\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'msc-settour-images',
+              expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 30 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          {
+            urlPattern: /^https:\/\/images\.unsplash\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'msc-unsplash-images',
+              expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 * 24 * 30 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+        ],
+      },
+      manifest: {
+        name: 'MSC 榮耀號 同事旅遊指南',
+        short_name: 'MSC 指南',
+        description: '2026 公司郵輪旅行專屬指南',
+        theme_color: '#002b5e',
+        background_color: '#e8f4ff',
+        display: 'standalone',
+        orientation: 'portrait',
+        lang: 'zh-TW',
+        start_url: '/',
+        scope: '/',
+        icons: [
+          { src: '/pwa-192x192.png', sizes: '192x192', type: 'image/png' },
+          { src: '/pwa-512x512.png', sizes: '512x512', type: 'image/png' },
+          { src: '/pwa-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+        ],
+      },
+    }),
+  ],
+});

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#002b5e"/>
+  <!-- Ship hull -->
+  <path d="M100 310 L412 310 L380 370 Q360 390 256 390 Q152 390 132 370 Z" fill="#00a0e3"/>
+  <!-- Ship body -->
+  <rect x="140" y="220" width="232" height="95" rx="8" fill="#ffffff"/>
+  <!-- Windows row -->
+  <rect x="165" y="240" width="25" height="18" rx="4" fill="#00a0e3"/>
+  <rect x="205" y="240" width="25" height="18" rx="4" fill="#00a0e3"/>
+  <rect x="245" y="240" width="25" height="18" rx="4" fill="#00a0e3"/>
+  <rect x="285" y="240" width="25" height="18" rx="4" fill="#00a0e3"/>
+  <rect x="325" y="240" width="25" height="18" rx="4" fill="#00a0e3"/>
+  <!-- Deck line -->
+  <rect x="140" y="220" width="232" height="6" rx="3" fill="#00a0e3"/>
+  <!-- Funnel -->
+  <rect x="230" y="145" width="52" height="80" rx="6" fill="#002b5e"/>
+  <rect x="226" y="138" width="60" height="16" rx="4" fill="#00a0e3"/>
+  <!-- Smoke (subtle) -->
+  <circle cx="256" cy="118" r="10" fill="#ffffff" opacity="0.4"/>
+  <circle cx="268" cy="104" r="8" fill="#ffffff" opacity="0.3"/>
+  <circle cx="276" cy="90" r="6" fill="#ffffff" opacity="0.2"/>
+  <!-- Antenna -->
+  <line x1="256" y1="138" x2="256" y2="95" stroke="#ffffff" stroke-width="3" opacity="0.6"/>
+  <!-- Water waves -->
+  <path d="M80 350 Q128 338 180 350 Q228 362 280 350 Q328 338 380 350 Q420 358 440 350" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" opacity="0.5"/>
+</svg>
