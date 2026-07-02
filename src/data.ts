@@ -8,14 +8,14 @@ export const targetDateStr = '2026-07-09T11:30:00+08:00';
 const IMG = {
   // 真實 MSC Bellissima 現場照片 (from cruisedeckplans.com)
   crystal:    '/crystal-staircase.jpg',   // 奧地利水晶旋轉樓梯   // 水晶大廳
-  galleria:   'https://www.cruisedeckplans.com/DP/deckpictures/133/org/MSCDec-65706-1633027942.jpg',   // 香榭大道 LED 天幕
-  lighthouse: 'https://www.cruisedeckplans.com/DP/deckpictures/133/org/MSCDec-37728-1633027863.jpg',   // 主餐廳
-  buffet:     'https://www.cruisedeckplans.com/DP/deckpictures/163/org/MSCDec-61181-1673812330.jpg',   // 自助餐廳
+  galleria:   '/galleria.jpg',   // 香榭麗舍榮耀大道 LED 天幕
+  lighthouse: '/lighthouse.jpg',   // 主餐廳龍蝦
+  buffet:     '/buffet.jpg',   // 15F 市集自助餐廳
   waterpark:  'https://www.cruisedeckplans.com/DP/deckpictures/165/org/MSCDec-77442-1676645380.jpg',   // 亞利桑那水上樂園
   spa:        'https://www.cruisedeckplans.com/DP/deckpictures/133/org/MSCDec-74883-1633026056.jpg',   // Aurea SPA
 
   // Unsplash 補充照片
-  steak:      'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80&w=800',
+  steak:      '/steak.jpg',   // 付費特色餐廳
   chocolate:  'https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&q=80&w=800',
   broadway:   'https://images.unsplash.com/photo-1507676184212-d0330a15673c?auto=format&fit=crop&q=80&w=800',
   f1:         'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&q=80&w=800',
