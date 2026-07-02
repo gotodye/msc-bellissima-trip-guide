@@ -207,6 +207,7 @@ export const dictionary: Record<Lang, any> = {
         {
           icon: 'CheckSquare', title: "出門前最後檢查 (點擊打勾)",
           checklist: [
+            "船票 / 登船證（紙本或電子均可）",
             "護照正本 (效期需大於6個月)",
             "護照影本 (2份A4比例1:1)",
             "台灣居留證 ARC (外籍同仁必備)",
@@ -246,7 +247,7 @@ export const dictionary: Record<Lang, any> = {
       rules: [
         { 
           icon: 'Sparkles', title: "【公司專屬 VIP 特權】", highlight: true, 
-          text: "本公司享有「VIP 優先登船通道」。請於 7/9 11:30 準時至「基隆港西岸旅客中心」集合，我們將走特快通道辦理登船，免去大排長龍！" 
+          text: "本公司享有「VIP 優先登船通道」！請於 7/9 12:00 準時至「台北火車站」搭乘公司專車前往基隆港，走特快通道辦理登船，免去大排長龍！" 
         },
         { 
           icon: 'Ship', title: "登船必做的兩件大事", list: [
