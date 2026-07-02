@@ -7,7 +7,7 @@ export const targetDateStr = '2026-07-09T11:30:00+08:00';
 // ─── Image URLs (real MSC Bellissima photos + Unsplash) ─────────────────────────
 const IMG = {
   // 真實 MSC Bellissima 現場照片 (from cruisedeckplans.com)
-  crystal:    'https://www.cruisedeckplans.com/DP/deckpictures/164/org/MSCDec-16358-1674524492.jpg',   // 水晶大廳
+  crystal:    '/crystal-staircase.jpg',   // 奧地利水晶旋轉樓梯   // 水晶大廳
   galleria:   'https://www.cruisedeckplans.com/DP/deckpictures/133/org/MSCDec-65706-1633027942.jpg',   // 香榭大道 LED 天幕
   lighthouse: 'https://www.cruisedeckplans.com/DP/deckpictures/133/org/MSCDec-37728-1633027863.jpg',   // 主餐廳
   buffet:     'https://www.cruisedeckplans.com/DP/deckpictures/163/org/MSCDec-61181-1673812330.jpg',   // 自助餐廳
