@@ -4,29 +4,25 @@ export type Lang = 'zh' | 'en' | 'id' | 'th';
 
 export const targetDateStr = '2026-07-09T11:30:00+08:00';
 
-// ─── Image URLs (all Unsplash – stable, no hotlink protection) ───────────────
+// ─── Image URLs (real MSC Bellissima photos + Unsplash) ─────────────────────────
 const IMG = {
-  // Ship interior / facilities
-  crystal:    'https://images.unsplash.com/photo-1578774204375-826dc5d996ed?auto=format&fit=crop&q=80&w=800',
-  galleria:   'https://images.unsplash.com/photo-1567016432779-094069958ea5?auto=format&fit=crop&q=80&w=800',
-  lego:       'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&q=80&w=800',
-  waterpark:  'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&q=80&w=800',
-  broadway:   'https://images.unsplash.com/photo-1507676184212-d0330a15673c?auto=format&fit=crop&q=80&w=800',
-  f1:         'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&q=80&w=800',
-  spa:        'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=80&w=800',
-  gym:        'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=800',
-  track:      'https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&q=80&w=800',
-  buffet:     'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=800',
-  cherry:     'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&q=80&w=800',
-  lighthouse: 'https://images.unsplash.com/photo-1548574505-5e2627dafbf3?auto=format&fit=crop&q=80&w=800',
-  japanese:   'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=800',
+  // 真實 MSC Bellissima 現場照片 (from cruisedeckplans.com)
+  crystal:    'https://www.cruisedeckplans.com/DP/deckpictures/164/org/MSCDec-16358-1674524492.jpg',   // 水晶大廳
+  galleria:   'https://www.cruisedeckplans.com/DP/deckpictures/133/org/MSCDec-65706-1633027942.jpg',   // 香榭大道 LED 天幕
+  lighthouse: 'https://www.cruisedeckplans.com/DP/deckpictures/133/org/MSCDec-37728-1633027863.jpg',   // 主餐廳
+  buffet:     'https://www.cruisedeckplans.com/DP/deckpictures/163/org/MSCDec-61181-1673812330.jpg',   // 自助餐廳
+  waterpark:  'https://www.cruisedeckplans.com/DP/deckpictures/165/org/MSCDec-77442-1676645380.jpg',   // 亞利桑那水上樂園
+  spa:        'https://www.cruisedeckplans.com/DP/deckpictures/133/org/MSCDec-74883-1633026056.jpg',   // Aurea SPA
+
+  // Unsplash 補充照片
   steak:      'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80&w=800',
   chocolate:  'https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&q=80&w=800',
-  captainBar: 'https://images.unsplash.com/photo-1514362448893-3e283e4f0a9c?auto=format&fit=crop&q=80&w=800',
-  skyLounge:  'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&q=80&w=800',
+  broadway:   'https://images.unsplash.com/photo-1507676184212-d0330a15673c?auto=format&fit=crop&q=80&w=800',
+  f1:         'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&q=80&w=800',
+  track:      'https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&q=80&w=800',
   cocktail:   'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?auto=format&fit=crop&q=80&w=800',
-  balcony:    'https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&q=80&w=800',
-  // Preparation / info tabs
+
+  // 行前/規則/APP/下船 tabs 照片
   passport:   'https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?auto=format&fit=crop&q=80&w=800',
   luggage:    'https://images.unsplash.com/photo-1552858725-2758b5fb1286?auto=format&fit=crop&q=80&w=800',
   phone:      'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&q=80&w=800',
@@ -35,8 +31,6 @@ const IMG = {
   coffee:     'https://images.unsplash.com/photo-1523362628745-0c100150b504?auto=format&fit=crop&q=80&w=800',
   camera:     'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=800',
   food:       'https://images.unsplash.com/photo-1414235077428-338988a2e8c0?auto=format&fit=crop&q=80&w=800',
-  okinawa:    'https://images.unsplash.com/photo-1542051812871-75528045a9a3?auto=format&fit=crop&q=80&w=800',
-  naha:       'https://images.unsplash.com/photo-1590559899731-a382839e5549?auto=format&fit=crop&q=80&w=800',
   ship:       'https://images.unsplash.com/photo-1548690312-e3b507d8c110?auto=format&fit=crop&q=80&w=800',
 };
 
@@ -170,8 +164,8 @@ export const dictionary: Record<Lang, any> = {
       { id: 'depart',   label: "📋 出發前" },
       { id: 'onboard',  label: "🚢 船上" },
       { id: 'hacks',    label: "✨ 密技" },
-      { id: 'social',   label: "📍 同樂" },
-      { id: 'local',    label: "🏁 那霸" },
+      { id: 'social',   label: "📍 動態" },
+      { id: 'bingo',    label: "🎴 賓果" },
     ],
     // ── Together (Bingo + Quick Share) ───────────────────────────────────────
     together: {
@@ -513,8 +507,8 @@ export const dictionary: Record<Lang, any> = {
       { id: 'depart',   label: "📋 Before" },
       { id: 'onboard',  label: "🚢 Onboard" },
       { id: 'hacks',    label: "✨ Hacks" },
-      { id: 'social',   label: "📍 Fun" },
-      { id: 'local',    label: "🏁 Naha" },
+      { id: 'social',   label: "📍 Feed" },
+      { id: 'bingo',    label: "🎴 Bingo" },
     ],
     together: {
       bingoTitle: "Trip Bingo Challenge",
@@ -831,8 +825,8 @@ export const dictionary: Record<Lang, any> = {
       { id: 'depart',   label: "📋 Sebelum" },
       { id: 'onboard',  label: "🚢 Di Kapal" },
       { id: 'hacks',    label: "✨ Tips" },
-      { id: 'social',   label: "📍 Seru" },
-      { id: 'local',    label: "🏁 Naha" },
+      { id: 'social',   label: "📍 Feed" },
+      { id: 'bingo',    label: "🎴 Bingo" },
     ],
     together: {
       bingoTitle: "Tantangan Bingo Pelayaran",
@@ -1081,8 +1075,8 @@ export const dictionary: Record<Lang, any> = {
       { id: 'depart',   label: "📋 ก่อนออก" },
       { id: 'onboard',  label: "🚢 บนเรือ" },
       { id: 'hacks',    label: "✨ เคล็ดลับ" },
-      { id: 'social',   label: "📍 สนุก" },
-      { id: 'local',    label: "🏁 นาฮะ" },
+      { id: 'social',   label: "📍 ฟีด" },
+      { id: 'bingo',    label: "🎴 บิงโก" },
     ],
     together: {
       bingoTitle: "บิงโกท้าทายการเดินทาง",

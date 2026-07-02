@@ -438,13 +438,9 @@ export default function App() {
           <motion.div key={activeTab + lang} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.22 }} className="space-y-4">
 
             {activeTab === 'social' ? (
-              <div className="space-y-6">
-                <BingoCard lang={lang} />
-                <div className="pt-2 border-t border-slate-100">
-                  <p className="text-xs font-bold text-slate-400 mb-3 uppercase tracking-wide">📍 即時動態</p>
-                  <Timeline isOnline={isOnline} />
-                </div>
-              </div>
+              <Timeline isOnline={isOnline} />
+            ) : activeTab === 'bingo' ? (
+              <BingoCard lang={lang} />
               </>
             ) : activeTab === 'hacks' ? (
               <>
