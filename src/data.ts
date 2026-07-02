@@ -18,7 +18,7 @@ const IMG = {
   steak:      '/steak.jpg',   // 付費特色餐廳
   chocolate:  'https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&q=80&w=800',
   broadway:   '/broadway.jpg',
-  f1:         'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&q=80&w=800',
+  f1:         '/f1.jpg',
   track:      'https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&q=80&w=800',
   cocktail:   'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?auto=format&fit=crop&q=80&w=800',
 
