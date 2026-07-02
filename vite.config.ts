@@ -5,14 +5,12 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
   plugins: [
-        tailwindcss(),
+    tailwindcss(),
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      // Pre-cache all built assets (JS, CSS, HTML)
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
-        // Runtime-cache external images (settour + unsplash)
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/photo\.settour\.com\.tw\/.*/i,

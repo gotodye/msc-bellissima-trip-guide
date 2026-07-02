@@ -4,28 +4,29 @@ export type Lang = 'zh' | 'en' | 'id' | 'th';
 
 export const targetDateStr = '2026-07-09T11:30:00+08:00';
 
-// ─── Image URLs (from settour.com.tw) ───────────────────────────────────────
+// ─── Image URLs (all Unsplash – stable, no hotlink protection) ───────────────
 const IMG = {
-  crystal:    'https://photo.settour.com.tw/900x600/https://www.settour.com.tw/ss_img/cms/20230525/8e6c9024-5cdb-41d6-a7bd-f8c94eb005e2.jpg',
-  galleria:   'https://photo.settour.com.tw/900x600/https://www.settour.com.tw/ss_img/cms/20230525/da99ad78-b3f0-4555-b97d-16428a644afe.jpg',
-  lego:       'https://photo.settour.com.tw/900x600/https://www.settour.com.tw/ss_img/cms/20230525/9f6d4380-0b56-496d-9794-cd58bd86631b.jpg',
-  waterpark:  'https://photo.settour.com.tw/900x600/https://www.settour.com.tw/ss_img/cms/20230525/ed3952bc-dde9-4ab3-b6f6-a94aade53cf6.jpg',
-  broadway:   'https://photo.settour.com.tw/900x600/https://www.settour.com.tw/ss_img/cms/20230525/0af50d44-8050-4fe4-9ef6-10601f395e43.jpg',
-  f1:         'https://photo.settour.com.tw/900x600/https://www.settour.com.tw/ss_img/cms/20230525/b3d76dbe-ac7e-4525-b86a-957e02f00352.jpg',
-  spa:        'https://photo.settour.com.tw/900x600/https://www.settour.com.tw/ss_img/cms/20230525/bf02ccfa-08e7-4e35-9ffd-af2a6f7acf2a.jpg',
-  gym:        'https://photo.settour.com.tw/900x600/https://www.settour.com.tw/ss_img/cms/20230525/46d196ea-0138-452e-857c-9b9b0782089e.jpg',
-  track:      'https://photo.settour.com.tw/900x600/https://www.settour.com.tw/ss_img/cms/20230525/1cff08f9-aa24-4124-b590-f83204ba7b6e.jpg',
-  buffet:     'https://photo.settour.com.tw/900x600/https://www.settour.com.tw/ss_img/cms/20230525/b302403e-7656-4d28-b1f0-47bc7f371852.jpg',
-  cherry:     'https://photo.settour.com.tw/900x600/https://www.settour.com.tw/ss_img/cms/20230525/5d172d1b-e772-4fa2-99cf-f7747967c514.jpg',
-  lighthouse: 'https://photo.settour.com.tw/900x600/https://www.settour.com.tw/ss_img/cms/20230525/c95be796-3e35-44ec-baaf-86e910843903.jpg',
-  japanese:   'https://photo.settour.com.tw/900x600/https://www.settour.com.tw/ss_img/cms/20230525/6608006f-3e47-4259-9d50-f9d12de93efe.jpg',
-  steak:      'https://photo.settour.com.tw/900x600/https://www.settour.com.tw/ss_img/cms/20230525/7b56da9b-a0b8-4f44-bca4-ba9a0a7db782.jpg',
-  chocolate:  'https://photo.settour.com.tw/900x600/https://www.settour.com.tw/ss_img/cms/20230525/a980dad5-9b97-4d10-b17c-023c86ad0312.jpg',
-  captainBar: 'https://photo.settour.com.tw/900x600/https://www.settour.com.tw/ss_img/cms/20230525/95775358-c3fe-42af-ae31-0dc7ca3091e5.jpg',
-  skyLounge:  'https://photo.settour.com.tw/900x600/https://www.settour.com.tw/ss_img/cms/20230525/86efeac7-d378-44f2-8e21-d575ccd4a6ab.jpg',
-  cocktail:   'https://photo.settour.com.tw/900x600/https://www.settour.com.tw/ss_img/cms/20230525/641794a8-8387-4124-a246-e65083b2d9cd.jpg',
-  balcony:    'https://photo.settour.com.tw/900x600/https://www.settour.com.tw/ss_img/cms/20230525/75084b68-f49c-4a58-94df-24666f33ce4c.jpg',
-  // Existing Unsplash images kept for pre/rules/app/onboard/local tabs
+  // Ship interior / facilities
+  crystal:    'https://images.unsplash.com/photo-1578774204375-826dc5d996ed?auto=format&fit=crop&q=80&w=800',
+  galleria:   'https://images.unsplash.com/photo-1567016432779-094069958ea5?auto=format&fit=crop&q=80&w=800',
+  lego:       'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&q=80&w=800',
+  waterpark:  'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&q=80&w=800',
+  broadway:   'https://images.unsplash.com/photo-1507676184212-d0330a15673c?auto=format&fit=crop&q=80&w=800',
+  f1:         'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&q=80&w=800',
+  spa:        'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=80&w=800',
+  gym:        'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=800',
+  track:      'https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&q=80&w=800',
+  buffet:     'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=800',
+  cherry:     'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&q=80&w=800',
+  lighthouse: 'https://images.unsplash.com/photo-1548574505-5e2627dafbf3?auto=format&fit=crop&q=80&w=800',
+  japanese:   'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=800',
+  steak:      'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80&w=800',
+  chocolate:  'https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&q=80&w=800',
+  captainBar: 'https://images.unsplash.com/photo-1514362448893-3e283e4f0a9c?auto=format&fit=crop&q=80&w=800',
+  skyLounge:  'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&q=80&w=800',
+  cocktail:   'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?auto=format&fit=crop&q=80&w=800',
+  balcony:    'https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&q=80&w=800',
+  // Preparation / info tabs
   passport:   'https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?auto=format&fit=crop&q=80&w=800',
   luggage:    'https://images.unsplash.com/photo-1552858725-2758b5fb1286?auto=format&fit=crop&q=80&w=800',
   phone:      'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&q=80&w=800',
@@ -36,6 +37,7 @@ const IMG = {
   food:       'https://images.unsplash.com/photo-1414235077428-338988a2e8c0?auto=format&fit=crop&q=80&w=800',
   okinawa:    'https://images.unsplash.com/photo-1542051812871-75528045a9a3?auto=format&fit=crop&q=80&w=800',
   naha:       'https://images.unsplash.com/photo-1590559899731-a382839e5549?auto=format&fit=crop&q=80&w=800',
+  ship:       'https://images.unsplash.com/photo-1548690312-e3b507d8c110?auto=format&fit=crop&q=80&w=800',
 };
 
 // ─── Shared Bingo Cells (emoji + short label + description) ─────────────────
@@ -165,14 +167,11 @@ export const dictionary: Record<Lang, any> = {
     reminderMessage: "時間到囉！快打開 MSC for Me APP 預約明天的大秀！",
     reminderError: "設定失敗，請手動設定鬧鐘。",
     tabs: [
-      { id: 'pre',      label: "行前準備" },
-      { id: 'rules',    label: "登船規則" },
-      { id: 'app',      label: "APP教學" },
-      { id: 'onboard',  label: "船上攻略" },
+      { id: 'depart',   label: "📋 出發前" },
+      { id: 'onboard',  label: "🚢 船上" },
       { id: 'hacks',    label: "✨ 密技" },
-      { id: 'social',   label: "📍 動態" },
-      { id: 'together', label: "🎴 賓果" },
-      { id: 'local',    label: "那霸下船" },
+      { id: 'social',   label: "📍 同樂" },
+      { id: 'local',    label: "🏁 那霸" },
     ],
     // ── Together (Bingo + Quick Share) ───────────────────────────────────────
     together: {
@@ -510,14 +509,11 @@ export const dictionary: Record<Lang, any> = {
     reminderMessage: "Time to book tomorrow's show on the MSC for Me app!",
     reminderError: "Failed to set alarm. Please set it manually.",
     tabs: [
-      { id: 'pre',      label: "Pre-Departure" },
-      { id: 'rules',    label: "Boarding" },
-      { id: 'app',      label: "App Guide" },
-      { id: 'onboard',  label: "Onboard" },
+      { id: 'depart',   label: "📋 Before" },
+      { id: 'onboard',  label: "🚢 Onboard" },
       { id: 'hacks',    label: "✨ Hacks" },
-      { id: 'social',   label: "📍 Feed" },
-      { id: 'together', label: "🎴 Bingo" },
-      { id: 'local',    label: "Naha Port" },
+      { id: 'social',   label: "📍 Fun" },
+      { id: 'local',    label: "🏁 Naha" },
     ],
     together: {
       bingoTitle: "Trip Bingo Challenge",
@@ -831,14 +827,11 @@ export const dictionary: Record<Lang, any> = {
     reminderMessage: "Waktunya memesan pertunjukan besok di aplikasi MSC for Me!",
     reminderError: "Gagal mengatur alarm. Harap atur secara manual.",
     tabs: [
-      { id: 'pre',      label: "Persiapan" },
-      { id: 'rules',    label: "Aturan" },
-      { id: 'app',      label: "Aplikasi" },
-      { id: 'onboard',  label: "Di Kapal" },
+      { id: 'depart',   label: "📋 Sebelum" },
+      { id: 'onboard',  label: "🚢 Di Kapal" },
       { id: 'hacks',    label: "✨ Tips" },
-      { id: 'social',   label: "📍 Feed" },
-      { id: 'together', label: "🎴 Bingo" },
-      { id: 'local',    label: "Naha" },
+      { id: 'social',   label: "📍 Seru" },
+      { id: 'local',    label: "🏁 Naha" },
     ],
     together: {
       bingoTitle: "Tantangan Bingo Pelayaran",
@@ -1084,14 +1077,11 @@ export const dictionary: Record<Lang, any> = {
     reminderMessage: "ได้เวลาจองการแสดงสำหรับวันพรุ่งนี้ในแอป MSC for Me แล้ว!",
     reminderError: "ไม่สามารถตั้งค่าได้ โปรดตั้งค่าด้วยตนเอง",
     tabs: [
-      { id: 'pre',      label: "เตรียมตัว" },
-      { id: 'rules',    label: "กฎระเบียบ" },
-      { id: 'app',      label: "แอป" },
-      { id: 'onboard',  label: "บนเรือ" },
+      { id: 'depart',   label: "📋 ก่อนออก" },
+      { id: 'onboard',  label: "🚢 บนเรือ" },
       { id: 'hacks',    label: "✨ เคล็ดลับ" },
-      { id: 'social',   label: "📍 ฟีด" },
-      { id: 'together', label: "🎴 บิงโก" },
-      { id: 'local',    label: "นาฮะ" },
+      { id: 'social',   label: "📍 สนุก" },
+      { id: 'local',    label: "🏁 นาฮะ" },
     ],
     together: {
       bingoTitle: "บิงโกท้าทายการเดินทาง",
