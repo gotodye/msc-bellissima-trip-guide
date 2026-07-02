@@ -441,7 +441,6 @@ export default function App() {
               <Timeline isOnline={isOnline} />
             ) : activeTab === 'bingo' ? (
               <BingoCard lang={lang} />
-              </>
             ) : activeTab === 'hacks' ? (
               <>
                 <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-4">
