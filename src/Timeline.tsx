@@ -415,6 +415,41 @@ function ScatteredPolaroid({ post, index, count, onOpen }: { post: Post; index: 
   );
 }
 
+// ─── 直接為這張大事件卡拍照／上傳照片，不用等 EXIF 時間自動判斷 ─────────────────
+function EventUploadButton({ eventId }: { eventId: string }) {
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState('');
+
+  const pick = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    setUploading(true); setError('');
+    try {
+      const authorName  = localStorage.getItem('msc-username') || '匿名旅客';
+      const authorEmoji = localStorage.getItem('msc-emoji')    || DEFAULT_AVATAR;
+      await addPost({ authorName, authorEmoji, location: '', message: '' }, file, eventId);
+      vibrate();
+    } catch {
+      setError('上傳失敗，請確認網路連線');
+    } finally { setUploading(false); }
+  };
+
+  return (
+    <div className="mb-4">
+      <button onClick={() => fileRef.current?.click()} disabled={uploading}
+        className="w-full py-3 rounded-xl border-2 border-dashed border-[#00a0e3]/40 text-[#00a0e3] text-sm font-bold flex items-center justify-center gap-2 hover:border-[#00a0e3] hover:bg-[#00a0e3]/5 transition-colors disabled:opacity-50">
+        {uploading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
+        {uploading ? '上傳中…' : '拍照 / 上傳照片到這個時刻'}
+      </button>
+      {error && <p className="text-red-500 text-xs font-medium mt-1.5 text-center">{error}</p>}
+      <input ref={fileRef} type="file" accept="image/*" capture="environment"
+        className="hidden" onChange={pick} />
+    </div>
+  );
+}
+
 // ─── 大事件卡展開檢視（Module B：進場時照片從馬賽克拼圖「炸開」成散落拍立得） ──────
 function EventModal({ event, posts, onClose }: { event: TaskEvent; posts: Post[]; onClose: () => void }) {
   const [big, setBig] = useState<Post | null>(null);
@@ -440,6 +475,7 @@ function EventModal({ event, posts, onClose }: { event: TaskEvent; posts: Post[]
         </div>
 
         <div className="overflow-y-auto p-4">
+          {!big && <EventUploadButton eventId={event.id} />}
           {big ? (
             <div>
               <button onClick={() => setBig(null)} className="text-xs text-[#00a0e3] font-semibold mb-2">← 返回總覽</button>

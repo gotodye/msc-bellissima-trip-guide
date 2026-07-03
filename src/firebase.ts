@@ -9,7 +9,7 @@ import {
 } from 'firebase/firestore';
 import { getStorage, ref, uploadString, getDownloadURL } from 'firebase/storage';
 import { parse as parseExif } from 'exifr';
-import { classifyEvent } from './taskSchedule';
+import { classifyEvent, TASK_EVENTS } from './taskSchedule';
 import type { TaskEvent } from './taskSchedule';
 
 const firebaseConfig = {
@@ -123,13 +123,17 @@ export async function extractCapturedAt(file: File): Promise<Date> {
 }
 
 // 發佈航海日誌（含照片上傳、EXIF 判讀、大事件自動分類）
+// forcedEventId：從大事件卡片直接拍照/上傳時指定，略過 EXIF 時間判斷，直接歸入該卡片
 export async function addPost(
   post: Omit<Post, 'id' | 'timestamp' | 'tripId' | 'photoURL' | 'capturedAt' | 'eventId' | 'dayIndex' | 'isTaskPost' | 'hornCount'>,
   photoFile?: File,
+  forcedEventId?: string,
 ): Promise<void> {
   let photoURL = '';
   let capturedAt = new Date();
-  let matchedEvent: TaskEvent | null = null;
+  let matchedEvent: TaskEvent | null = forcedEventId
+    ? (TASK_EVENTS.find(e => e.id === forcedEventId) ?? null)
+    : null;
 
   if (photoFile) {
     // 拍攝時間與壓縮可以平行處理
@@ -138,7 +142,7 @@ export async function addPost(
       extractCapturedAt(photoFile),
     ]);
     capturedAt = exifDate;
-    matchedEvent = classifyEvent(capturedAt);
+    if (!forcedEventId) matchedEvent = classifyEvent(capturedAt);
 
     const imageRef = ref(storage, `msc-2026/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`);
     await uploadString(imageRef, dataUrl, 'data_url');
