@@ -9,7 +9,8 @@ import {
 } from 'firebase/firestore';
 import { getStorage, ref, uploadString, getDownloadURL } from 'firebase/storage';
 import { parse as parseExif } from 'exifr';
-import { classifyEvent, type TaskEvent } from './taskSchedule';
+import { classifyEvent } from './taskSchedule';
+import type { TaskEvent } from './taskSchedule';
 
 const firebaseConfig = {
   apiKey:            "AIzaSyAkmXeD9-x1EoXSSjK38bR5fEn_JExnamM",
@@ -97,7 +98,7 @@ async function compressImage(file: File): Promise<string> {
 }
 
 // 讀取照片 EXIF 拍攝時間；讀不到（截圖／無 EXIF）就退回上傳當下時間
-async function extractCapturedAt(file: File): Promise<Date> {
+export async function extractCapturedAt(file: File): Promise<Date> {
   try {
     const exif = await parseExif(file, ['DateTimeOriginal', 'CreateDate']);
     const raw = exif?.DateTimeOriginal ?? exif?.CreateDate;
