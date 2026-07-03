@@ -64,9 +64,9 @@ function setAndroidAlarm(message: string) {
         'intent://alarm/set#Intent;action=android.intent.action.SET_ALARM;' +
         'i.android.intent.extra.alarm.HOUR=23;i.android.intent.extra.alarm.MINUTES=55;' +
         `S.android.intent.extra.alarm.MESSAGE=${encodeURIComponent(message)};end`;
-    const a = document.createElement('a');
-    a.href = intentUrl;
-    a.click();
+    // Chrome 只會攔截「真正的頂層導航」去解析 intent:// scheme；建立 <a> 但不插入 DOM
+    // 再呼叫 .click() 屬於未附加節點的合成點擊，不會被當成有效導航，鬧鐘 App 也就打不開。
+    window.location.href = intentUrl;
 }
 
 // 統一入口：Android 直接開時鐘 App 設鬧鐘；其他裝置（iOS 等）退回下載行事曆提醒
