@@ -164,7 +164,7 @@ export const dictionary: Record<Lang, any> = {
       { id: 'depart',   label: "📋 出發前" },
       { id: 'onboard',  label: "🚢 船上" },
       { id: 'hacks',    label: "✨ 密技" },
-      { id: 'social',   label: "📍 動態" },
+      { id: 'social',   label: "⚓ 航海日誌" },
       { id: 'bingo',    label: "🎴 賓果" },
     ],
     // ── Together (Bingo + Quick Share) ───────────────────────────────────────
@@ -507,7 +507,7 @@ export const dictionary: Record<Lang, any> = {
       { id: 'depart',   label: "📋 Before" },
       { id: 'onboard',  label: "🚢 Onboard" },
       { id: 'hacks',    label: "✨ Hacks" },
-      { id: 'social',   label: "📍 Feed" },
+      { id: 'social',   label: "⚓ Time-Sail" },
       { id: 'bingo',    label: "🎴 Bingo" },
     ],
     together: {
@@ -825,7 +825,7 @@ export const dictionary: Record<Lang, any> = {
       { id: 'depart',   label: "📋 Sebelum" },
       { id: 'onboard',  label: "🚢 Di Kapal" },
       { id: 'hacks',    label: "✨ Tips" },
-      { id: 'social',   label: "📍 Feed" },
+      { id: 'social',   label: "⚓ Catatan Pelayaran" },
       { id: 'bingo',    label: "🎴 Bingo" },
     ],
     together: {
@@ -1075,7 +1075,7 @@ export const dictionary: Record<Lang, any> = {
       { id: 'depart',   label: "📋 ก่อนออก" },
       { id: 'onboard',  label: "🚢 บนเรือ" },
       { id: 'hacks',    label: "✨ เคล็ดลับ" },
-      { id: 'social',   label: "📍 ฟีด" },
+      { id: 'social',   label: "⚓ บันทึกการเดินเรือ" },
       { id: 'bingo',    label: "🎴 บิงโก" },
     ],
     together: {
