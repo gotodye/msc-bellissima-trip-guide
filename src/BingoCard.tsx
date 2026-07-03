@@ -4,57 +4,43 @@ import { Camera, RotateCcw, Trophy, X, AlertCircle } from 'lucide-react';
 import { storage } from './firebase';
 import { ref, uploadString, getDownloadURL } from 'firebase/storage';
 
-// ─── 3 張賓果卡 × 3×3 (9格，方便印在一張紙上) ─────────────────────────────────
+// ─── 2 張賓果卡 × 3×3 (共18格，含那霸上岸任務) ────────────────────────────────
 const CARDS = [
   {
     id: 'explore', title: '🚢 探索號', color: '#002b5e',
     items: [
-      { id:'e1', emoji:'🌅', title:'看日出/落日', task:'在甲板拍下有太陽的海上照片' },
-      { id:'e2', emoji:'💎', title:'水晶樓梯', task:'在水晶樓梯沒人時打卡合照' },
-      { id:'e3', emoji:'🌊', title:'玩水上滑道', task:'玩至少一個水上樂園滑道' },
-      { id:'e4', emoji:'🎭', title:'看大秀', task:'親眼看完一場表演秀' },
-      { id:'e9', emoji:'🌃', title:'甲板夜景', task:'甲板夜間拍一張夜景' },
-      { id:'e12', emoji:'🛍️', title:'Galleria逛街', task:'逛完整條香榭大道一圈' },
-      { id:'e15', emoji:'🏊', title:'泳池暢泳', task:'在任一泳池游泳' },
-      { id:'e16', emoji:'🎮', title:'VR F1賽車', task:'體驗 F1 虛擬賽車機' },
-      { id:'e20', emoji:'🦋', title:'LED天幕', task:'在 Galleria 拍 LED 天幕照' },
+      { id: 'e1', emoji: '🌅', title: '看日出/落日', task: '在甲板拍下有太陽的海上照片' },
+      { id: 'e2', emoji: '💎', title: '水晶樓梯', task: '在水晶樓梯沒人時打卡合照' },
+      { id: 'e4', emoji: '🎭', title: '看大秀', task: '親眼看完一場表演秀' },
+      { id: 'e9', emoji: '🌃', title: '甲板夜景', task: '甲板夜間拍一張夜景' },
+      { id: 'e16', emoji: '🎮', title: 'VR F1賽車', task: '體驗 F1 虛擬賽車機' },
+      { id: 'e20', emoji: '🦋', title: 'LED天幕', task: '在 Galleria 拍 LED 天幕照' },
+      { id: 'n1', emoji: '⛩️', title: '波上宮打卡', task: '在波上宮或波之上海灘拍照' },
+      { id: 'n2', emoji: '🛍️', title: '國際通戰利品', task: '在國際通買到戰利品拍照' },
+      { id: 'n3', emoji: '🏯', title: '首里城巡禮', task: '造訪首里城拍一張紀念照' },
     ]
   },
   {
-    id: 'food', title: '🍽️ 美食號', color: '#9a3412',
+    id: 'together', title: '🍽️ 美食同事號', color: '#9a3412',
     items: [
-      { id:'f1', emoji:'🦞', title:'龍蝦打卡', task:'自助餐廳吃到龍蝦並拍照' },
-      { id:'f2', emoji:'🥩', title:'豐盛餐盤', task:'拍一張最豐盛的自助餐盤' },
-      { id:'f3', emoji:'🍰', title:'最美甜點', task:'找到最美甜點拍擺盤照' },
-      { id:'f5', emoji:'🍹', title:'飲料排排站', task:'5種飲料排成一列合照' },
-      { id:'f6', emoji:'🍜', title:'日式餐廳', task:'在 Kaito 日式餐廳打卡' },
-      { id:'f10', emoji:'🍕', title:'深夜Pizza', task:'凌晨吃到新鮮現烤Pizza' },
-      { id:'f12', emoji:'🍦', title:'免費霜淇淋', task:'吃到船上免費霜淇淋' },
-      { id:'f13', emoji:'🍫', title:'巧克力工坊', task:'Jean-Philippe 巧克力店打卡' },
-      { id:'f19', emoji:'☕', title:'精緻下午茶', task:'享受一次精緻下午茶' },
-    ]
-  },
-  {
-    id: 'team', title: '👥 同事號', color: '#065f46',
-    items: [
-      { id:'t1', emoji:'📸', title:'全員大合照', task:'和全體同事拍一張大合照' },
-      { id:'t2', emoji:'🃏', title:'桌遊一局', task:'和同事玩牌/棋/桌遊一局' },
-      { id:'t4', emoji:'🤳', title:'神秘自拍', task:'和船長或工作人員自拍' },
-      { id:'t9', emoji:'📞', title:'船內電話', task:'打船內電話給另一間房同事' },
-      { id:'t10', emoji:'👘', title:'盛裝打扮', task:'正式之夜全套盛裝並拍照' },
-      { id:'t11', emoji:'⚪', title:'白色派對', task:'全白打扮參加 White Party' },
-      { id:'t12', emoji:'🇮🇹', title:'義大利之夜', task:'紅白綠裝扮參加義大利之夜' },
-      { id:'t17', emoji:'🌊', title:'一起跳水', task:'和同事同時跳進泳池' },
-      { id:'t20', emoji:'👯', title:'人人合照', task:'和每位同事各拍一張合照（集滿！）' },
+      { id: 'f1', emoji: '🦞', title: '龍蝦打卡', task: '自助餐廳吃到龍蝦並拍照' },
+      { id: 'f3', emoji: '🍰', title: '最美甜點', task: '找到最美甜點拍擺盤照' },
+      { id: 'f12', emoji: '🍦', title: '免費霜淇淋', task: '吃到船上免費霜淇淋' },
+      { id: 'k1', emoji: '🧱', title: '樂高俱樂部', task: '和小朋友一起去樂高俱樂部玩耍' },
+      { id: 't1', emoji: '📸', title: '全員大合照', task: '和全體同事拍一張大合照' },
+      { id: 't11', emoji: '⚪', title: '白色派對', task: '全白打扮參加 White Party' },
+      { id: 't12', emoji: '🇮🇹', title: '義大利之夜', task: '紅白綠裝扮參加義大利之夜' },
+      { id: 's1', emoji: '🎁', title: '血拚戰利品', task: '拍一張這趟旅程的血拚戰利品' },
+      { id: 'f5', emoji: '🥤', title: '飲料排排站', task: '5種飲料排成一列合照' },
     ]
   }
 ];
 
 // Bingo line indices (3x3 grid)
 const LINES = [
-  [0,1,2],[3,4,5],[6,7,8],       // rows
-  [0,3,6],[1,4,7],[2,5,8],       // cols
-  [0,4,8],[2,4,6],               // diagonals
+  [0, 1, 2], [3, 4, 5], [6, 7, 8],       // rows
+  [0, 3, 6], [1, 4, 7], [2, 5, 8],       // cols
+  [0, 4, 8], [2, 4, 6],               // diagonals
 ];
 
 async function uploadPhoto(file: File, itemId: string): Promise<string> {
@@ -84,7 +70,7 @@ async function uploadPhoto(file: File, itemId: string): Promise<string> {
   });
 }
 
-function getBingos(checked: Set<string>, items: {id:string}[]): number[][] {
+function getBingos(checked: Set<string>, items: { id: string }[]): number[][] {
   return LINES.filter(line => line.every(i => checked.has(items[i]?.id)));
 }
 
@@ -153,9 +139,8 @@ export function BingoCard({ lang }: Props) {
       <div className="flex gap-2 mb-4">
         {CARDS.map((c, i) => (
           <button key={c.id} onClick={() => setCardIdx(i)}
-            className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all ${
-              i === cardIdx ? 'text-white shadow-md' : 'bg-slate-100 text-slate-500'
-            }`}
+            className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all ${i === cardIdx ? 'text-white shadow-md' : 'bg-slate-100 text-slate-500'
+              }`}
             style={i === cardIdx ? { background: c.color } : {}}>
             {c.title}
           </button>
@@ -166,7 +151,7 @@ export function BingoCard({ lang }: Props) {
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2 flex-wrap">
           {bingoCount > 0 && (
-            <motion.span initial={{scale:0}} animate={{scale:1}}
+            <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }}
               className="flex items-center gap-1 bg-amber-400 text-amber-900 px-2.5 py-1 rounded-full text-xs font-black">
               <Trophy className="w-3 h-3" /> BINGO ×{bingoCount}
             </motion.span>
@@ -192,7 +177,7 @@ export function BingoCard({ lang }: Props) {
 
       {/* 3×3 Grid — 說明文字直接放在格子裡，點格子＝上傳/重新上傳照片 */}
       <AnimatePresence mode="wait">
-        <motion.div key={card.id} initial={{opacity:0}} animate={{opacity:1}}
+        <motion.div key={card.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           className="grid grid-cols-3 gap-2">
           {card.items.map((item, idx) => {
             const isDone = myChecked.has(item.id);
@@ -202,11 +187,10 @@ export function BingoCard({ lang }: Props) {
 
             return (
               <div key={item.id}
-                className={`relative rounded-2xl overflow-hidden cursor-pointer transition-all ${
-                  inBingo ? 'ring-2 ring-amber-400 ring-offset-1' :
-                  isDone ? 'ring-1 ring-offset-1' : 'border border-slate-200'
-                }`}
-                style={{ aspectRatio:'1', ringColor: card.color }}
+                className={`relative rounded-2xl overflow-hidden cursor-pointer transition-all ${inBingo ? 'ring-2 ring-amber-400 ring-offset-1' :
+                    isDone ? 'ring-1 ring-offset-1' : 'border border-slate-200'
+                  }`}
+                style={{ aspectRatio: '1', ringColor: card.color }}
                 onClick={() => openPicker(item.id)}>
 
                 {/* Background: real photo thumbnail once uploaded, otherwise theme color / placeholder */}
@@ -257,7 +241,7 @@ export function BingoCard({ lang }: Props) {
       {/* Photo preview modal */}
       <AnimatePresence>
         {preview && (
-          <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
             onClick={() => setPreview(null)}>
             <button className="absolute top-4 right-4 text-white p-2">
