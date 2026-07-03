@@ -642,6 +642,18 @@ export const dictionary: Record<Lang, any> = {
           ]
         },
         {
+          category: "🍽️ Food Hacks",
+          categoryColor: "amber",
+          image: IMG.chocolate,
+          title: "Jean-Philippe Chocolate & Café: French Sweets You Can't Skip",
+          tips: [
+            "🍫 Curated by world dessert master Jean-Philippe Maury — over a thousand handcrafted French chocolates",
+            "☕ Premium coffee and French pastries — the best spot for a relaxed afternoon break",
+            "🎁 Great for gifting — beautifully packaged chocolates make a classy souvenir",
+            "💡 This is a paid venue, but prices are reasonable — around $5–15 per person"
+          ]
+        },
+        {
           category: "🎭 Entertainment",
           categoryColor: "purple",
           image: IMG.broadway,
@@ -826,7 +838,8 @@ export const dictionary: Record<Lang, any> = {
             "Pakaian Formal", 
             "Pakaian Olahraga & Sepatu Kets", 
             "Jaket Ringan/Tahan Angin",
-            "Baju Renang (tidak ada pompa angin di kapal!)"
+            "Baju Renang (tidak ada pompa angin di kapal!)",
+            "Baju putih atau warna merah/putih/hijau untuk pesta bertema"
           ] 
         },
         { 
@@ -885,6 +898,18 @@ export const dictionary: Record<Lang, any> = {
           ]
         },
         {
+          category: "📸 Spot Foto",
+          categoryColor: "rose",
+          image: IMG.galleria,
+          title: "Galleria Kanopi LED: Pertunjukan Cahaya Gratis Setara IMAX",
+          tips: [
+            "🌟 Kanopi LED 80 meter menampilkan pertunjukan visual berbeda sepanjang hari",
+            "📷 Foto viral: Berbaring di lantai dan potret ke atas — hasilnya seperti poster film",
+            "🎪 Pusat acara: Pesta Putih, Malam Italia, dan semua acara bertema diadakan di sini",
+            "🛍️ 250+ merek bebas pajak — waktu terbaik menjelajah pukul 14:00–16:00 saat sepi"
+          ]
+        },
+        {
           category: "🍽️ Tips Makanan",
           categoryColor: "amber",
           image: IMG.buffet,
@@ -908,6 +933,30 @@ export const dictionary: Record<Lang, any> = {
           ]
         },
         {
+          category: "🍽️ Tips Makanan",
+          categoryColor: "amber",
+          image: IMG.steak,
+          title: "Restoran Spesial: Pesan di Hari Pertama atau Kehabisan",
+          tips: [
+            "🥩 Pilihan utama: Butcher's Cut Steakhouse (Dek 7) — steak premium dengan suasana Amerika klasik",
+            "🍣 Sangat direkomendasikan: Kaito Teppanyaki & Sushi Bar (Dek 7) — pertunjukan teppanyaki langsung + makanan Jepang lezat",
+            "🚨 Penting: Buka aplikasi sore hari 9 Juli dan langsung pesan — cepat penuh!",
+            "💡 Banyak yang melewatkan ini. Pesan restoran spesial lebih penting daripada pesan tiket pertunjukan!"
+          ]
+        },
+        {
+          category: "🍽️ Tips Makanan",
+          categoryColor: "amber",
+          image: IMG.chocolate,
+          title: "Jean-Philippe Chocolate & Café: Manisnya Prancis yang Wajib Coba",
+          tips: [
+            "🍫 Diracik oleh maestro dessert dunia Jean-Philippe Maury — lebih dari seribu jenis cokelat Prancis buatan tangan",
+            "☕ Tersedia kopi premium dan dessert Prancis — tempat terbaik untuk santai sore hari",
+            "🎁 Cokelat cocok jadi oleh-oleh — kemasannya elegan",
+            "💡 Ini item berbayar, tapi harganya terjangkau, sekitar $5–15 per orang"
+          ]
+        },
+        {
           category: "🎭 Hiburan",
           categoryColor: "purple",
           image: IMG.broadway,
@@ -917,6 +966,18 @@ export const dictionary: Record<Lang, any> = {
             "⚡ Tiket habis dalam 5 menit — ini bukan lebay, ini fakta",
             "🔔 Segera: Tap tombol 'Tambah Alarm' di atas untuk pengingat 23:55",
             "📱 Harus dalam mode pesawat + Wi-Fi kapal saat mencoba"
+          ]
+        },
+        {
+          category: "🎭 Hiburan",
+          categoryColor: "purple",
+          image: IMG.f1,
+          title: "Wahana Berbayar: Paket Kredit Hemat 20–30%",
+          tips: [
+            "🏎️ Pilihan: Simulator F1, VR shooting, bowling, dan zona arcade",
+            "💡 Wajib beli: Paket kredit (misal isi $70 dapat $90) jauh lebih hemat daripada bayar per permainan",
+            "⏱️ Waktu terbaik: Saat berlabuh di Naha (10 Juli), sebagian besar turun kapal — wahana nyaris kosong!",
+            "👨‍👩‍👧 Pembagian anak: Di bawah 10 tahun ke LEGO Club gratis; anak besar dan dewasa coba F1 dan VR"
           ]
         },
         {
@@ -931,6 +992,19 @@ export const dictionary: Record<Lang, any> = {
           ]
         },
         {
+          category: "💡 Hemat",
+          categoryColor: "emerald",
+          image: IMG.track,
+          title: "Panduan Lengkap Fasilitas Gratis di Kapal",
+          tips: [
+            "💧 Trik air: Air desalinasi terasa sedikit asin. Bawa termos, isi air panas di Buffet Dek 15, biarkan dingin — bebas rasa asin dan gratis",
+            "💊 Obat mabuk laut gratis: Tersedia di Resepsionis Dek 5, tanpa resep — tinggal minta",
+            "🍊 Obat alami: Apel hijau di buffet adalah rahasia awak kapal untuk mabuk laut",
+            "🌙 Makan malam larut: Buffet buka hampir 24 jam — selalu ada makanan",
+            "🛁 Keuntungan kabin balkon: Sarapan layanan kamar GRATIS — gantung kartu sarapan di pintu malam sebelumnya"
+          ]
+        },
+        {
           category: "🎪 Pesta Tema",
           categoryColor: "sky",
           image: IMG.cocktail,
@@ -939,6 +1013,18 @@ export const dictionary: Record<Lang, any> = {
             "⬜ Pesta Putih: Pakaian serba putih — semakin putih semakin bagus",
             "🇮🇹 Malam Italia: Pakai merah, putih, atau hijau (warna bendera Italia)",
             "📍 Lokasi: Galleria (Dek 6–7) — datang 30 menit lebih awal untuk posisi terbaik"
+          ]
+        },
+        {
+          category: "🌸 Spa & Relaksasi",
+          categoryColor: "pink",
+          image: IMG.spa,
+          title: "MSC Aurea Spa: Terapis Bali & Promo Hari Pertama",
+          tips: [
+            "💆 160+ perawatan tubuh dan wajah oleh terapis profesional Bali",
+            "💡 Promo hari pertama: Biasanya ada paket promosi hari pertama — lebih murah dari hari-hari berikutnya",
+            "🎁 Ide hadiah: Pesan perawatan berdua dengan pasangan, momen romantis di kapal pesiar",
+            "📅 Sangat disarankan pesan lebih awal (via aplikasi atau Resepsionis Dek 5) — slot populer cepat penuh"
           ]
         },
       ],
@@ -1050,7 +1136,8 @@ export const dictionary: Record<Lang, any> = {
             "ชุดทางการ", 
             "ชุดกีฬา & รองเท้าผ้าใบ", 
             "เสื้อกันลม/แจ็คเก็ตบาง",
-            "ชุดว่ายน้ำ (ไม่มีที่สูบลมบนเรือ!)"
+            "ชุดว่ายน้ำ (ไม่มีที่สูบลมบนเรือ!)",
+            "ชุดสีขาว หรือชุดสีแดง/ขาว/เขียว สำหรับปาร์ตี้ธีม"
           ] 
         },
         { 
@@ -1108,6 +1195,18 @@ export const dictionary: Record<Lang, any> = {
           ]
         },
         {
+          category: "📸 จุดถ่ายรูป",
+          categoryColor: "rose",
+          image: IMG.galleria,
+          title: "Galleria หลังคา LED: โชว์แสงสีฟรีระดับ IMAX",
+          tips: [
+            "🌟 หลังคา LED ยาว 80 เมตร มีโชว์แสงสีต่างกันตลอดวัน ชมฟรี",
+            "📷 มุมถ่ายรูปฮิต: นอนราบกับพื้นแล้วถ่ายขึ้นฟ้า ได้ภาพเหมือนโปสเตอร์หนัง",
+            "🎪 ศูนย์กลางงานปาร์ตี้: White Party, Italian Night และงานธีมทั้งหมดจัดที่นี่",
+            "🛍️ ร้านค้าปลอดภาษีกว่า 250 แบรนด์ ช่วงเวลาคนน้อย 14:00–16:00 น."
+          ]
+        },
+        {
           category: "🍽️ เคล็ดลับอาหาร",
           categoryColor: "amber",
           image: IMG.buffet,
@@ -1130,6 +1229,30 @@ export const dictionary: Record<Lang, any> = {
           ]
         },
         {
+          category: "🍽️ เคล็ดลับอาหาร",
+          categoryColor: "amber",
+          image: IMG.steak,
+          title: "ร้านอาหารพิเศษ: จองวันแรกไม่งั้นพลาด",
+          tips: [
+            "🥩 ตัวเลือกอันดับ 1: Butcher's Cut Steakhouse (ชั้น 7) — สเต็กระดับพรีเมียม บรรยากาศอเมริกันคลาสสิก",
+            "🍣 แนะนำมาก: Kaito Teppanyaki & Sushi Bar (ชั้น 7) — โชว์เทปันยากิสดพร้อมอาหารญี่ปุ่นรสเลิศ",
+            "🚨 สำคัญ: เปิดแอปช่วงบ่ายวันที่ 9 ก.ค. แล้วจองทันที — เต็มเร็วมาก",
+            "💡 หลายคนพลาดจุดนี้ การจองร้านอาหารพิเศษสำคัญกว่าการจองรอบการแสดง!"
+          ]
+        },
+        {
+          category: "🍽️ เคล็ดลับอาหาร",
+          categoryColor: "amber",
+          image: IMG.chocolate,
+          title: "Jean-Philippe Chocolate & Café: ของหวานฝรั่งเศสที่ไม่ควรพลาด",
+          tips: [
+            "🍫 ควบคุมโดยปรมาจารย์ของหวานระดับโลก Jean-Philippe Maury — ช็อกโกแลตฝรั่งเศสทำมือกว่าพันแบบ",
+            "☕ มีกาแฟพรีเมียมและของหวานฝรั่งเศส เหมาะพักผ่อนยามบ่าย",
+            "🎁 ช็อกโกแลตเหมาะเป็นของฝาก บรรจุภัณฑ์สวยหรู",
+            "💡 เป็นรายการเสียเงิน แต่ราคาไม่แพง เฉลี่ยคนละ $5–15"
+          ]
+        },
+        {
           category: "🎭 บันเทิง",
           categoryColor: "purple",
           image: IMG.broadway,
@@ -1139,6 +1262,18 @@ export const dictionary: Record<Lang, any> = {
             "⚡ ตั๋วหมดภายใน 5 นาที — ไม่ได้พูดเกินจริง",
             "🔔 กดปุ่ม 'เพิ่มนาฬิกาปลุก' ด้านบนเพื่อแจ้งเตือน 23:55 น.",
             "📱 ต้องอยู่ในโหมดเครื่องบิน + Wi-Fi เรือเมื่อพยายามจอง"
+          ]
+        },
+        {
+          category: "🎭 บันเทิง",
+          categoryColor: "purple",
+          image: IMG.f1,
+          title: "เครื่องเล่นเสียเงิน: แพ็กเกจเติมเงินประหยัด 20–30%",
+          tips: [
+            "🏎️ ตัวเลือก: ซิมูเลเตอร์ F1, VR ยิงปืน, โบว์ลิ่ง และโซนเกมอาเขต",
+            "💡 ควรซื้อ: แพ็กเกจเติมเงิน (เช่น เติม $70 ได้ $90) คุ้มกว่าจ่ายทีละครั้งมาก",
+            "⏱️ เวลาดีที่สุด: วันจอดที่นาฮะ (10 ก.ค.) คนส่วนใหญ่ลงเรือ เครื่องเล่นว่างเกือบหมด!",
+            "👨‍👩‍👧 แบ่งตามวัย: เด็กต่ำกว่า 10 ปีไป LEGO Club ฟรี เด็กโตและผู้ใหญ่ลอง F1 กับ VR"
           ]
         },
         {
@@ -1154,6 +1289,19 @@ export const dictionary: Record<Lang, any> = {
           ]
         },
         {
+          category: "💡 ประหยัด",
+          categoryColor: "emerald",
+          image: IMG.track,
+          title: "คู่มือฉบับสมบูรณ์ ของฟรีบนเรือที่คุณอาจไม่รู้",
+          tips: [
+            "💧 เทคนิคน้ำดื่ม: น้ำจากเครื่องกลั่นเค็มนิดๆ ให้นำกระบอกน้ำไปเติมน้ำร้อนที่บุฟเฟ่ต์ชั้น 15 รอเย็นแล้วดื่มได้ ไม่เค็มและฟรี",
+            "💊 ยาเมาเรือฟรี: ขอได้ที่เคาน์เตอร์ชั้น 5 ไม่ต้องมีใบสั่งยา",
+            "🍊 สูตรลับแก้เมา: แอปเปิ้ลเขียวที่บุฟเฟ่ต์ เป็นเคล็ดลับของลูกเรือรุ่นเก่า",
+            "🌙 มื้อดึก: บุฟเฟ่ต์เปิดเกือบ 24 ชั่วโมง มีของกินตลอด",
+            "🛁 สิทธิพิเศษห้องระเบียง: อาหารเช้าส่งถึงห้องฟรี แขวนบัตรอาหารเช้าที่ประตูคืนก่อนหน้า"
+          ]
+        },
+        {
           category: "🎪 ปาร์ตี้ธีม",
           categoryColor: "sky",
           image: IMG.cocktail,
@@ -1162,6 +1310,18 @@ export const dictionary: Record<Lang, any> = {
             "⬜ White Party: ชุดขาวล้วนทั้งตัว — ยิ่งขาวยิ่งดี",
             "🇮🇹 Italian Night: ใส่แดง ขาว หรือเขียว (สีธงอิตาลี)",
             "📍 สถานที่: Galleria (ดาดฟ้า 6–7) มาก่อน 30 นาทีเพื่อจองพื้นที่กลาง"
+          ]
+        },
+        {
+          category: "🌸 สปาและผ่อนคลาย",
+          categoryColor: "pink",
+          image: IMG.spa,
+          title: "MSC Aurea Spa: นักบำบัดชาวบาหลีและโปรวันแรก",
+          tips: [
+            "💆 ทรีตเมนต์ตัวและหน้ากว่า 160 รายการ โดยนักบำบัดมืออาชีพชาวบาหลี",
+            "💡 โปรวันแรก: มักมีแพ็กเกจโปรโมชั่นวันแรกที่ขึ้นเรือ ราคาถูกกว่าวันหลังๆ",
+            "🎁 ไอเดียของขวัญ: จองทรีตเมนต์คู่กับคนพิเศษ ช่วงเวลาโรแมนติกบนเรือสำราญ",
+            "📅 แนะนำจองล่วงหน้า (ผ่านแอปหรือเคาน์เตอร์ชั้น 5) คิวยอดนิยมเต็มเร็ว"
           ]
         },
       ],
