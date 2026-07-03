@@ -194,7 +194,7 @@ export const dictionary: Record<Lang, any> = {
     sections: {
       pre: [
         { 
-          icon: 'Sparkles', title: "【公司專屬 VIP 特權】", highlight: true, 
+          icon: 'Sparkles', title: "【接送集合事項】", highlight: true, 
           text: "請於 7/9 11:45-12:00 至「台北火車站東三門」集合，東南工作人員（藍色背心）將協助點名，12:00 準時發車前往基隆港!" 
         },
         { 
@@ -205,15 +205,14 @@ export const dictionary: Record<Lang, any> = {
         {
           icon: 'CheckSquare', title: "出門前最後檢查，隨身行李 (點擊打勾)",
           checklist: [
-            "船票 / 登船證（需列印 A4 紙本）",
+            "手機",
+            "船票 / 登船證",
             "護照正本 (效期需大於6個月)",
             "護照影本 (2份A4比例1:1)",
             "台灣居留證 ARC (外籍同仁必備)",
-            "錢包 (信用卡、現金)",
-            "手機",
+            "錢包 (信用卡、現金)、少量外幣 (日幣、美金)",
             "個人藥品 (暈船藥、腸胃藥、感冒藥)",
             "防曬用品 (太陽眼鏡、防曬乳、帽子)",
-            "少量外幣現金 (日幣、美金)",
             "雨具 (摺疊傘、輕便雨衣)"
           ]
         },
@@ -235,10 +234,6 @@ export const dictionary: Record<Lang, any> = {
         { 
           icon: 'ShieldAlert', title: "違禁與限帶物品清單", 
           text: "【絕對禁止】延長線、電棒捲、熨斗、對講機、生鮮肉品、新鮮蔬果。安檢極其嚴格，違禁品將直接沒收，不會歸還。\n【暫時保管】酒類、飲料會由海關保管，下船後歸還。\n【可以攜帶】礦泉水、素食泡麵。" 
-        },
-        {
-          icon: 'ShoppingBag', title: "行李打包重要提醒",
-          text: "整理行李時記得先把行李條綁好；藥品、證件、登船文件、金錢等緊急用品，請隨身攜帶，不要放進要托運的行李箱。"
         }
       ],
       rules: [
@@ -260,6 +255,12 @@ export const dictionary: Record<Lang, any> = {
         }
       ],
       onboard: [
+        {
+          icon: 'Globe', title: "船上重要須知", list: [
+            "護照正本若登船後未發還，請至 5F 服務櫃台領取。",
+            "持非台灣護照的同仁，請務必於回國前三天完成線上入境資料申請。"
+          ]
+        },
         { 
           icon: 'Ship', title: "登船必做的兩件大事", list: [
             "1. 安全演習：回房間看電視安全宣導影片 → 用房內電話撥打 881 → 帶著房卡前往指定的緊急集合點 (Assembly Station) 刷卡報到。",
@@ -269,13 +270,6 @@ export const dictionary: Record<Lang, any> = {
         { 
           icon: 'Globe', title: "外語與服務支援", 
           text: "外籍同仁可至 5 樓服務台索取英文版 Daily Program (每日報紙) 以及主餐廳的英文菜單。" 
-        },
-        {
-          icon: 'Globe', title: "船上重要須知", list: [
-            "護照正本若登船後未發還，請至 5F 服務櫃台領取。",
-            "船上消費使用貨幣為美金 (USD)。",
-            "持非台灣護照的同仁，請務必於回國前三天完成線上入境資料申請。"
-          ]
         }
       ],
       // ── HACKS TAB: Blogger Insider Tips ──────────────────────────────────
