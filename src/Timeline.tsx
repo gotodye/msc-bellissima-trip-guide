@@ -611,8 +611,10 @@ function EventUploadButton({ eventId, lang }: { eventId: string; lang: Lang }) {
         {uploading ? t.uploading : t.uploadToMoment}
       </button>
       {error && <p className="text-red-500 text-xs font-medium mt-1.5 text-center">{error}</p>}
+      {/* 用 sr-only 取代 display:none —— iOS Safari 對 display:none 的 file input 呼叫 .click()
+          有時不會真的跳出拍照/照片庫選單，視覺隱藏但仍在版面上才能穩定觸發 */}
       <input ref={fileRef} type="file" accept="image/*"
-        className="hidden" onChange={pick} />
+        className="sr-only" onChange={pick} />
     </div>
   );
 }
@@ -811,7 +813,7 @@ function PostForm({ onClose, lang }: { onClose: () => void; lang: Lang }) {
           </button>
         )}
         <input ref={fileRef} type="file" accept="image/*"
-          className="hidden" onChange={pickPhoto} />
+          className="sr-only" onChange={pickPhoto} />
 
         {error && <p className="text-red-500 text-xs font-medium">{error}</p>}
 

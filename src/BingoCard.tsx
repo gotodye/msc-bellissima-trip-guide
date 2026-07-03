@@ -426,7 +426,7 @@ export function BingoCard({ lang }: Props) {
       </AnimatePresence>
 
       <input ref={fileRef} type="file" accept="image/*"
-        className="hidden" onChange={onFile} />
+        className="sr-only" onChange={onFile} />
 
       {/* Photo preview modal */}
       <AnimatePresence>
