@@ -3,10 +3,10 @@ import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from
 import { MapPin, Send, X, RefreshCw, Camera, Anchor } from 'lucide-react';
 import {
   addPost, subscribePosts, extractCapturedAt, honkPost,
-  addComment, subscribeComments,
+  addComment, subscribeComments, getPendingPosts, flushPendingPosts,
   SHIP_LOCATIONS_BY_LANG, SAILOR_AVATARS, DEFAULT_AVATAR, QUICK_TAGS_BY_LANG,
 } from './firebase';
-import type { Post, Comment } from './firebase';
+import type { Post, Comment, PendingPost } from './firebase';
 import { TASK_EVENTS, classifyEvent, eventText, NAHA_PROGRESS } from './taskSchedule';
 import type { TaskEvent } from './taskSchedule';
 import type { Lang } from './data';
@@ -23,7 +23,8 @@ const TIMELINE_TEXT: Record<Lang, {
   messagePlaceholder: string; previewAlt: string; classifying: string;
   classifiedEvent: (title: string) => string; classifiedGeneral: string; uploadPhoto: string;
   errNoName: string; errNoContent: string; errSubmitFail: string; submitting: string; submitButton: string;
-  anonymous: string; routeDepart: string; routeReturn: string; routeNaha: string; locale: string;
+  anonymous: string; routeDepart: string; routeReturn: string; routeNaha: string; pendingUpload: string;
+  pendingSyncLabel: (n: number) => string; locale: string;
 }> = {
   zh: {
     writeButton: '寫一篇航海日誌', offline: '⚠️ 離線・顯示快取資料', syncing: '⟳ 同步中…',
@@ -40,7 +41,8 @@ const TIMELINE_TEXT: Record<Lang, {
     classifiedEvent: title => `🎉 這張會歸入大事件卡「${title}」`, classifiedGeneral: '🌊 這張會放進一般航海誌',
     uploadPhoto: '上傳照片（選填）', errNoName: '請填寫你的名字', errNoContent: '請填寫訊息、選地點或上傳照片',
     errSubmitFail: '發佈失敗，請確認網路連線', submitting: '發佈中…', submitButton: '寫入航海日誌',
-    anonymous: '匿名旅客', routeDepart: 'Day1 基隆', routeReturn: 'Day4 基隆', routeNaha: '⛩️那霸', locale: 'zh-TW',
+    anonymous: '匿名旅客', routeDepart: 'Day1 基隆', routeReturn: 'Day4 基隆', routeNaha: '⛩️那霸', pendingUpload: '待上傳',
+    pendingSyncLabel: n => `📦 ${n} 則待上傳・恢復連線後自動補傳`, locale: 'zh-TW',
   },
   en: {
     writeButton: 'Write a Time-Sail Entry', offline: '⚠️ Offline · Showing cached data', syncing: '⟳ Syncing…',
@@ -57,7 +59,8 @@ const TIMELINE_TEXT: Record<Lang, {
     classifiedEvent: title => `🎉 This will be filed under "${title}"`, classifiedGeneral: '🌊 This will go into the general Time-Sail feed',
     uploadPhoto: 'Upload a photo (optional)', errNoName: 'Please enter your name', errNoContent: 'Please add a message, location, or photo',
     errSubmitFail: 'Failed to post — please check your connection', submitting: 'Posting…', submitButton: 'Post to Time-Sail',
-    anonymous: 'Anonymous Traveler', routeDepart: 'Day1 Keelung', routeReturn: 'Day4 Keelung', routeNaha: '⛩️Naha', locale: 'en-US',
+    anonymous: 'Anonymous Traveler', routeDepart: 'Day1 Keelung', routeReturn: 'Day4 Keelung', routeNaha: '⛩️Naha', pendingUpload: 'Pending',
+    pendingSyncLabel: n => `📦 ${n} pending — will auto-send once back online`, locale: 'en-US',
   },
   id: {
     writeButton: 'Tulis Catatan Pelayaran', offline: '⚠️ Offline · Menampilkan data tersimpan', syncing: '⟳ Menyinkronkan…',
@@ -74,7 +77,8 @@ const TIMELINE_TEXT: Record<Lang, {
     classifiedEvent: title => `🎉 Foto ini akan masuk ke kartu momen "${title}"`, classifiedGeneral: '🌊 Foto ini akan masuk ke feed umum',
     uploadPhoto: 'Unggah foto (opsional)', errNoName: 'Mohon isi nama Anda', errNoContent: 'Mohon isi pesan, lokasi, atau unggah foto',
     errSubmitFail: 'Gagal memposting — periksa koneksi internet Anda', submitting: 'Memposting…', submitButton: 'Posting ke Catatan Pelayaran',
-    anonymous: 'Wisatawan Anonim', routeDepart: 'Hari1 Keelung', routeReturn: 'Hari4 Keelung', routeNaha: '⛩️Naha', locale: 'id-ID',
+    anonymous: 'Wisatawan Anonim', routeDepart: 'Hari1 Keelung', routeReturn: 'Hari4 Keelung', routeNaha: '⛩️Naha', pendingUpload: 'Tertunda',
+    pendingSyncLabel: n => `📦 ${n} tertunda・akan otomatis terkirim saat kembali online`, locale: 'id-ID',
   },
   th: {
     writeButton: 'เขียนบันทึกการเดินเรือ', offline: '⚠️ ออฟไลน์ · แสดงข้อมูลที่บันทึกไว้', syncing: '⟳ กำลังซิงค์…',
@@ -91,7 +95,8 @@ const TIMELINE_TEXT: Record<Lang, {
     classifiedEvent: title => `🎉 ภาพนี้จะถูกจัดเข้าการ์ด "${title}"`, classifiedGeneral: '🌊 ภาพนี้จะไปอยู่ในฟีดทั่วไป',
     uploadPhoto: 'อัปโหลดภาพ (ไม่บังคับ)', errNoName: 'กรุณากรอกชื่อของคุณ', errNoContent: 'กรุณากรอกข้อความ เลือกสถานที่ หรืออัปโหลดภาพ',
     errSubmitFail: 'โพสต์ไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต', submitting: 'กำลังโพสต์…', submitButton: 'โพสต์ลงบันทึกการเดินเรือ',
-    anonymous: 'นักเดินทางนิรนาม', routeDepart: 'วันที่1 จีหลง', routeReturn: 'วันที่4 จีหลง', routeNaha: '⛩️นาฮะ', locale: 'th-TH',
+    anonymous: 'นักเดินทางนิรนาม', routeDepart: 'วันที่1 จีหลง', routeReturn: 'วันที่4 จีหลง', routeNaha: '⛩️นาฮะ', pendingUpload: 'รอส่ง',
+    pendingSyncLabel: n => `📦 ${n} รายการรอส่ง・จะส่งอัตโนมัติเมื่อออนไลน์`, locale: 'th-TH',
   },
 };
 
@@ -342,6 +347,26 @@ type Slot =
   | { type: 'event'; event: TaskEvent; posts: Post[]; sortMs: number }
   | { type: 'post'; post: Post; sortMs: number };
 
+// 把還沒真的傳上雲端、只存在本機的貼文轉成跟正式 Post 一樣的格式，這樣可以直接混進同一份時間軸顯示
+function pendingToPost(p: PendingPost): Post & { isPending?: boolean } {
+  return {
+    id: p.localId,
+    tripId: '',
+    authorName: p.authorName,
+    authorEmoji: p.authorEmoji,
+    location: p.location,
+    message: p.message,
+    photoURL: p.photoDataUrl || '',
+    timestamp: { seconds: Math.floor(new Date(p.capturedAt).getTime() / 1000) },
+    capturedAt: p.capturedAt,
+    eventId: p.eventId,
+    dayIndex: p.dayIndex ?? undefined,
+    isTaskPost: p.isTaskPost,
+    hornCount: 0,
+    isPending: true,
+  };
+}
+
 function buildSlots(posts: Post[]): Slot[] {
   const eventSlots: Slot[] = TASK_EVENTS.map(event => ({
     type: 'event', event,
@@ -498,14 +523,19 @@ function PostDetailModal({ post, onClose, lang }: { post: Post; onClose: () => v
   );
 }
 
-function PolaroidCard({ post, lang }: { post: Post; lang: Lang }) {
+function PolaroidCard({ post, lang }: { post: Post & { isPending?: boolean }; lang: Lang }) {
   const rotate = useMemo(() => stableRotate(post.id), [post.id]);
   const [open, setOpen] = useState(false);
   return (
     <>
       <motion.div style={{ rotate }} whileTap={{ scale: 0.96 }}
         onClick={() => setOpen(true)}
-        className="bg-white p-2 pb-5 rounded-sm shadow-md border border-slate-100 cursor-pointer">
+        className="relative bg-white p-2 pb-5 rounded-sm shadow-md border border-slate-100 cursor-pointer">
+      {post.isPending && (
+        <span className="absolute top-1 right-1 bg-amber-400 text-amber-900 text-[8px] font-bold px-1.5 py-0.5 rounded-full z-10">
+          {TIMELINE_TEXT[lang].pendingUpload}
+        </span>
+      )}
       <div className="w-full h-[128px] bg-slate-100 rounded-sm overflow-hidden flex items-center justify-center">
         {post.photoURL
           ? <img src={post.photoURL} className="w-full h-full object-cover" loading="lazy" alt="" />
@@ -799,6 +829,7 @@ function PostForm({ onClose, lang }: { onClose: () => void; lang: Lang }) {
 export function Timeline({ isOnline, lang }: { isOnline: boolean; lang: Lang }) {
   const t = TIMELINE_TEXT[lang];
   const [posts,    setPosts]    = useState<Post[]>([]);
+  const [pendingPosts, setPendingPosts] = useState<PendingPost[]>(() => getPendingPosts());
   const [lastSync, setLastSync] = useState<Date | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [syncing,  setSyncing]  = useState(true);
@@ -814,7 +845,22 @@ export function Timeline({ isOnline, lang }: { isOnline: boolean; lang: Lang }) 
     return unsub;
   }, []);
 
-  const slots = useMemo(() => buildSlots(posts), [posts]);
+  // 恢復網路連線時，自動把還留在本機、還沒真的傳上雲端的貼文補傳出去
+  useEffect(() => {
+    if (!isOnline) return;
+    let cancelled = false;
+    flushPendingPosts().then(sentCount => {
+      if (!cancelled && sentCount > 0) setPendingPosts(getPendingPosts());
+    });
+    return () => { cancelled = true; };
+  }, [isOnline]);
+
+  const mergedPosts = useMemo(
+    () => [...posts, ...pendingPosts.map(pendingToPost)],
+    [posts, pendingPosts],
+  );
+
+  const slots = useMemo(() => buildSlots(mergedPosts), [mergedPosts]);
   const slotMeta = useMemo(() => {
     const map = new Map<string, { hour: number }>();
     for (const slot of slots) {
@@ -862,6 +908,7 @@ export function Timeline({ isOnline, lang }: { isOnline: boolean; lang: Lang }) 
     : undefined;
 
   const syncLabel = () => {
+    if (pendingPosts.length > 0) return t.pendingSyncLabel(pendingPosts.length);
     if (!isOnline) return t.offline;
     if (syncing)   return t.syncing;
     if (!lastSync) return '';
@@ -884,7 +931,7 @@ export function Timeline({ isOnline, lang }: { isOnline: boolean; lang: Lang }) 
       </div>
 
       <AnimatePresence>
-        {showForm && <PostForm onClose={() => setShowForm(false)} lang={lang} />}
+        {showForm && <PostForm onClose={() => { setShowForm(false); setPendingPosts(getPendingPosts()); }} lang={lang} />}
       </AnimatePresence>
 
       {/* 橫向轉舵時間軸 */}
