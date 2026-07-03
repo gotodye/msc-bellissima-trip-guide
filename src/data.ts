@@ -502,37 +502,35 @@ export const dictionary: Record<Lang, any> = {
     sections: {
       pre: [
         { 
+          icon: 'Sparkles', title: "【Pickup & Gathering Arrangements】", highlight: true, 
+          text: "Please gather at Taipei Main Station East Gate 3 between 11:45-12:00 on July 9th. Southeast Travel staff (blue vests) will help with roll call — the bus departs promptly at 12:00 for Keelung Port!" 
+        },
+        { 
           image: IMG.passport,
           icon: 'AlertTriangle', title: "Passport & Expat Regulations", highlight: true, 
           text: "Taiwanese: Original Passport (valid > 6 months) + 2 Copies.\nExpats: MUST bring your Taiwan ARC. Please verify with the travel agency immediately if your nationality requires a Japan visa. No visa = No boarding!" 
         },
         {
-          icon: 'CheckSquare', title: "Pre-departure Checks (Click to check)",
+          icon: 'CheckSquare', title: "Pre-departure Checks, Personal Carry Items (Click to check)",
           checklist: [
+            "Mobile Phone",
             "Original Passport (Valid > 6 months)",
             "Passport Copies (2 copies, A4 1:1 ratio)",
             "Taiwan ARC (For foreign colleagues)",
-            "Wallet (Credit cards, Cash)",
-            "Mobile Phone"
-          ]
-        },
-        {
-          icon: 'CheckSquare', title: "Basic Personal Items Checklist (Click to check)",
-          checklist: [
+            "Wallet (Credit cards, Cash) & Small amount of foreign currency (JPY, USD)",
             "Personal medications (seasickness, stomach, cold)",
             "Sun protection (sunglasses, sunscreen, hat)",
-            "Personal skincare & cosmetics",
-            "Phone charging cables & multi-port charger",
-            "Rain gear (umbrella, raincoat)",
-            "Small amount of foreign currency (JPY, USD)"
+            "Rain gear (umbrella, raincoat)"
           ]
         },
         { 
           image: IMG.luggage,
-          icon: 'CheckSquare', title: "Interactive Packing List", 
+          icon: 'CheckSquare', title: "Packing List, Tie Your Luggage Tag First (Click to check)", 
           checklist: [
+            "Personal skincare & cosmetics",
             "Toothbrush & Toothpaste", 
             "Indoor Slippers", 
+            "Phone charging cables & multi-port charger",
             "Formal Wear (for formal nights)", 
             "Sportswear & Sneakers (strictly required for the gym)", 
             "Windbreaker/Light Jacket",
@@ -543,27 +541,9 @@ export const dictionary: Record<Lang, any> = {
         { 
           icon: 'ShieldAlert', title: "Prohibited & Restricted Items", 
           text: "【Strictly Prohibited】Extension cords, curling irons, irons, walkie-talkies, raw meat, fresh fruits & vegetables. Security is very strict — prohibited items will be confiscated permanently.\n【Held by Customs】Alcohol & drinks will be held by customs and returned when you disembark.\n【Allowed】Bottled water, vegetarian instant noodles." 
-        },
-        {
-          icon: 'ShoppingBag', title: "Packing Reminder",
-          text: "Tie your luggage tag securely before check-in. Keep emergency items — medication, documents, boarding papers, and money — with you in your carry-on, not in checked luggage."
         }
       ],
       rules: [
-        { 
-          icon: 'Sparkles', title: "[VIP Boarding Privilege]", highlight: true, 
-          text: "Our company has access to the VIP Priority Boarding Lane. Please gather at Keelung Port West Passenger Terminal exactly at 11:30 AM on July 9th to skip the queues!" 
-        },
-        { 
-          icon: 'Ship', title: "Two Essential Tasks Upon Boarding", list: [
-            "1. Safety Drill: Watch the safety video in your cabin → Dial 881 → Bring your cruise card to your designated Assembly Station to swipe in.",
-            "2. Link Cruise Card: Link a credit card at the atrium kiosks. Expats without credit cards can deposit USD cash at Deck 5 Reception."
-          ] 
-        },
-        { 
-          icon: 'Globe', title: "Language Support", 
-          text: "Expats can request the English 'Daily Program' and English menus at the Deck 5 Reception." 
-        }
       ],
       app: [
         {
@@ -585,9 +565,18 @@ export const dictionary: Record<Lang, any> = {
         {
           icon: 'Globe', title: "Important Onboard Notes", list: [
             "If your original passport isn't returned after boarding, collect it at the 5F service desk.",
-            "The onboard currency is US Dollars (USD).",
             "Non-Taiwanese passport holders must complete online arrival registration 3 days before returning to Taiwan."
           ]
+        },
+        { 
+          icon: 'Ship', title: "Two Essential Tasks Upon Boarding", list: [
+            "1. Safety Drill: Watch the safety video in your cabin → Dial 881 → Bring your cruise card to your designated Assembly Station to swipe in.",
+            "2. Link Cruise Card: Link a credit card at the atrium kiosks. Expats without credit cards can deposit USD cash at Deck 5 Reception."
+          ] 
+        },
+        { 
+          icon: 'Globe', title: "Language Support", 
+          text: "Expats can request the English 'Daily Program' and English menus at the Deck 5 Reception." 
         }
       ],
       hacks: [
@@ -805,37 +794,35 @@ export const dictionary: Record<Lang, any> = {
     sections: {
       pre: [
         { 
+          icon: 'Sparkles', title: "【Pengaturan Jemputan & Titik Kumpul】", highlight: true, 
+          text: "Harap berkumpul di Stasiun Taipei Gerbang Timur 3 pukul 11:45-12:00 pada 9 Juli. Staf Southeast Travel (rompi biru) akan membantu absensi — bus berangkat tepat jam 12:00 menuju Pelabuhan Keelung!" 
+        },
+        { 
           image: IMG.passport,
           icon: 'AlertTriangle', title: "Peraturan Paspor & Ekspatriat", highlight: true, 
           text: "Warga Taiwan: Paspor Asli + 2 Fotokopi.\nEkspatriat: WAJIB bawa ARC Taiwan Anda. Harap verifikasi visa Jepang. Tanpa visa = Tidak bisa naik!" 
         },
         {
-          icon: 'CheckSquare', title: "Pemeriksaan Sebelum Berangkat (Klik untuk centang)",
+          icon: 'CheckSquare', title: "Pemeriksaan Sebelum Berangkat, Barang Bawaan (Klik untuk centang)",
           checklist: [
+            "Ponsel",
             "Paspor Asli (Masa berlaku > 6 bulan)",
             "Fotokopi Paspor (2 lembar, rasio A4 1:1)",
             "Taiwan ARC (Untuk rekan asing)",
-            "Dompet (Kartu kredit, Uang tunai)",
-            "Ponsel"
-          ]
-        },
-        {
-          icon: 'CheckSquare', title: "Daftar Barang Pribadi (Klik untuk centang)",
-          checklist: [
+            "Dompet (Kartu kredit, Uang tunai) & Sedikit uang asing (JPY, USD)",
             "Obat-obatan pribadi (mabuk laut, sakit perut, flu)",
             "Perlindungan matahari (kacamata hitam, tabir surya, topi)",
-            "Perawatan kulit & kosmetik",
-            "Kabel charger & kepala charger multi-port",
-            "Jas hujan / Payung lipat",
-            "Uang tunai mata uang asing (JPY, USD)"
+            "Jas hujan / Payung lipat"
           ]
         },
         { 
           image: IMG.luggage,
-          icon: 'CheckSquare', title: "Daftar Barang Bawaan", 
+          icon: 'CheckSquare', title: "Daftar Barang Bawaan, Ikat Label Bagasi Dulu (Klik untuk centang)", 
           checklist: [
+            "Perawatan kulit & kosmetik",
             "Sikat Gigi & Pasta Gigi", 
             "Sandal Dalam Ruangan", 
+            "Kabel charger & kepala charger multi-port",
             "Pakaian Formal", 
             "Pakaian Olahraga & Sepatu Kets", 
             "Jaket Ringan/Tahan Angin",
@@ -845,27 +832,9 @@ export const dictionary: Record<Lang, any> = {
         { 
           icon: 'ShieldAlert', title: "Barang Terlarang & Dibatasi", 
           text: "【Dilarang Keras】Kabel roll, catokan rambut, setrika, walkie-talkie, daging mentah, buah & sayur segar. Pemeriksaan keamanan sangat ketat — barang terlarang akan disita permanen.\n【Ditahan Bea Cukai】Minuman beralkohol akan ditahan bea cukai dan dikembalikan saat turun kapal.\n【Boleh Dibawa】Air mineral, mi instan vegetarian." 
-        },
-        {
-          icon: 'ShoppingBag', title: "Pengingat Packing",
-          text: "Ikat label bagasi Anda dengan kencang sebelum check-in. Bawa barang darurat — obat-obatan, dokumen, dokumen boarding, dan uang — di tas jinjing Anda, jangan dimasukkan ke bagasi terdaftar."
         }
       ],
       rules: [
-        { 
-          icon: 'Sparkles', title: "[Hak Istimewa VIP]", highlight: true, 
-          text: "Kita memiliki akses Jalur Boarding Prioritas VIP. Harap berkumpul di Terminal Keelung tepat jam 11:30 pagi pada 9 Juli!" 
-        },
-        { 
-          icon: 'Ship', title: "Dua Hal Penting Saat Naik", list: [
-            "1. Latihan Keselamatan: Tonton video → Tekan 881 → Bawa kartu pesiar ke Assembly Station.",
-            "2. Tautkan Kartu Kredit: Di kios di atrium. Ekspatriat tanpa kartu kredit bisa deposit uang tunai USD di Dek 5."
-          ] 
-        },
-        { 
-          icon: 'Globe', title: "Layanan Bahasa", 
-          text: "Ekspatriat dapat meminta 'Daily Program' bahasa Inggris di Resepsionis Dek 5." 
-        }
       ],
       app: [
         {
@@ -887,9 +856,18 @@ export const dictionary: Record<Lang, any> = {
         {
           icon: 'Globe', title: "Catatan Penting di Kapal", list: [
             "Jika paspor asli Anda tidak dikembalikan setelah naik kapal, ambil di meja layanan 5F.",
-            "Mata uang yang digunakan di kapal adalah Dolar AS (USD).",
             "Pemegang paspor non-Taiwan wajib menyelesaikan pendaftaran kedatangan online 3 hari sebelum kembali ke Taiwan."
           ]
+        },
+        { 
+          icon: 'Ship', title: "Dua Hal Penting Saat Naik", list: [
+            "1. Latihan Keselamatan: Tonton video → Tekan 881 → Bawa kartu pesiar ke Assembly Station.",
+            "2. Tautkan Kartu Kredit: Di kios di atrium. Ekspatriat tanpa kartu kredit bisa deposit uang tunai USD di Dek 5."
+          ] 
+        },
+        { 
+          icon: 'Globe', title: "Layanan Bahasa", 
+          text: "Ekspatriat dapat meminta 'Daily Program' bahasa Inggris di Resepsionis Dek 5." 
         }
       ],
       hacks: [
@@ -1040,37 +1018,35 @@ export const dictionary: Record<Lang, any> = {
     sections: {
       pre: [
         { 
+          icon: 'Sparkles', title: "【การรับส่งและจุดนัดพบ】", highlight: true, 
+          text: "โปรดมารวมตัวกันที่สถานีรถไฟไทเป ประตูตะวันออก 3 เวลา 11:45-12:00 น. วันที่ 9 กรกฎาคม เจ้าหน้าที่ Southeast Travel (เสื้อกั๊กสีน้ำเงิน) จะช่วยเช็คชื่อ รถจะออกเวลา 12:00 น. ตรง มุ่งหน้าท่าเรือจีหลง!" 
+        },
+        { 
           image: IMG.passport,
           icon: 'AlertTriangle', title: "ระเบียบพาสปอร์ต & ชาวต่างชาติ", highlight: true, 
           text: "ไต้หวัน: พาสปอร์ตตัวจริง + สำเนา 2 ใบ\nชาวต่างชาติ: ต้องนำบัตร ARC ไต้หวันมาด้วย โปรดตรวจสอบเรื่องวีซ่าญี่ปุ่น หากไม่มีวีซ่าจะถูกปฏิเสธไม่ให้ขึ้นเรือ!" 
         },
         {
-          icon: 'CheckSquare', title: "ตรวจสอบก่อนออกเดินทาง (คลิกเพื่อทำเครื่องหมาย)",
+          icon: 'CheckSquare', title: "ตรวจสอบก่อนออกเดินทาง สิ่งของติดตัว (คลิกเพื่อทำเครื่องหมาย)",
           checklist: [
+            "โทรศัพท์มือถือ",
             "พาสปอร์ตตัวจริง (อายุ > 6 เดือน)",
             "สำเนาพาสปอร์ต (2 ฉบับ ขนาด A4 1:1)",
             "ARC ไต้หวัน (สำหรับพนักงานต่างชาติ)",
-            "กระเป๋าสตางค์ (บัตรเครดิต, เงินสด)",
-            "โทรศัพท์มือถือ"
-          ]
-        },
-        {
-          icon: 'CheckSquare', title: "รายการของใช้ส่วนตัว (คลิกเพื่อทำเครื่องหมาย)",
-          checklist: [
+            "กระเป๋าสตางค์ (บัตรเครดิต, เงินสด) & เงินสดสกุลต่างประเทศเล็กน้อย (เยน, ดอลลาร์สหรัฐ)",
             "ยาประจำตัว (ยาแก้เมารถ, ยาแก้ปวดท้อง, ยาแก้หวัด)",
             "อุปกรณ์กันแดด (แว่นกันแดด, ครีมกันแดด, หมวก)",
-            "ผลิตภัณฑ์ดูแลผิวและเครื่องสำอาง",
-            "สายชาร์จโทรศัพท์และหัวชาร์จแบบหลายพอร์ต",
-            "อุปกรณ์กันฝน (ร่มพับ, เสื้อกันฝน)",
-            "เงินสดสกุลต่างประเทศ (เยน, ดอลลาร์สหรัฐ)"
+            "อุปกรณ์กันฝน (ร่มพับ, เสื้อกันฝน)"
           ]
         },
         { 
           image: IMG.luggage,
-          icon: 'CheckSquare', title: "รายการสัมภาระ", 
+          icon: 'CheckSquare', title: "รายการสัมภาระ มัดป้ายกระเป๋าก่อน (คลิกเพื่อทำเครื่องหมาย)", 
           checklist: [
+            "ผลิตภัณฑ์ดูแลผิวและเครื่องสำอาง",
             "แปรงสีฟัน & ยาสีฟัน", 
             "รองเท้าแตะใส่ในห้อง", 
+            "สายชาร์จโทรศัพท์และหัวชาร์จแบบหลายพอร์ต",
             "ชุดทางการ", 
             "ชุดกีฬา & รองเท้าผ้าใบ", 
             "เสื้อกันลม/แจ็คเก็ตบาง",
@@ -1080,27 +1056,9 @@ export const dictionary: Record<Lang, any> = {
         { 
           icon: 'ShieldAlert', title: "สิ่งของต้องห้ามและจำกัด", 
           text: "【ห้ามเด็ดขาด】ปลั๊กพ่วง เครื่องม้วนผม เตารีด วอล์คกี้ทอล์คกี้ เนื้อสัตว์สด ผักผลไม้สด ตรวจเข้มงวดมาก ของต้องห้ามจะถูกยึดถาวร\n【ศุลกากรเก็บรักษา】เครื่องดื่มแอลกอฮอล์จะถูกศุลกากรเก็บรักษาไว้ และคืนให้เมื่อลงเรือ\n【นำขึ้นเรือได้】น้ำแร่ บะหมี่กึ่งสำเร็จรูปมังสวิรัติ" 
-        },
-        {
-          icon: 'ShoppingBag', title: "ข้อควรจำเรื่องสัมภาระ",
-          text: "มัดป้ายกระเป๋าให้แน่นก่อนเช็คอิน ของใช้จำเป็นฉุกเฉิน เช่น ยา เอกสาร เอกสารขึ้นเรือ และเงิน ควรพกติดตัว ไม่ควรใส่ในกระเป๋าที่โหลด"
         }
       ],
       rules: [
-        { 
-          icon: 'Sparkles', title: "[สิทธิพิเศษ VIP]", highlight: true, 
-          text: "เรามีสิทธิ์ใช้ช่องทาง VIP Boarding โปรดมารวมตัวกันที่ท่าเรือจีหลงเวลา 11:30 น. ตรง วันที่ 9 กรกฎาคม!" 
-        },
-        { 
-          icon: 'Ship', title: "สองสิ่งที่ต้องทำเมื่อขึ้นเรือ", list: [
-            "1. ฝึกซ้อมความปลอดภัย: ดูวิดีโอ → กด 881 → นำบัตรไปรูดที่จุดรวมพล",
-            "2. เชื่อมบัตรเครดิตที่ตู้บริเวณโถงกลาง"
-          ] 
-        },
-        { 
-          icon: 'Globe', title: "การสนับสนุนด้านภาษา", 
-          text: "ขอรับตารางกิจกรรมประจำวันภาษาอังกฤษได้ที่เคาน์เตอร์ชั้น 5" 
-        }
       ],
       app: [
         {
@@ -1122,9 +1080,18 @@ export const dictionary: Record<Lang, any> = {
         {
           icon: 'Globe', title: "ข้อควรรู้สำคัญบนเรือ", list: [
             "หากพาสปอร์ตตัวจริงไม่ได้คืนหลังขึ้นเรือ ให้ไปรับที่เคาน์เตอร์บริการชั้น 5F",
-            "สกุลเงินที่ใช้บนเรือคือดอลลาร์สหรัฐ (USD)",
             "ผู้ถือพาสปอร์ตที่ไม่ใช่ไต้หวัน ต้องลงทะเบียนเข้าประเทศออนไลน์ล่วงหน้า 3 วันก่อนเดินทางกลับไต้หวัน"
           ]
+        },
+        { 
+          icon: 'Ship', title: "สองสิ่งที่ต้องทำเมื่อขึ้นเรือ", list: [
+            "1. ฝึกซ้อมความปลอดภัย: ดูวิดีโอ → กด 881 → นำบัตรไปรูดที่จุดรวมพล",
+            "2. เชื่อมบัตรเครดิตที่ตู้บริเวณโถงกลาง"
+          ] 
+        },
+        { 
+          icon: 'Globe', title: "การสนับสนุนด้านภาษา", 
+          text: "ขอรับตารางกิจกรรมประจำวันภาษาอังกฤษได้ที่เคาน์เตอร์ชั้น 5" 
         }
       ],
       hacks: [
