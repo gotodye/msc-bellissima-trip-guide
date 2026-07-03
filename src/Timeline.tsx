@@ -15,88 +15,93 @@ import type { Lang } from './data';
 const TIMELINE_TEXT: Record<Lang, {
   writeButton: string; offline: string; syncing: string; synced: (time: string) => string;
   emptyTitle: string; emptyDesc: string; loading: string;
-  commentsLabel: (n: number) => string; noComments: string; namePlaceholder: string;
+  commentsLabel: (n: number) => string; noComments: string;
   confirm: string; commentPlaceholder: string; sailorAlt: string;
   uploadToMoment: string; uploading: string; uploadError: string;
   backToOverview: string; eventEmpty: string; cardEmpty: string; postDiaryTitle: (name: string) => string;
-  formTitle: string; chooseAvatar: string; yourName: string; locationPlaceholder: string;
+  formTitle: string; yourName: string; locationPlaceholder: string;
   messagePlaceholder: string; previewAlt: string; classifying: string;
   classifiedEvent: (title: string) => string; classifiedGeneral: string; uploadPhoto: string;
-  errNoName: string; errNoContent: string; errSubmitFail: string; submitting: string; submitButton: string;
+  errNoContent: string; errSubmitFail: string; submitting: string; submitButton: string;
   anonymous: string; routeDepart: string; routeReturn: string; routeNaha: string; pendingUpload: string;
-  pendingSyncLabel: (n: number) => string; locale: string;
+  pendingSyncLabel: (n: number) => string;
+  identityTitle: string; identityDesc: string; changeIdentity: string; locale: string;
 }> = {
   zh: {
     writeButton: '寫一篇航海日誌', offline: '⚠️ 離線・顯示快取資料', syncing: '⟳ 同步中…',
     synced: t => `✓ 最後更新 ${t}`,
     emptyTitle: '航海日誌還是空的', emptyDesc: '成為第一個寫日誌的人吧！', loading: '載入航海日誌中…',
     commentsLabel: n => `💬 留言${n > 0 ? `（${n}）` : ''}`, noComments: '還沒有留言，當第一個留言的人吧！',
-    namePlaceholder: '先取個名字才能留言…', confirm: '確定', commentPlaceholder: '留言…', sailorAlt: '水手人物',
+    confirm: '確定', commentPlaceholder: '留言…', sailorAlt: '水手人物',
     uploadToMoment: '拍照 / 上傳照片到這個時刻', uploading: '上傳中…', uploadError: '上傳失敗，請確認網路連線',
     backToOverview: '← 返回總覽', eventEmpty: '還沒有人上傳這個時刻的照片，快來搶頭香！', cardEmpty: '還沒人上傳，搶頭香！',
     postDiaryTitle: name => `${name} 的航海日誌`,
-    formTitle: '✍️ 寫一篇航海日誌', chooseAvatar: '選一個水手人物', yourName: '你的名字',
+    formTitle: '✍️ 寫一篇航海日誌', yourName: '你的名字',
     locationPlaceholder: '📍 標記地點（選填）', messagePlaceholder: '說點什麼吧…（選填）', previewAlt: '預覽',
     classifying: '判斷這張照片屬於哪個時刻…',
     classifiedEvent: title => `🎉 這張會歸入大事件卡「${title}」`, classifiedGeneral: '🌊 這張會放進一般航海誌',
-    uploadPhoto: '上傳照片（選填）', errNoName: '請填寫你的名字', errNoContent: '請填寫訊息、選地點或上傳照片',
+    uploadPhoto: '上傳照片（選填）', errNoContent: '請填寫訊息、選地點或上傳照片',
     errSubmitFail: '發佈失敗，請確認網路連線', submitting: '發佈中…', submitButton: '寫入航海日誌',
     anonymous: '匿名旅客', routeDepart: 'Day1 基隆', routeReturn: 'Day4 基隆', routeNaha: '⛩️那霸', pendingUpload: '待上傳',
-    pendingSyncLabel: n => `📦 ${n} 則待上傳・恢復連線後自動補傳`, locale: 'zh-TW',
+    pendingSyncLabel: n => `📦 ${n} 則待上傳・恢復連線後自動補傳`,
+    identityTitle: '設定你的水手身份', identityDesc: '這個頭像和名字會顯示在你之後的每篇日誌、留言和照片旁邊', changeIdentity: '更換', locale: 'zh-TW',
   },
   en: {
     writeButton: 'Write a Time-Sail Entry', offline: '⚠️ Offline · Showing cached data', syncing: '⟳ Syncing…',
     synced: t => `✓ Last updated ${t}`,
     emptyTitle: 'The Time-Sail log is empty', emptyDesc: 'Be the first to write an entry!', loading: 'Loading Time-Sail…',
     commentsLabel: n => `💬 Comments${n > 0 ? ` (${n})` : ''}`, noComments: 'No comments yet — be the first!',
-    namePlaceholder: 'Pick a name to comment…', confirm: 'OK', commentPlaceholder: 'Add a comment…', sailorAlt: 'Sailor avatar',
+    confirm: 'OK', commentPlaceholder: 'Add a comment…', sailorAlt: 'Sailor avatar',
     uploadToMoment: 'Take / Upload a Photo for This Moment', uploading: 'Uploading…', uploadError: 'Upload failed — please check your connection',
     backToOverview: '← Back to overview', eventEmpty: 'No photos yet for this moment — be the first!', cardEmpty: 'No photos yet — be the first!',
     postDiaryTitle: name => `${name}'s Time-Sail entry`,
-    formTitle: '✍️ Write a Time-Sail Entry', chooseAvatar: 'Pick a sailor avatar', yourName: 'Your name',
+    formTitle: '✍️ Write a Time-Sail Entry', yourName: 'Your name',
     locationPlaceholder: '📍 Tag a location (optional)', messagePlaceholder: 'Say something… (optional)', previewAlt: 'Preview',
     classifying: 'Figuring out which moment this belongs to…',
     classifiedEvent: title => `🎉 This will be filed under "${title}"`, classifiedGeneral: '🌊 This will go into the general Time-Sail feed',
-    uploadPhoto: 'Upload a photo (optional)', errNoName: 'Please enter your name', errNoContent: 'Please add a message, location, or photo',
+    uploadPhoto: 'Upload a photo (optional)', errNoContent: 'Please add a message, location, or photo',
     errSubmitFail: 'Failed to post — please check your connection', submitting: 'Posting…', submitButton: 'Post to Time-Sail',
     anonymous: 'Anonymous Traveler', routeDepart: 'Day1 Keelung', routeReturn: 'Day4 Keelung', routeNaha: '⛩️Naha', pendingUpload: 'Pending',
-    pendingSyncLabel: n => `📦 ${n} pending — will auto-send once back online`, locale: 'en-US',
+    pendingSyncLabel: n => `📦 ${n} pending — will auto-send once back online`,
+    identityTitle: 'Set Up Your Sailor Identity', identityDesc: 'This avatar and name will show up next to every entry, comment, and photo you post', changeIdentity: 'Change', locale: 'en-US',
   },
   id: {
     writeButton: 'Tulis Catatan Pelayaran', offline: '⚠️ Offline · Menampilkan data tersimpan', syncing: '⟳ Menyinkronkan…',
     synced: t => `✓ Terakhir diperbarui ${t}`,
     emptyTitle: 'Catatan Pelayaran masih kosong', emptyDesc: 'Jadilah yang pertama menulis!', loading: 'Memuat Catatan Pelayaran…',
     commentsLabel: n => `💬 Komentar${n > 0 ? ` (${n})` : ''}`, noComments: 'Belum ada komentar — jadilah yang pertama!',
-    namePlaceholder: 'Isi nama dulu untuk berkomentar…', confirm: 'OK', commentPlaceholder: 'Tulis komentar…', sailorAlt: 'Avatar pelaut',
+    confirm: 'OK', commentPlaceholder: 'Tulis komentar…', sailorAlt: 'Avatar pelaut',
     uploadToMoment: 'Foto / Unggah Foto untuk Momen Ini', uploading: 'Mengunggah…', uploadError: 'Gagal mengunggah — periksa koneksi internet Anda',
     backToOverview: '← Kembali ke ringkasan', eventEmpty: 'Belum ada foto untuk momen ini — jadilah yang pertama!', cardEmpty: 'Belum ada yang unggah — jadilah yang pertama!',
     postDiaryTitle: name => `Catatan Pelayaran ${name}`,
-    formTitle: '✍️ Tulis Catatan Pelayaran', chooseAvatar: 'Pilih avatar pelaut', yourName: 'Nama Anda',
+    formTitle: '✍️ Tulis Catatan Pelayaran', yourName: 'Nama Anda',
     locationPlaceholder: '📍 Tandai lokasi (opsional)', messagePlaceholder: 'Tulis sesuatu… (opsional)', previewAlt: 'Pratinjau',
     classifying: 'Mengecek momen mana foto ini termasuk…',
     classifiedEvent: title => `🎉 Foto ini akan masuk ke kartu momen "${title}"`, classifiedGeneral: '🌊 Foto ini akan masuk ke feed umum',
-    uploadPhoto: 'Unggah foto (opsional)', errNoName: 'Mohon isi nama Anda', errNoContent: 'Mohon isi pesan, lokasi, atau unggah foto',
+    uploadPhoto: 'Unggah foto (opsional)', errNoContent: 'Mohon isi pesan, lokasi, atau unggah foto',
     errSubmitFail: 'Gagal memposting — periksa koneksi internet Anda', submitting: 'Memposting…', submitButton: 'Posting ke Catatan Pelayaran',
     anonymous: 'Wisatawan Anonim', routeDepart: 'Hari1 Keelung', routeReturn: 'Hari4 Keelung', routeNaha: '⛩️Naha', pendingUpload: 'Tertunda',
-    pendingSyncLabel: n => `📦 ${n} tertunda・akan otomatis terkirim saat kembali online`, locale: 'id-ID',
+    pendingSyncLabel: n => `📦 ${n} tertunda・akan otomatis terkirim saat kembali online`,
+    identityTitle: 'Atur Identitas Pelautmu', identityDesc: 'Avatar dan nama ini akan muncul di setiap catatan, komentar, dan foto yang kamu unggah', changeIdentity: 'Ganti', locale: 'id-ID',
   },
   th: {
     writeButton: 'เขียนบันทึกการเดินเรือ', offline: '⚠️ ออฟไลน์ · แสดงข้อมูลที่บันทึกไว้', syncing: '⟳ กำลังซิงค์…',
     synced: t => `✓ อัปเดตล่าสุด ${t}`,
     emptyTitle: 'บันทึกการเดินเรือยังว่างอยู่', emptyDesc: 'เป็นคนแรกที่เขียนบันทึกสิ!', loading: 'กำลังโหลดบันทึกการเดินเรือ…',
     commentsLabel: n => `💬 ความคิดเห็น${n > 0 ? `（${n}）` : ''}`, noComments: 'ยังไม่มีความคิดเห็น เป็นคนแรกเลยสิ!',
-    namePlaceholder: 'ตั้งชื่อก่อนถึงจะแสดงความคิดเห็นได้…', confirm: 'ตกลง', commentPlaceholder: 'แสดงความคิดเห็น…', sailorAlt: 'อวาตาร์กะลาสี',
+    confirm: 'ตกลง', commentPlaceholder: 'แสดงความคิดเห็น…', sailorAlt: 'อวาตาร์กะลาสี',
     uploadToMoment: 'ถ่ายภาพ / อัปโหลดภาพสำหรับช่วงเวลานี้', uploading: 'กำลังอัปโหลด…', uploadError: 'อัปโหลดไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต',
     backToOverview: '← กลับไปหน้ารวม', eventEmpty: 'ยังไม่มีใครอัปโหลดภาพช่วงเวลานี้ มาเป็นคนแรกกันเถอะ!', cardEmpty: 'ยังไม่มีใครอัปโหลด มาเป็นคนแรกกันเถอะ!',
     postDiaryTitle: name => `บันทึกการเดินเรือของ ${name}`,
-    formTitle: '✍️ เขียนบันทึกการเดินเรือ', chooseAvatar: 'เลือกอวาตาร์กะลาสี', yourName: 'ชื่อของคุณ',
+    formTitle: '✍️ เขียนบันทึกการเดินเรือ', yourName: 'ชื่อของคุณ',
     locationPlaceholder: '📍 ระบุสถานที่ (ไม่บังคับ)', messagePlaceholder: 'พูดอะไรสักหน่อย… (ไม่บังคับ)', previewAlt: 'ตัวอย่าง',
     classifying: 'กำลังตรวจสอบว่าภาพนี้อยู่ช่วงเวลาไหน…',
     classifiedEvent: title => `🎉 ภาพนี้จะถูกจัดเข้าการ์ด "${title}"`, classifiedGeneral: '🌊 ภาพนี้จะไปอยู่ในฟีดทั่วไป',
-    uploadPhoto: 'อัปโหลดภาพ (ไม่บังคับ)', errNoName: 'กรุณากรอกชื่อของคุณ', errNoContent: 'กรุณากรอกข้อความ เลือกสถานที่ หรืออัปโหลดภาพ',
+    uploadPhoto: 'อัปโหลดภาพ (ไม่บังคับ)', errNoContent: 'กรุณากรอกข้อความ เลือกสถานที่ หรืออัปโหลดภาพ',
     errSubmitFail: 'โพสต์ไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต', submitting: 'กำลังโพสต์…', submitButton: 'โพสต์ลงบันทึกการเดินเรือ',
     anonymous: 'นักเดินทางนิรนาม', routeDepart: 'วันที่1 จีหลง', routeReturn: 'วันที่4 จีหลง', routeNaha: '⛩️นาฮะ', pendingUpload: 'รอส่ง',
-    pendingSyncLabel: n => `📦 ${n} รายการรอส่ง・จะส่งอัตโนมัติเมื่อออนไลน์`, locale: 'th-TH',
+    pendingSyncLabel: n => `📦 ${n} รายการรอส่ง・จะส่งอัตโนมัติเมื่อออนไลน์`,
+    identityTitle: 'ตั้งค่าตัวตนกะลาสีของคุณ', identityDesc: 'อวาตาร์และชื่อนี้จะแสดงข้างบันทึก ความคิดเห็น และภาพที่คุณโพสต์ทุกครั้ง', changeIdentity: 'เปลี่ยน', locale: 'th-TH',
   },
 };
 
@@ -198,8 +203,6 @@ function CommentThread({ postId, lang }: { postId: string; lang: Lang }) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
-  const [myName, setMyName] = useState(() => localStorage.getItem('msc-username') || '');
-  const [nameInput, setNameInput] = useState('');
 
   useEffect(() => {
     const unsub = subscribeComments(postId, setComments);
@@ -213,22 +216,16 @@ function CommentThread({ postId, lang }: { postId: string; lang: Lang }) {
     return '';
   };
 
-  const saveName = () => {
-    const n = nameInput.trim();
-    if (!n) return;
-    localStorage.setItem('msc-username', n);
-    if (!localStorage.getItem('msc-emoji')) localStorage.setItem('msc-emoji', DEFAULT_AVATAR);
-    setMyName(n);
-  };
-
+  // 進入航海日誌頁面時已經強制設定過身份，這裡一定讀得到
   const send = async () => {
     const value = text.trim();
-    if (!value || sending || !myName) return;
+    if (!value || sending) return;
+    const authorName = localStorage.getItem('msc-username') || t.anonymous;
     const authorEmoji = localStorage.getItem('msc-emoji') || DEFAULT_AVATAR;
     setSending(true);
     setText('');
     try {
-      await addComment(postId, { authorName: myName, authorEmoji, text: value });
+      await addComment(postId, { authorName, authorEmoji, text: value });
     } catch {
       setText(value); // 送出失敗把文字還給使用者，不用重打
     }
@@ -256,18 +253,6 @@ function CommentThread({ postId, lang }: { postId: string; lang: Lang }) {
           </div>
         ))}
       </div>
-      {!myName ? (
-        <div className="flex items-center gap-2">
-          <input value={nameInput} onChange={e => setNameInput(e.target.value)}
-            onKeyDown={e => { if (e.key === 'Enter') saveName(); }}
-            placeholder={t.namePlaceholder}
-            className="flex-1 bg-slate-50 border border-slate-200 rounded-full px-3.5 py-2 text-xs text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-[#00a0e3]" />
-          <button onClick={saveName} disabled={!nameInput.trim()}
-            className="bg-[#002b5e] disabled:opacity-40 text-white text-xs font-bold rounded-full px-3.5 py-2 flex-shrink-0 transition-opacity">
-            {t.confirm}
-          </button>
-        </div>
-      ) : (
       <div className="flex items-center gap-2">
         <input value={text} onChange={e => setText(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter') send(); }}
@@ -278,7 +263,6 @@ function CommentThread({ postId, lang }: { postId: string; lang: Lang }) {
           <Send className="w-3.5 h-3.5" />
         </button>
       </div>
-      )}
     </div>
   );
 }
@@ -293,6 +277,61 @@ function Avatar({ id, size = 32, lang = 'zh' }: { id?: string; size?: number; la
   }
   // 舊資料相容：直接顯示原本存的 emoji 文字
   return <span style={{ fontSize: size * 0.7, lineHeight: 1 }}>{id || '😊'}</span>;
+}
+
+// ─── 設定水手身份（姓名 + 頭像）：獨立於「寫日誌」表單之外的共用關卡，留言／
+// 任務卡拍照上傳／寫日誌都倚賴這裡設定好的身份，不會再各自 fallback 成匿名旅客 ──
+function IdentityModal({ lang, onDone }: { lang: Lang; onDone: (name: string, emoji: string) => void }) {
+  const t = TIMELINE_TEXT[lang];
+  const [name, setName] = useState(() => localStorage.getItem('msc-username') || '');
+  const [emoji, setEmoji] = useState(() => localStorage.getItem('msc-emoji') || DEFAULT_AVATAR);
+
+  const confirm = () => {
+    const n = name.trim();
+    if (!n) return;
+    localStorage.setItem('msc-username', n);
+    localStorage.setItem('msc-emoji', emoji);
+    onDone(n, emoji);
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+    >
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
+        className="bg-white rounded-3xl w-full max-w-sm p-5"
+      >
+        <h3 className="font-bold text-[#002b5e] text-[16px] mb-1">{t.identityTitle}</h3>
+        <p className="text-xs text-slate-400 mb-4 leading-relaxed">{t.identityDesc}</p>
+
+        <div className="flex items-center gap-3 mb-3">
+          <Avatar id={emoji} size={52} lang={lang} />
+          <input value={name} onChange={e => setName(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter') confirm(); }}
+            placeholder={t.yourName}
+            className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-[#00a0e3]" />
+        </div>
+        <div className="flex gap-2 overflow-x-auto pb-1 mb-4 [&::-webkit-scrollbar]:hidden">
+          {SAILOR_AVATARS.map(a => (
+            <button key={a.id} type="button" onClick={() => setEmoji(a.id)}
+              title={a.label}
+              className={`flex-shrink-0 rounded-full p-0.5 transition-all ${
+                emoji === a.id ? 'ring-2 ring-[#00a0e3]' : 'ring-1 ring-transparent'
+              }`}>
+              <Avatar id={a.id} size={40} lang={lang} />
+            </button>
+          ))}
+        </div>
+
+        <button onClick={confirm} disabled={!name.trim()}
+          className="w-full bg-[#002b5e] hover:bg-[#003a7a] disabled:opacity-40 text-white font-bold py-3 rounded-xl transition-colors">
+          {t.confirm}
+        </button>
+      </motion.div>
+    </motion.div>
+  );
 }
 
 // 依 id + salt 產生穩定的 0~1 亂數（同一張照片每次 render 結果一致）
@@ -702,12 +741,13 @@ function EventModal({ event, posts, onClose, lang }: { event: TaskEvent; posts: 
 }
 
 // ─── 發文表單（水手人物 + 地點 + 快捷標籤 + EXIF 分類預覽） ───────────────────
-function PostForm({ onClose, lang }: { onClose: () => void; lang: Lang }) {
+function PostForm({ onClose, onEditIdentity, lang }: { onClose: () => void; onEditIdentity: () => void; lang: Lang }) {
   const t = TIMELINE_TEXT[lang];
   const locations = SHIP_LOCATIONS_BY_LANG[lang] || SHIP_LOCATIONS_BY_LANG.zh;
   const quickTags = QUICK_TAGS_BY_LANG[lang] || QUICK_TAGS_BY_LANG.zh;
-  const [name,     setName]    = useState(() => localStorage.getItem('msc-username') || '');
-  const [emoji,    setEmoji]   = useState(() => localStorage.getItem('msc-emoji')    || DEFAULT_AVATAR);
+  // 進入航海日誌頁面時已經強制設定過身份，這裡不用再重複選頭像/填名字
+  const name = localStorage.getItem('msc-username') || t.anonymous;
+  const emoji = localStorage.getItem('msc-emoji') || DEFAULT_AVATAR;
   const [location, setLocation]= useState('');
   const [message,  setMessage] = useState('');
   const [photo,    setPhoto]   = useState<File | null>(null);
@@ -735,14 +775,11 @@ function PostForm({ onClose, lang }: { onClose: () => void; lang: Lang }) {
   const addTag = (tag: string) => setMessage(m => (m.includes(tag) ? m : `${m ? m + ' ' : ''}${tag}`));
 
   const submit = async () => {
-    if (!name.trim()) { setError(t.errNoName); return; }
     if (!message.trim() && !photo && !location) { setError(t.errNoContent); return; }
     setLoading(true); setError('');
     try {
-      localStorage.setItem('msc-username', name.trim());
-      localStorage.setItem('msc-emoji', emoji);
       await addPost(
-        { authorName: name.trim(), authorEmoji: emoji, location, message: message.trim() },
+        { authorName: name, authorEmoji: emoji, location, message: message.trim() },
         photo ?? undefined,
       );
       onClose();
@@ -764,27 +801,13 @@ function PostForm({ onClose, lang }: { onClose: () => void; lang: Lang }) {
       </div>
 
       <div className="px-5 py-4 space-y-3">
-        {/* 水手人物 + 姓名 */}
-        <div>
-          <p className="text-[10px] text-slate-400 mb-1.5 ml-0.5">{t.chooseAvatar}</p>
-          <div className="flex items-center gap-3 mb-2">
-            <Avatar id={emoji} size={44} lang={lang} />
-            <input value={name} onChange={e => setName(e.target.value)}
-              placeholder={t.yourName}
-              className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-[#00a0e3]" />
-          </div>
-          <div className="flex gap-2 overflow-x-auto pb-1 [&::-webkit-scrollbar]:hidden">
-            {SAILOR_AVATARS.map(a => (
-              <button key={a.id} type="button" onClick={() => setEmoji(a.id)}
-                title={a.label}
-                className={`flex-shrink-0 rounded-full p-0.5 transition-all ${
-                  emoji === a.id ? 'ring-2 ring-[#00a0e3]' : 'ring-1 ring-transparent'
-                }`}>
-                <Avatar id={a.id} size={40} lang={lang} />
-              </button>
-            ))}
-          </div>
-        </div>
+        {/* 目前身份（在進入航海日誌頁面時就已設定，這裡只顯示＋可更換） */}
+        <button type="button" onClick={onEditIdentity}
+          className="w-full flex items-center gap-2.5 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 hover:border-[#00a0e3] transition-colors">
+          <Avatar id={emoji} size={32} lang={lang} />
+          <span className="flex-1 text-left text-sm font-medium text-slate-700 truncate">{name}</span>
+          <span className="text-[11px] text-[#00a0e3] font-bold flex-shrink-0">{t.changeIdentity}</span>
+        </button>
 
         {/* 地點 */}
         <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3">
@@ -855,6 +878,9 @@ export function Timeline({ isOnline, lang }: { isOnline: boolean; lang: Lang }) 
   const [syncing,  setSyncing]  = useState(true);
   const [openEvent, setOpenEvent] = useState<TaskEvent | null>(null);
   const [activeHour, setActiveHour] = useState(16);
+  // 一進航海日誌頁面就檢查有沒有設定過水手身份；還沒有就強制先設定，避免任何
+  // 留言／任務卡上傳／寫日誌的入口漏接，各自 fallback 成匿名旅客
+  const [showIdentityModal, setShowIdentityModal] = useState(() => !localStorage.getItem('msc-username'));
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const refMap = useRef(new Map<string, HTMLElement>());
@@ -937,6 +963,16 @@ export function Timeline({ isOnline, lang }: { isOnline: boolean; lang: Lang }) 
 
   return (
     <div>
+      {/* 目前身份（常駐顯示，隨時可點擊更換） */}
+      {!showIdentityModal && (
+        <button onClick={() => setShowIdentityModal(true)}
+          className="flex items-center gap-1.5 mb-2 text-xs text-slate-500 hover:text-[#00a0e3] transition-colors">
+          <Avatar id={localStorage.getItem('msc-emoji') || DEFAULT_AVATAR} size={18} lang={lang} />
+          <span className="font-medium">{localStorage.getItem('msc-username')}</span>
+          <span className="text-[10px] opacity-60">· {t.changeIdentity}</span>
+        </button>
+      )}
+
       {/* 工具列 */}
       <div className="flex items-center justify-between mb-4">
         <button onClick={() => setShowForm(v => !v)}
@@ -951,7 +987,19 @@ export function Timeline({ isOnline, lang }: { isOnline: boolean; lang: Lang }) 
       </div>
 
       <AnimatePresence>
-        {showForm && <PostForm onClose={() => { setShowForm(false); setPendingPosts(getPendingPosts()); }} lang={lang} />}
+        {showForm && (
+          <PostForm
+            onClose={() => { setShowForm(false); setPendingPosts(getPendingPosts()); }}
+            onEditIdentity={() => setShowIdentityModal(true)}
+            lang={lang}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showIdentityModal && (
+          <IdentityModal lang={lang} onDone={() => setShowIdentityModal(false)} />
+        )}
       </AnimatePresence>
 
       {/* 橫向轉舵時間軸 */}
