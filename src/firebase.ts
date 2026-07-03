@@ -9,7 +9,7 @@ import {
 } from 'firebase/firestore';
 import { getStorage, ref, uploadString, getDownloadURL } from 'firebase/storage';
 import { parse as parseExif } from 'exifr';
-import { classifyEvent, TASK_EVENTS } from './taskSchedule';
+import { classifyEvent } from './taskSchedule';
 import type { TaskEvent } from './taskSchedule';
 
 const firebaseConfig = {
@@ -123,43 +123,126 @@ export async function extractCapturedAt(file: File): Promise<Date> {
 }
 
 // 發佈航海日誌（含照片上傳、EXIF 判讀、大事件自動分類）
-// forcedEventId：從大事件卡片直接拍照/上傳時指定，略過 EXIF 時間判斷，直接歸入該卡片
+// ─────────────────────────────────────────────────────────────────────────────
+// 離線佇列：沒有網路（或上傳失敗）時，貼文先存在本機，恢復連線後自動補傳
+// ─────────────────────────────────────────────────────────────────────────────
+export interface PendingPost {
+  localId:      string;
+  authorName:   string;
+  authorEmoji:  string;
+  location:     string;
+  message:      string;
+  photoDataUrl?: string; // 本機壓縮好的圖片，還沒真的傳上雲端
+  capturedAt:   string;
+  eventId:      string | null;
+  dayIndex:     1 | 2 | 3 | 4 | null;
+  isTaskPost:   boolean;
+}
+
+const PENDING_KEY = 'msc-pending-posts';
+
+function loadPending(): PendingPost[] {
+  try { return JSON.parse(localStorage.getItem(PENDING_KEY) || '[]'); } catch { return []; }
+}
+function savePending(list: PendingPost[]) {
+  try { localStorage.setItem(PENDING_KEY, JSON.stringify(list)); } catch { /* storage full/unavailable，忽略 */ }
+}
+
+/** 目前還留在本機、尚未同步到雲端的貼文（自己的手機可以先看到，其他人還看不到）。 */
+export function getPendingPosts(): PendingPost[] {
+  return loadPending();
+}
+
+function removePending(localId: string) {
+  savePending(loadPending().filter(p => p.localId !== localId));
+}
+
+async function uploadOne(payload: Omit<PendingPost, 'localId'>): Promise<void> {
+  let photoURL = '';
+  if (payload.photoDataUrl) {
+    const imageRef = ref(storage, `msc-2026/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`);
+    await uploadString(imageRef, payload.photoDataUrl, 'data_url');
+    photoURL = await getDownloadURL(imageRef);
+  }
+  await addDoc(collection(db, 'posts'), {
+    tripId: TRIP_ID,
+    authorName: payload.authorName,
+    authorEmoji: payload.authorEmoji,
+    location: payload.location,
+    message: payload.message,
+    photoURL,
+    timestamp: serverTimestamp(),
+    capturedAt: payload.capturedAt,
+    eventId: payload.eventId,
+    dayIndex: payload.dayIndex,
+    isTaskPost: payload.isTaskPost,
+    hornCount: 0,
+  });
+}
+
+/** 恢復連線時呼叫：把所有還留在本機的待傳貼文依序送出，回傳成功送出的數量。 */
+export async function flushPendingPosts(): Promise<number> {
+  const list = loadPending();
+  if (!list.length || !navigator.onLine) return 0;
+  let sentCount = 0;
+  for (const p of list) {
+    try {
+      const { localId, ...payload } = p;
+      await uploadOne(payload);
+      removePending(localId);
+      sentCount++;
+    } catch {
+      break; // 還是連不上，留著下次連線再試，不要卡住整個佇列
+    }
+  }
+  return sentCount;
+}
+
+// 發佈航海日誌（含照片上傳、EXIF 判讀、大事件自動分類）
+// 回傳 'sent' 代表已經真的送上雲端；'queued' 代表沒有網路（或上傳失敗），先存在本機，恢復連線後會自動補傳
 export async function addPost(
   post: Omit<Post, 'id' | 'timestamp' | 'tripId' | 'photoURL' | 'capturedAt' | 'eventId' | 'dayIndex' | 'isTaskPost' | 'hornCount'>,
   photoFile?: File,
-  forcedEventId?: string,
-): Promise<void> {
-  let photoURL = '';
+): Promise<'sent' | 'queued'> {
+  let dataUrl = '';
   let capturedAt = new Date();
-  let matchedEvent: TaskEvent | null = forcedEventId
-    ? (TASK_EVENTS.find(e => e.id === forcedEventId) ?? null)
-    : null;
+  let matchedEvent: TaskEvent | null = null;
 
   if (photoFile) {
-    // 拍攝時間與壓縮可以平行處理
-    const [dataUrl, exifDate] = await Promise.all([
+    // 拍攝時間與壓縮都在本機完成，不需要網路，一定會成功
+    const [compressed, exifDate] = await Promise.all([
       compressImage(photoFile),
       extractCapturedAt(photoFile),
     ]);
+    dataUrl = compressed;
     capturedAt = exifDate;
-    if (!forcedEventId) matchedEvent = classifyEvent(capturedAt);
-
-    const imageRef = ref(storage, `msc-2026/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`);
-    await uploadString(imageRef, dataUrl, 'data_url');
-    photoURL = await getDownloadURL(imageRef);
+    matchedEvent = classifyEvent(capturedAt);
   }
 
-  await addDoc(collection(db, 'posts'), {
-    ...post,
-    tripId: TRIP_ID,
-    photoURL,
-    timestamp: serverTimestamp(),
+  const payload: Omit<PendingPost, 'localId'> = {
+    authorName: post.authorName,
+    authorEmoji: post.authorEmoji,
+    location: post.location,
+    message: post.message,
+    photoDataUrl: dataUrl || undefined,
     capturedAt: capturedAt.toISOString(),
     eventId: matchedEvent?.id ?? null,
     dayIndex: matchedEvent?.day ?? null,
     isTaskPost: !!matchedEvent,
-    hornCount: 0,
-  });
+  };
+
+  if (!navigator.onLine) {
+    savePending([...loadPending(), { localId: `local-${Date.now()}-${Math.random().toString(36).slice(2)}`, ...payload }]);
+    return 'queued';
+  }
+
+  try {
+    await uploadOne(payload);
+    return 'sent';
+  } catch {
+    savePending([...loadPending(), { localId: `local-${Date.now()}-${Math.random().toString(36).slice(2)}`, ...payload }]);
+    return 'queued';
+  }
 }
 
 // ⚓ 鳴笛（取代讚）

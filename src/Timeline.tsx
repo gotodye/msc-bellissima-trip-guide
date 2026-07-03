@@ -3,10 +3,10 @@ import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from
 import { MapPin, Send, X, RefreshCw, Camera, Anchor } from 'lucide-react';
 import {
   addPost, subscribePosts, extractCapturedAt, honkPost,
-  addComment, subscribeComments,
+  addComment, subscribeComments, getPendingPosts, flushPendingPosts,
   SHIP_LOCATIONS, SAILOR_AVATARS, DEFAULT_AVATAR, QUICK_TAGS,
 } from './firebase';
-import type { Post, Comment } from './firebase';
+import type { Post, Comment, PendingPost } from './firebase';
 import { TASK_EVENTS, classifyEvent, NAHA_PROGRESS } from './taskSchedule';
 import type { TaskEvent } from './taskSchedule';
 
@@ -208,6 +208,26 @@ type Slot =
   | { type: 'event'; event: TaskEvent; posts: Post[]; sortMs: number }
   | { type: 'post'; post: Post; sortMs: number };
 
+// 把還沒真的傳上雲端、只存在本機的貼文轉成跟正式 Post 一樣的格式，這樣可以直接混進同一份時間軸顯示
+function pendingToPost(p: PendingPost): Post & { isPending?: boolean } {
+  return {
+    id: p.localId,
+    tripId: '',
+    authorName: p.authorName,
+    authorEmoji: p.authorEmoji,
+    location: p.location,
+    message: p.message,
+    photoURL: p.photoDataUrl || '',
+    timestamp: { seconds: Math.floor(new Date(p.capturedAt).getTime() / 1000) },
+    capturedAt: p.capturedAt,
+    eventId: p.eventId,
+    dayIndex: p.dayIndex ?? undefined,
+    isTaskPost: p.isTaskPost,
+    hornCount: 0,
+    isPending: true,
+  };
+}
+
 function buildSlots(posts: Post[]): Slot[] {
   const eventSlots: Slot[] = TASK_EVENTS.map(event => ({
     type: 'event', event,
@@ -351,14 +371,19 @@ function PostDetailModal({ post, onClose }: { post: Post; onClose: () => void })
   );
 }
 
-function PolaroidCard({ post }: { post: Post }) {
+function PolaroidCard({ post }: { post: Post & { isPending?: boolean } }) {
   const rotate = useMemo(() => stableRotate(post.id), [post.id]);
   const [open, setOpen] = useState(false);
   return (
     <>
       <motion.div style={{ rotate }} whileTap={{ scale: 0.96 }}
         onClick={() => setOpen(true)}
-        className="bg-white p-2 pb-5 rounded-sm shadow-md border border-slate-100 cursor-pointer">
+        className="relative bg-white p-2 pb-5 rounded-sm shadow-md border border-slate-100 cursor-pointer">
+      {post.isPending && (
+        <span className="absolute top-1 right-1 bg-amber-400 text-amber-900 text-[8px] font-bold px-1.5 py-0.5 rounded-full z-10">
+          待上傳
+        </span>
+      )}
       <div className="w-full h-[128px] bg-slate-100 rounded-sm overflow-hidden flex items-center justify-center">
         {post.photoURL
           ? <img src={post.photoURL} className="w-full h-full object-cover" loading="lazy" alt="" />
@@ -585,6 +610,7 @@ function PostForm({ onClose }: { onClose: () => void }) {
 // ─── 航海日誌主元件（橫向時間軸） ───────────────────────────────────────────
 export function Timeline({ isOnline }: { isOnline: boolean }) {
   const [posts,    setPosts]    = useState<Post[]>([]);
+  const [pendingPosts, setPendingPosts] = useState<PendingPost[]>(() => getPendingPosts());
   const [lastSync, setLastSync] = useState<Date | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [syncing,  setSyncing]  = useState(true);
@@ -600,7 +626,22 @@ export function Timeline({ isOnline }: { isOnline: boolean }) {
     return unsub;
   }, []);
 
-  const slots = useMemo(() => buildSlots(posts), [posts]);
+  // 恢復網路連線時，自動把還留在本機、還沒真的傳上雲端的貼文補傳出去
+  useEffect(() => {
+    if (!isOnline) return;
+    let cancelled = false;
+    flushPendingPosts().then(sentCount => {
+      if (!cancelled && sentCount > 0) setPendingPosts(getPendingPosts());
+    });
+    return () => { cancelled = true; };
+  }, [isOnline]);
+
+  const mergedPosts = useMemo(
+    () => [...posts, ...pendingPosts.map(pendingToPost)],
+    [posts, pendingPosts],
+  );
+
+  const slots = useMemo(() => buildSlots(mergedPosts), [mergedPosts]);
   const slotMeta = useMemo(() => {
     const map = new Map<string, { hour: number }>();
     for (const slot of slots) {
@@ -648,6 +689,7 @@ export function Timeline({ isOnline }: { isOnline: boolean }) {
     : undefined;
 
   const syncLabel = () => {
+    if (pendingPosts.length > 0) return `📦 ${pendingPosts.length} 則待上傳・恢復連線後自動補傳`;
     if (!isOnline) return '⚠️ 離線・顯示快取資料';
     if (syncing)   return '⟳ 同步中…';
     if (!lastSync) return '';
@@ -670,7 +712,7 @@ export function Timeline({ isOnline }: { isOnline: boolean }) {
       </div>
 
       <AnimatePresence>
-        {showForm && <PostForm onClose={() => setShowForm(false)} />}
+        {showForm && <PostForm onClose={() => { setShowForm(false); setPendingPosts(getPendingPosts()); }} />}
       </AnimatePresence>
 
       {/* 橫向轉舵時間軸 */}
