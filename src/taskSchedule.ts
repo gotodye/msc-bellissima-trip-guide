@@ -87,3 +87,8 @@ export function eventById(id: string | null | undefined): TaskEvent | undefined 
 /** 整趟航程的起訖，用於橫向時間軸換算滑動進度（0~1）。 */
 export const TRIP_START = new Date('2026-07-09T16:00:00');
 export const TRIP_END = new Date('2026-07-12T10:00:00');
+
+/** 那霸抵達時刻在整趟航程中的進度比例（0~1），航線圖上用來畫「那霸」定點標記。 */
+const nahaEvent = TASK_EVENTS.find(e => e.id === 'd2-naha')!;
+const nahaArrival = new Date(`${nahaEvent.date}T${String(nahaEvent.startHour).padStart(2, '0')}:${String(nahaEvent.startMin).padStart(2, '0')}:00`);
+export const NAHA_PROGRESS = (nahaArrival.getTime() - TRIP_START.getTime()) / (TRIP_END.getTime() - TRIP_START.getTime());

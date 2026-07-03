@@ -7,7 +7,7 @@ import {
   SHIP_LOCATIONS, SAILOR_AVATARS, DEFAULT_AVATAR, QUICK_TAGS,
 } from './firebase';
 import type { Post, Comment } from './firebase';
-import { TASK_EVENTS, classifyEvent } from './taskSchedule';
+import { TASK_EVENTS, classifyEvent, NAHA_PROGRESS } from './taskSchedule';
 import type { TaskEvent } from './taskSchedule';
 
 // ─── 小工具 ─────────────────────────────────────────────────────────────────
@@ -246,8 +246,14 @@ function RouteStrip({ containerRef }: { containerRef: React.RefObject<HTMLDivEle
   return (
     <div className="relative h-9 mb-2 px-1">
       <div className="absolute top-1/2 left-1 right-1 h-[2px] bg-white/40 -translate-y-1/2 rounded-full" />
-      <span className="absolute top-1/2 left-1 -translate-y-1/2 text-[10px] font-bold text-white/90 drop-shadow">⚓ 基隆</span>
-      <span className="absolute top-1/2 right-1 -translate-y-1/2 text-[10px] font-bold text-white/90 drop-shadow">⛩️ 那霸</span>
+      <span className="absolute top-1/2 left-1 -translate-y-1/2 text-[10px] font-bold text-white/90 drop-shadow">Day1 基隆</span>
+      <span className="absolute top-1/2 right-1 -translate-y-1/2 text-[10px] font-bold text-white/90 drop-shadow">Day4 基隆</span>
+      {/* 那霸是航程中途的定點標記，不是動畫終點——避免船在回程時看起來像倒退 */}
+      <span
+        className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 text-[10px] font-bold text-white/80 drop-shadow whitespace-nowrap"
+        style={{ left: `${NAHA_PROGRESS * 100}%` }}>
+        ⛩️那霸
+      </span>
       <motion.div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 text-lg drop-shadow" style={{ left }}>
         🚢
       </motion.div>
