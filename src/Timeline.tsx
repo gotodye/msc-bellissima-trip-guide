@@ -3,9 +3,10 @@ import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'mot
 import { MapPin, Send, X, RefreshCw, Camera, Anchor } from 'lucide-react';
 import {
   addPost, subscribePosts, extractCapturedAt, honkPost,
+  addComment, subscribeComments,
   SHIP_LOCATIONS, AUTHOR_EMOJIS, QUICK_TAGS,
 } from './firebase';
-import type { Post } from './firebase';
+import type { Post, Comment } from './firebase';
 import { TASK_EVENTS, classifyEvent } from './taskSchedule';
 import type { TaskEvent } from './taskSchedule';
 
@@ -27,8 +28,8 @@ function fmtHM(post: Post): string {
 
 // 依「當下時刻」決定背景色（日夜漸變）
 function hourToBg(hour: number): string {
-  if (hour < 5)  return '#0b1a3a';
-  if (hour < 7)  return '#2b3d6b';
+  if (hour < 5) return '#0b1a3a';
+  if (hour < 7) return '#2b3d6b';
   if (hour < 10) return '#bfe3ff';
   if (hour < 16) return '#eaf6ff';
   if (hour < 18) return '#ffd9a8';
@@ -90,9 +91,8 @@ function HornButton({ post, light }: { post: Post; light?: boolean }) {
 
   return (
     <button onClick={honk}
-      className={`flex items-center gap-1 text-[10px] font-bold active:scale-90 transition-transform ${
-        light ? 'text-white' : 'text-[#00a0e3]'
-      }`}>
+      className={`flex items-center gap-1 text-[10px] font-bold active:scale-90 transition-transform ${light ? 'text-white' : 'text-[#00a0e3]'
+        }`}>
       <motion.span
         animate={firing ? { scale: [1, 1.35, 1], rotate: [0, -10, 10, 0] } : {}}
         transition={{ duration: 0.35 }}
@@ -101,6 +101,74 @@ function HornButton({ post, light }: { post: Post; light?: boolean }) {
     </button>
   );
 }
+// ─── 💬 留言串 ───────────────────────────────────────────────────────────────
+function CommentThread({ postId }: { postId: string }) {
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [text, setText] = useState('');
+  const [sending, setSending] = useState(false);
+
+  useEffect(() => {
+    const unsub = subscribeComments(postId, setComments);
+    return unsub;
+  }, [postId]);
+
+  const fmtCommentTime = (c: Comment) => {
+    if (c.timestamp?.seconds) {
+      return new Date(c.timestamp.seconds * 1000).toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
+    }
+    return '';
+  };
+
+  const send = async () => {
+    const value = text.trim();
+    if (!value || sending) return;
+    const authorName = localStorage.getItem('msc-username') || '匿名旅客';
+    const authorEmoji = localStorage.getItem('msc-emoji') || '😊';
+    setSending(true);
+    setText('');
+    try {
+      await addComment(postId, { authorName, authorEmoji, text: value });
+    } catch {
+      setText(value); // 送出失敗把文字還給使用者，不用重打
+    }
+    setSending(false);
+  };
+
+  return (
+    <div className="mt-4 pt-4 border-t border-slate-100">
+      <p className="text-xs font-bold text-slate-400 mb-2">
+        💬 留言{comments.length > 0 ? `（${comments.length}）` : ''}
+      </p>
+      <div className="space-y-2 mb-3 max-h-48 overflow-y-auto">
+        {comments.length === 0 ? (
+          <p className="text-xs text-slate-300 text-center py-2">還沒有留言，當第一個留言的人吧！</p>
+        ) : comments.map(c => (
+          <div key={c.id} className="flex items-start gap-2">
+            <span className="text-base flex-shrink-0 leading-none mt-0.5">{c.authorEmoji}</span>
+            <div className="min-w-0 flex-1 bg-slate-50 rounded-xl px-3 py-1.5">
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-xs font-bold text-[#002b5e]">{c.authorName}</span>
+                <span className="text-[9px] text-slate-400">{fmtCommentTime(c)}</span>
+              </div>
+              <p className="text-xs text-slate-600 break-words">{c.text}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="flex items-center gap-2">
+        <input value={text} onChange={e => setText(e.target.value)}
+          onKeyDown={e => { if (e.key === 'Enter') send(); }}
+          placeholder="留言…"
+          className="flex-1 bg-slate-50 border border-slate-200 rounded-full px-3.5 py-2 text-xs text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-[#00a0e3]" />
+        <button onClick={send} disabled={sending || !text.trim()}
+          className="bg-[#002b5e] disabled:opacity-40 text-white rounded-full p-2 flex-shrink-0 transition-opacity">
+          <Send className="w-3.5 h-3.5" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 type Slot =
   | { type: 'event'; event: TaskEvent; posts: Post[]; sortMs: number }
   | { type: 'post'; post: Post; sortMs: number };
@@ -178,25 +246,78 @@ function EventCard({ event, posts, onOpen }: { event: TaskEvent; posts: Post[]; 
 }
 
 // ─── 個人拍立得卡（B 軌） ────────────────────────────────────────────────────
+// ─── 個人拍立得卡（B 軌）點擊可放大看＋留言 ─────────────────────────────────
+function PostDetailModal({ post, onClose }: { post: Post; onClose: () => void }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-3"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 30, opacity: 0 }}
+        onClick={e => e.stopPropagation()}
+        className="bg-white rounded-3xl w-full max-w-lg max-h-[85vh] overflow-hidden flex flex-col"
+      >
+        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 flex-shrink-0">
+          <div className="min-w-0">
+            <div className="text-[10px] font-bold text-[#00a0e3]">{fmtHM(post)}</div>
+            <h3 className="font-bold text-[#002b5e] text-[15px] truncate">{post.authorName} 的航海日誌</h3>
+          </div>
+          <button onClick={onClose} className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex-shrink-0">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        <div className="overflow-y-auto p-4">
+          {post.photoURL
+            ? <img src={post.photoURL} className="w-full rounded-2xl mb-3" alt="" />
+            : <div className="w-full h-40 bg-slate-50 rounded-2xl mb-3 flex items-center justify-center text-4xl">{post.authorEmoji}</div>
+          }
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="text-xl">{post.authorEmoji}</span>
+              <div className="min-w-0">
+                <div className="text-sm font-bold text-[#002b5e]">{post.authorName}</div>
+                {post.location && <div className="text-xs text-[#00a0e3] truncate">{post.location}</div>}
+                {post.message && <div className="text-xs text-slate-500 truncate">{post.message}</div>}
+              </div>
+            </div>
+            <HornButton post={post} />
+          </div>
+          {post.id && <CommentThread postId={post.id} />}
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 function PolaroidCard({ post }: { post: Post }) {
   const rotate = useMemo(() => stableRotate(post.id), [post.id]);
+  const [open, setOpen] = useState(false);
   return (
-    <motion.div style={{ rotate }} whileTap={{ scale: 0.96 }}
-      className="bg-white p-2 pb-5 rounded-sm shadow-md border border-slate-100">
-      <div className="w-full h-[128px] bg-slate-100 rounded-sm overflow-hidden flex items-center justify-center">
-        {post.photoURL
-          ? <img src={post.photoURL} className="w-full h-full object-cover" loading="lazy" alt="" />
-          : <span className="text-2xl">{post.authorEmoji}</span>}
-      </div>
-      <p className="text-[10px] text-slate-500 mt-1.5 text-center truncate">{post.authorName} · {fmtHM(post)}</p>
-      {post.location && (
-        <p className="text-[9px] text-[#00a0e3] text-center truncate">{post.location}</p>
-      )}
-      {post.message && <p className="text-[9px] text-slate-400 text-center truncate px-1">{post.message}</p>}
-      <div className="flex justify-center mt-1">
-        <HornButton post={post} />
-      </div>
-    </motion.div>
+    <>
+      <motion.div style={{ rotate }} whileTap={{ scale: 0.96 }}
+        onClick={() => setOpen(true)}
+        className="bg-white p-2 pb-5 rounded-sm shadow-md border border-slate-100 cursor-pointer">
+        <div className="w-full h-[128px] bg-slate-100 rounded-sm overflow-hidden flex items-center justify-center">
+          {post.photoURL
+            ? <img src={post.photoURL} className="w-full h-full object-cover" loading="lazy" alt="" />
+            : <span className="text-2xl">{post.authorEmoji}</span>}
+        </div>
+        <p className="text-[10px] text-slate-500 mt-1.5 text-center truncate">{post.authorName} · {fmtHM(post)}</p>
+        {post.location && (
+          <p className="text-[9px] text-[#00a0e3] text-center truncate">{post.location}</p>
+        )}
+        {post.message && <p className="text-[9px] text-slate-400 text-center truncate px-1">{post.message}</p>}
+        <div className="flex justify-center mt-1">
+          <HornButton post={post} />
+        </div>
+      </motion.div>
+      <AnimatePresence>
+        {open && <PostDetailModal post={post} onClose={() => setOpen(false)} />}
+      </AnimatePresence>
+    </>
   );
 }
 
@@ -239,6 +360,7 @@ function EventModal({ event, posts, onClose }: { event: TaskEvent; posts: Post[]
                 </div>
                 <HornButton post={big} />
               </div>
+              {big.id && <CommentThread postId={big.id} />}
             </div>
           ) : posts.length === 0 ? (
             <div className="text-center py-10 text-slate-400 text-sm">
@@ -262,15 +384,15 @@ function EventModal({ event, posts, onClose }: { event: TaskEvent; posts: Post[]
 
 // ─── 發文表單（水手人物 + 地點 + 快捷標籤 + EXIF 分類預覽） ───────────────────
 function PostForm({ onClose }: { onClose: () => void }) {
-  const [name,     setName]    = useState(() => localStorage.getItem('msc-username') || '');
-  const [emoji,    setEmoji]   = useState(() => localStorage.getItem('msc-emoji')    || '😊');
-  const [location, setLocation]= useState('');
-  const [message,  setMessage] = useState('');
-  const [photo,    setPhoto]   = useState<File | null>(null);
-  const [preview,  setPreview] = useState('');
+  const [name, setName] = useState(() => localStorage.getItem('msc-username') || '');
+  const [emoji, setEmoji] = useState(() => localStorage.getItem('msc-emoji') || '😊');
+  const [location, setLocation] = useState('');
+  const [message, setMessage] = useState('');
+  const [photo, setPhoto] = useState<File | null>(null);
+  const [preview, setPreview] = useState('');
   const [classifyLabel, setClassifyLabel] = useState<string | null>(null);
-  const [loading,  setLoading] = useState(false);
-  const [error,    setError]   = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
 
   const pickPhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -395,10 +517,10 @@ function PostForm({ onClose }: { onClose: () => void }) {
 
 // ─── 航海日誌主元件（橫向時間軸） ───────────────────────────────────────────
 export function Timeline({ isOnline }: { isOnline: boolean }) {
-  const [posts,    setPosts]    = useState<Post[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [lastSync, setLastSync] = useState<Date | null>(null);
   const [showForm, setShowForm] = useState(false);
-  const [syncing,  setSyncing]  = useState(true);
+  const [syncing, setSyncing] = useState(true);
   const [openEvent, setOpenEvent] = useState<TaskEvent | null>(null);
   const [activeHour, setActiveHour] = useState(16);
 
@@ -460,7 +582,7 @@ export function Timeline({ isOnline }: { isOnline: boolean }) {
 
   const syncLabel = () => {
     if (!isOnline) return '⚠️ 離線・顯示快取資料';
-    if (syncing)   return '⟳ 同步中…';
+    if (syncing) return '⟳ 同步中…';
     if (!lastSync) return '';
     return `✓ 最後更新 ${lastSync.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })}`;
   };
@@ -474,10 +596,9 @@ export function Timeline({ isOnline }: { isOnline: boolean }) {
           <Anchor className="w-4 h-4" />
           寫一篇航海日誌
         </button>
-        <span className={`text-[11px] font-medium px-3 py-1.5 rounded-full ${
-          !isOnline ? 'bg-amber-100 text-amber-700' :
-          syncing   ? 'bg-slate-100 text-slate-500' : 'bg-green-100 text-green-700'
-        }`}>{syncLabel()}</span>
+        <span className={`text-[11px] font-medium px-3 py-1.5 rounded-full ${!isOnline ? 'bg-amber-100 text-amber-700' :
+            syncing ? 'bg-slate-100 text-slate-500' : 'bg-green-100 text-green-700'
+          }`}>{syncLabel()}</span>
       </div>
 
       <AnimatePresence>
