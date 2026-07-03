@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'motion/react';
+import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from 'motion/react';
 import { MapPin, Send, X, RefreshCw, Camera, Anchor } from 'lucide-react';
 import {
   addPost, subscribePosts, extractCapturedAt, honkPost,
@@ -222,9 +222,27 @@ function buildSlots(posts: Post[]): Slot[] {
 
 // ─── 航線圖 + 移動中的小船 ──────────────────────────────────────────────────
 function RouteStrip({ containerRef }: { containerRef: React.RefObject<HTMLDivElement> }) {
-  const { scrollXProgress } = useScroll({ container: containerRef });
-  const smooth = useSpring(scrollXProgress, { stiffness: 120, damping: 22, mass: 0.3 });
+  const progress = useMotionValue(0);
+  const smooth = useSpring(progress, { stiffness: 120, damping: 22, mass: 0.3 });
   const left = useTransform(smooth, [0, 1], ['3%', '95%']);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const update = () => {
+      const max = el.scrollWidth - el.clientWidth;
+      progress.set(max > 0 ? el.scrollLeft / max : 0);
+    };
+    update();
+    el.addEventListener('scroll', update, { passive: true });
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => {
+      el.removeEventListener('scroll', update);
+      ro.disconnect();
+    };
+  }, [containerRef, progress]);
+
   return (
     <div className="relative h-9 mb-2 px-1">
       <div className="absolute top-1/2 left-1 right-1 h-[2px] bg-white/40 -translate-y-1/2 rounded-full" />
