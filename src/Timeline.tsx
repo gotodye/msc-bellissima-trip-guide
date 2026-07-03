@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'motion/react';
+import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from 'motion/react';
 import { MapPin, Send, X, RefreshCw, Camera, Anchor } from 'lucide-react';
 import {
   addPost, subscribePosts, extractCapturedAt, honkPost,
@@ -7,7 +7,7 @@ import {
   SHIP_LOCATIONS_BY_LANG, SAILOR_AVATARS, DEFAULT_AVATAR, QUICK_TAGS_BY_LANG,
 } from './firebase';
 import type { Post, Comment } from './firebase';
-import { TASK_EVENTS, classifyEvent, eventText } from './taskSchedule';
+import { TASK_EVENTS, classifyEvent, eventText, NAHA_PROGRESS } from './taskSchedule';
 import type { TaskEvent } from './taskSchedule';
 import type { Lang } from './data';
 
@@ -23,7 +23,7 @@ const TIMELINE_TEXT: Record<Lang, {
   messagePlaceholder: string; previewAlt: string; classifying: string;
   classifiedEvent: (title: string) => string; classifiedGeneral: string; uploadPhoto: string;
   errNoName: string; errNoContent: string; errSubmitFail: string; submitting: string; submitButton: string;
-  anonymous: string; keelung: string; naha: string; locale: string;
+  anonymous: string; routeDepart: string; routeReturn: string; routeNaha: string; locale: string;
 }> = {
   zh: {
     writeButton: '寫一篇航海日誌', offline: '⚠️ 離線・顯示快取資料', syncing: '⟳ 同步中…',
@@ -40,7 +40,7 @@ const TIMELINE_TEXT: Record<Lang, {
     classifiedEvent: title => `🎉 這張會歸入大事件卡「${title}」`, classifiedGeneral: '🌊 這張會放進一般航海誌',
     uploadPhoto: '上傳照片（選填）', errNoName: '請填寫你的名字', errNoContent: '請填寫訊息、選地點或上傳照片',
     errSubmitFail: '發佈失敗，請確認網路連線', submitting: '發佈中…', submitButton: '寫入航海日誌',
-    anonymous: '匿名旅客', keelung: '⚓ 基隆', naha: '⛩️ 那霸', locale: 'zh-TW',
+    anonymous: '匿名旅客', routeDepart: 'Day1 基隆', routeReturn: 'Day4 基隆', routeNaha: '⛩️那霸', locale: 'zh-TW',
   },
   en: {
     writeButton: 'Write a Time-Sail Entry', offline: '⚠️ Offline · Showing cached data', syncing: '⟳ Syncing…',
@@ -57,7 +57,7 @@ const TIMELINE_TEXT: Record<Lang, {
     classifiedEvent: title => `🎉 This will be filed under "${title}"`, classifiedGeneral: '🌊 This will go into the general Time-Sail feed',
     uploadPhoto: 'Upload a photo (optional)', errNoName: 'Please enter your name', errNoContent: 'Please add a message, location, or photo',
     errSubmitFail: 'Failed to post — please check your connection', submitting: 'Posting…', submitButton: 'Post to Time-Sail',
-    anonymous: 'Anonymous Traveler', keelung: '⚓ Keelung', naha: '⛩️ Naha', locale: 'en-US',
+    anonymous: 'Anonymous Traveler', routeDepart: 'Day1 Keelung', routeReturn: 'Day4 Keelung', routeNaha: '⛩️Naha', locale: 'en-US',
   },
   id: {
     writeButton: 'Tulis Catatan Pelayaran', offline: '⚠️ Offline · Menampilkan data tersimpan', syncing: '⟳ Menyinkronkan…',
@@ -74,7 +74,7 @@ const TIMELINE_TEXT: Record<Lang, {
     classifiedEvent: title => `🎉 Foto ini akan masuk ke kartu momen "${title}"`, classifiedGeneral: '🌊 Foto ini akan masuk ke feed umum',
     uploadPhoto: 'Unggah foto (opsional)', errNoName: 'Mohon isi nama Anda', errNoContent: 'Mohon isi pesan, lokasi, atau unggah foto',
     errSubmitFail: 'Gagal memposting — periksa koneksi internet Anda', submitting: 'Memposting…', submitButton: 'Posting ke Catatan Pelayaran',
-    anonymous: 'Wisatawan Anonim', keelung: '⚓ Keelung', naha: '⛩️ Naha', locale: 'id-ID',
+    anonymous: 'Wisatawan Anonim', routeDepart: 'Hari1 Keelung', routeReturn: 'Hari4 Keelung', routeNaha: '⛩️Naha', locale: 'id-ID',
   },
   th: {
     writeButton: 'เขียนบันทึกการเดินเรือ', offline: '⚠️ ออฟไลน์ · แสดงข้อมูลที่บันทึกไว้', syncing: '⟳ กำลังซิงค์…',
@@ -91,7 +91,7 @@ const TIMELINE_TEXT: Record<Lang, {
     classifiedEvent: title => `🎉 ภาพนี้จะถูกจัดเข้าการ์ด "${title}"`, classifiedGeneral: '🌊 ภาพนี้จะไปอยู่ในฟีดทั่วไป',
     uploadPhoto: 'อัปโหลดภาพ (ไม่บังคับ)', errNoName: 'กรุณากรอกชื่อของคุณ', errNoContent: 'กรุณากรอกข้อความ เลือกสถานที่ หรืออัปโหลดภาพ',
     errSubmitFail: 'โพสต์ไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต', submitting: 'กำลังโพสต์…', submitButton: 'โพสต์ลงบันทึกการเดินเรือ',
-    anonymous: 'นักเดินทางนิรนาม', keelung: '⚓ จีหลง', naha: '⛩️ นาฮะ', locale: 'th-TH',
+    anonymous: 'นักเดินทางนิรนาม', routeDepart: 'วันที่1 จีหลง', routeReturn: 'วันที่4 จีหลง', routeNaha: '⛩️นาฮะ', locale: 'th-TH',
   },
 };
 
@@ -357,14 +357,38 @@ function buildSlots(posts: Post[]): Slot[] {
 // ─── 航線圖 + 移動中的小船 ──────────────────────────────────────────────────
 function RouteStrip({ containerRef, lang }: { containerRef: React.RefObject<HTMLDivElement>; lang: Lang }) {
   const t = TIMELINE_TEXT[lang];
-  const { scrollXProgress } = useScroll({ container: containerRef });
-  const smooth = useSpring(scrollXProgress, { stiffness: 120, damping: 22, mass: 0.3 });
+  const progress = useMotionValue(0);
+  const smooth = useSpring(progress, { stiffness: 120, damping: 22, mass: 0.3 });
   const left = useTransform(smooth, [0, 1], ['3%', '95%']);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const update = () => {
+      const max = el.scrollWidth - el.clientWidth;
+      progress.set(max > 0 ? el.scrollLeft / max : 0);
+    };
+    update();
+    el.addEventListener('scroll', update, { passive: true });
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => {
+      el.removeEventListener('scroll', update);
+      ro.disconnect();
+    };
+  }, [containerRef, progress]);
+
   return (
     <div className="relative h-9 mb-2 px-1">
       <div className="absolute top-1/2 left-1 right-1 h-[2px] bg-white/40 -translate-y-1/2 rounded-full" />
-      <span className="absolute top-1/2 left-1 -translate-y-1/2 text-[10px] font-bold text-white/90 drop-shadow">{t.keelung}</span>
-      <span className="absolute top-1/2 right-1 -translate-y-1/2 text-[10px] font-bold text-white/90 drop-shadow">{t.naha}</span>
+      <span className="absolute top-1/2 left-1 -translate-y-1/2 text-[10px] font-bold text-white/90 drop-shadow">{t.routeDepart}</span>
+      <span className="absolute top-1/2 right-1 -translate-y-1/2 text-[10px] font-bold text-white/90 drop-shadow">{t.routeReturn}</span>
+      {/* 那霸是航程中途的定點標記，不是動畫終點——避免船在回程時看起來像倒退 */}
+      <span
+        className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 text-[10px] font-bold text-white/80 drop-shadow whitespace-nowrap"
+        style={{ left: `${NAHA_PROGRESS * 100}%` }}>
+        {t.routeNaha}
+      </span>
       <motion.div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 text-lg drop-shadow" style={{ left }}>
         🚢
       </motion.div>
@@ -882,7 +906,7 @@ export function Timeline({ isOnline, lang }: { isOnline: boolean; lang: Lang }) 
 
         <RouteStrip containerRef={scrollRef} lang={lang} />
 
-        {posts.length === 0 && !syncing ? (
+        {slots.length === 0 && !syncing ? (
           <div className="text-center py-14 text-slate-500 relative">
             <div className="text-4xl mb-3">🚢</div>
             <p className="text-sm font-medium">{t.emptyTitle}</p>
