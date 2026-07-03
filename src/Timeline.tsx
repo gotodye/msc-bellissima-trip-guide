@@ -380,15 +380,16 @@ function buildSlots(posts: Post[]): Slot[] {
 }
 
 // 基隆用小燈塔圖示（lucide 沒有對應圖示、也沒有標準燈塔 emoji，自己畫一個極簡版）
+// 紅白條紋燈塔（依使用者提供的參考插畫重繪，簡化到適合 12px 小圖示的辨識度）
 function LighthouseIcon({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
-      <path d="M9.5 2h5l1 3h-7l1-3z" fill="currentColor" />
-      <path d="M8.5 5h7l1.2 5H7.3l1.2-5z" fill="currentColor" opacity="0.85" />
-      <path d="M7.3 10h9.4l1.8 11H5.5l1.8-11z" fill="currentColor" opacity="0.7" />
-      <rect x="9" y="12.5" width="6" height="1.6" fill="white" opacity="0.9" />
-      <rect x="9" y="16.5" width="6" height="1.6" fill="white" opacity="0.9" />
-      <path d="M9.5 2 L7 0.5 M14.5 2 L17 0.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" opacity="0.6" />
+    <svg viewBox="0 0 24 24" className={className} xmlns="http://www.w3.org/2000/svg">
+      <path d="M9.5 1.5h5l1.2 3h-7.4l1.2-3z" fill="#ef4444" />
+      <rect x="9.3" y="4.6" width="5.4" height="3.2" rx="0.5" fill="#fbbf24" />
+      <path d="M8.3 7.9h7.4l2 12.8H6.3l2-12.8z" fill="white" />
+      <path d="M8.3 7.9h7.4l0.7 4.4H7.6l0.7-4.4z" fill="#ef4444" />
+      <path d="M7.1 15.8h9.8l0.6 3.8H6.5l0.6-3.8z" fill="#ef4444" />
+      <rect x="5.5" y="20.7" width="13" height="1.6" rx="0.4" fill="#94a3b8" />
     </svg>
   );
 }
