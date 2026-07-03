@@ -107,6 +107,8 @@ function CommentThread({ postId }: { postId: string }) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
+  const [myName, setMyName] = useState(() => localStorage.getItem('msc-username') || '');
+  const [nameInput, setNameInput] = useState('');
 
   useEffect(() => {
     const unsub = subscribeComments(postId, setComments);
@@ -120,15 +122,22 @@ function CommentThread({ postId }: { postId: string }) {
     return '';
   };
 
+  const saveName = () => {
+    const n = nameInput.trim();
+    if (!n) return;
+    localStorage.setItem('msc-username', n);
+    if (!localStorage.getItem('msc-emoji')) localStorage.setItem('msc-emoji', DEFAULT_AVATAR);
+    setMyName(n);
+  };
+
   const send = async () => {
     const value = text.trim();
-    if (!value || sending) return;
-    const authorName = localStorage.getItem('msc-username') || '匿名旅客';
+    if (!value || sending || !myName) return;
     const authorEmoji = localStorage.getItem('msc-emoji') || DEFAULT_AVATAR;
     setSending(true);
     setText('');
     try {
-      await addComment(postId, { authorName, authorEmoji, text: value });
+      await addComment(postId, { authorName: myName, authorEmoji, text: value });
     } catch {
       setText(value); // 送出失敗把文字還給使用者，不用重打
     }
@@ -156,6 +165,18 @@ function CommentThread({ postId }: { postId: string }) {
           </div>
         ))}
       </div>
+      {!myName ? (
+        <div className="flex items-center gap-2">
+          <input value={nameInput} onChange={e => setNameInput(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter') saveName(); }}
+            placeholder="先取個名字才能留言…"
+            className="flex-1 bg-slate-50 border border-slate-200 rounded-full px-3.5 py-2 text-xs text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-[#00a0e3]" />
+          <button onClick={saveName} disabled={!nameInput.trim()}
+            className="bg-[#002b5e] disabled:opacity-40 text-white text-xs font-bold rounded-full px-3.5 py-2 flex-shrink-0 transition-opacity">
+            確定
+          </button>
+        </div>
+      ) : (
       <div className="flex items-center gap-2">
         <input value={text} onChange={e => setText(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter') send(); }}
@@ -166,6 +187,7 @@ function CommentThread({ postId }: { postId: string }) {
           <Send className="w-3.5 h-3.5" />
         </button>
       </div>
+      )}
     </div>
   );
 }
