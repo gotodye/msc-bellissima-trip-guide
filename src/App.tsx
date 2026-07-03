@@ -34,6 +34,9 @@ const HERO_IMAGES = [
 ];
 
 // ─── ICS download (iOS / 其他裝置的退路：行事曆提醒) ──────────────────────────
+// iOS Safari 對「Blob + createObjectURL + <a download>」這種下載方式支援不完整，
+// 常會顯示「無法下載此檔案」；改用 data: URI 直接導覽過去，Safari 才會正確辨識出
+// 這是行事曆資料，跳出「加入日曆」的選項。
 function downloadICS(message: string, errorMsg: string) {
     const target = new Date(targetDateStr);
     const alarmDates: Date[] = [];
@@ -47,10 +50,7 @@ function downloadICS(message: string, errorMsg: string) {
     }).join('\r\n');
     const ics = `BEGIN:VCALENDAR\r\nVERSION:2.0\r\n${events}\r\nEND:VCALENDAR`;
     try {
-        const blob = new Blob([ics], { type: 'text/calendar' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a'); a.href = url; a.download = 'msc-show-alarm.ics'; a.click();
-        URL.revokeObjectURL(url);
+        window.location.href = `data:text/calendar;charset=utf-8,${encodeURIComponent(ics)}`;
     } catch { alert(errorMsg); }
 }
 

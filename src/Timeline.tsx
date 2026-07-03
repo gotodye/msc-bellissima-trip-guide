@@ -7,7 +7,7 @@ import {
   SHIP_LOCATIONS_BY_LANG, SAILOR_AVATARS, DEFAULT_AVATAR, QUICK_TAGS_BY_LANG,
 } from './firebase';
 import type { Post, Comment, PendingPost } from './firebase';
-import { TASK_EVENTS, classifyEvent, eventText, NAHA_PROGRESS } from './taskSchedule';
+import { TASK_EVENTS, classifyEvent, eventText } from './taskSchedule';
 import type { TaskEvent } from './taskSchedule';
 import type { Lang } from './data';
 
@@ -41,7 +41,7 @@ const TIMELINE_TEXT: Record<Lang, {
     classifiedEvent: title => `🎉 這張會歸入大事件卡「${title}」`, classifiedGeneral: '🌊 這張會放進一般航海誌',
     uploadPhoto: '上傳照片（選填）', errNoName: '請填寫你的名字', errNoContent: '請填寫訊息、選地點或上傳照片',
     errSubmitFail: '發佈失敗，請確認網路連線', submitting: '發佈中…', submitButton: '寫入航海日誌',
-    anonymous: '匿名旅客', routeDepart: 'Day1 基隆', routeReturn: 'Day4 基隆', routeNaha: '⛩️那霸', pendingUpload: '待上傳',
+    anonymous: '匿名旅客', routeDepart: '⚓Day1 基隆', routeReturn: '⚓Day4 基隆', routeNaha: '⛩️那霸', pendingUpload: '待上傳',
     pendingSyncLabel: n => `📦 ${n} 則待上傳・恢復連線後自動補傳`, locale: 'zh-TW',
   },
   en: {
@@ -59,7 +59,7 @@ const TIMELINE_TEXT: Record<Lang, {
     classifiedEvent: title => `🎉 This will be filed under "${title}"`, classifiedGeneral: '🌊 This will go into the general Time-Sail feed',
     uploadPhoto: 'Upload a photo (optional)', errNoName: 'Please enter your name', errNoContent: 'Please add a message, location, or photo',
     errSubmitFail: 'Failed to post — please check your connection', submitting: 'Posting…', submitButton: 'Post to Time-Sail',
-    anonymous: 'Anonymous Traveler', routeDepart: 'Day1 Keelung', routeReturn: 'Day4 Keelung', routeNaha: '⛩️Naha', pendingUpload: 'Pending',
+    anonymous: 'Anonymous Traveler', routeDepart: '⚓Day1 Keelung', routeReturn: '⚓Day4 Keelung', routeNaha: '⛩️Naha', pendingUpload: 'Pending',
     pendingSyncLabel: n => `📦 ${n} pending — will auto-send once back online`, locale: 'en-US',
   },
   id: {
@@ -77,7 +77,7 @@ const TIMELINE_TEXT: Record<Lang, {
     classifiedEvent: title => `🎉 Foto ini akan masuk ke kartu momen "${title}"`, classifiedGeneral: '🌊 Foto ini akan masuk ke feed umum',
     uploadPhoto: 'Unggah foto (opsional)', errNoName: 'Mohon isi nama Anda', errNoContent: 'Mohon isi pesan, lokasi, atau unggah foto',
     errSubmitFail: 'Gagal memposting — periksa koneksi internet Anda', submitting: 'Memposting…', submitButton: 'Posting ke Catatan Pelayaran',
-    anonymous: 'Wisatawan Anonim', routeDepart: 'Hari1 Keelung', routeReturn: 'Hari4 Keelung', routeNaha: '⛩️Naha', pendingUpload: 'Tertunda',
+    anonymous: 'Wisatawan Anonim', routeDepart: '⚓Hari1 Keelung', routeReturn: '⚓Hari4 Keelung', routeNaha: '⛩️Naha', pendingUpload: 'Tertunda',
     pendingSyncLabel: n => `📦 ${n} tertunda・akan otomatis terkirim saat kembali online`, locale: 'id-ID',
   },
   th: {
@@ -95,7 +95,7 @@ const TIMELINE_TEXT: Record<Lang, {
     classifiedEvent: title => `🎉 ภาพนี้จะถูกจัดเข้าการ์ด "${title}"`, classifiedGeneral: '🌊 ภาพนี้จะไปอยู่ในฟีดทั่วไป',
     uploadPhoto: 'อัปโหลดภาพ (ไม่บังคับ)', errNoName: 'กรุณากรอกชื่อของคุณ', errNoContent: 'กรุณากรอกข้อความ เลือกสถานที่ หรืออัปโหลดภาพ',
     errSubmitFail: 'โพสต์ไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต', submitting: 'กำลังโพสต์…', submitButton: 'โพสต์ลงบันทึกการเดินเรือ',
-    anonymous: 'นักเดินทางนิรนาม', routeDepart: 'วันที่1 จีหลง', routeReturn: 'วันที่4 จีหลง', routeNaha: '⛩️นาฮะ', pendingUpload: 'รอส่ง',
+    anonymous: 'นักเดินทางนิรนาม', routeDepart: '⚓วันที่1 จีหลง', routeReturn: '⚓วันที่4 จีหลง', routeNaha: '⛩️นาฮะ', pendingUpload: 'รอส่ง',
     pendingSyncLabel: n => `📦 ${n} รายการรอส่ง・จะส่งอัตโนมัติเมื่อออนไลน์`, locale: 'th-TH',
   },
 };
@@ -408,10 +408,9 @@ function RouteStrip({ containerRef, lang }: { containerRef: React.RefObject<HTML
       <div className="absolute top-1/2 left-1 right-1 h-[2px] bg-white/40 -translate-y-1/2 rounded-full" />
       <span className="absolute top-1/2 left-1 -translate-y-1/2 text-[10px] font-bold text-white/90 drop-shadow">{t.routeDepart}</span>
       <span className="absolute top-1/2 right-1 -translate-y-1/2 text-[10px] font-bold text-white/90 drop-shadow">{t.routeReturn}</span>
-      {/* 那霸是航程中途的定點標記，不是動畫終點——避免船在回程時看起來像倒退 */}
+      {/* 那霸是航程中途的定點標記，固定畫在正中間，跟時間比例無關 */}
       <span
-        className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 text-[10px] font-bold text-white/80 drop-shadow whitespace-nowrap"
-        style={{ left: `${NAHA_PROGRESS * 100}%` }}>
+        className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-[10px] font-bold text-white/80 drop-shadow whitespace-nowrap">
         {t.routeNaha}
       </span>
       <motion.div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 text-lg drop-shadow" style={{ left }}>
@@ -572,7 +571,7 @@ function ScatteredPolaroid({ post, index, count, onOpen, lang }: { post: Post; i
       className="bg-white p-1.5 pb-4 rounded-sm shadow-lg border border-slate-100"
     >
       <div className="w-full h-[76px] bg-slate-100 rounded-sm overflow-hidden">
-        <img src={post.photoURL} className="w-full h-full object-cover" loading="lazy" alt="" />
+        <img src={post.photoURL} className="w-full h-full object-contain" loading="lazy" alt="" />
       </div>
       <p className="text-[8px] text-slate-500 mt-1 flex items-center justify-center gap-1 truncate">
         <Avatar id={post.authorEmoji} size={12} lang={lang} /> {post.authorName}
