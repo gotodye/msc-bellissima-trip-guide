@@ -3,11 +3,11 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import { initializeApp, getApps } from 'firebase/app';
 import {
-  getFirestore, collection, addDoc, doc, updateDoc, increment, query,
+  getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, increment, query,
   orderBy, onSnapshot, serverTimestamp, limit,
   enableIndexedDbPersistence,
 } from 'firebase/firestore';
-import { getStorage, ref, uploadString, getDownloadURL } from 'firebase/storage';
+import { getStorage, ref, uploadString, getDownloadURL, deleteObject } from 'firebase/storage';
 import { parse as parseExif } from 'exifr';
 import { classifyEvent, TASK_EVENTS } from './taskSchedule';
 import type { TaskEvent } from './taskSchedule';
@@ -276,6 +276,21 @@ export async function addPost(
 // ⚓ 鳴笛（取代讚）
 export async function honkPost(postId: string): Promise<void> {
   await updateDoc(doc(db, 'posts', postId), { hornCount: increment(1) });
+}
+
+// 刪除自己上傳的貼文（連帶刪除 Storage 裡的照片檔案，避免變成孤兒檔案佔空間）。
+// 留言子集合先不連帶清除——只是留著沒人看得到的孤兒留言，之後有需要再處理。
+export async function deletePost(post: Post): Promise<void> {
+  if (post.photoURL) {
+    try {
+      await deleteObject(ref(storage, post.photoURL));
+    } catch {
+      // 照片可能已經被刪過、或路徑異常，不要因為這樣擋住刪除貼文本身
+    }
+  }
+  if (post.id) {
+    await deleteDoc(doc(db, 'posts', post.id));
+  }
 }
 
 // 即時訂閱（回傳 unsubscribe 函式）

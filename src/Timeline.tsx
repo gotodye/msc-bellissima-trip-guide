@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from 'motion/react';
-import { MapPin, Send, X, RefreshCw, Camera, Anchor } from 'lucide-react';
+import { MapPin, Send, X, RefreshCw, Camera, Anchor, Trash2 } from 'lucide-react';
 import {
-  addPost, subscribePosts, extractCapturedAt, honkPost,
+  addPost, subscribePosts, extractCapturedAt, honkPost, deletePost,
   addComment, subscribeComments, getPendingPosts, flushPendingPosts,
   SHIP_LOCATIONS_BY_LANG, SAILOR_AVATARS, DEFAULT_AVATAR, QUICK_TAGS_BY_LANG,
 } from './firebase';
@@ -25,7 +25,8 @@ const TIMELINE_TEXT: Record<Lang, {
   errNoContent: string; errSubmitFail: string; submitting: string; submitButton: string;
   anonymous: string; routeDepart: string; routeReturn: string; routeNaha: string; pendingUpload: string;
   pendingSyncLabel: (n: number) => string;
-  identityTitle: string; identityDesc: string; changeIdentity: string; locale: string;
+  identityTitle: string; identityDesc: string; changeIdentity: string;
+  deleteConfirm: string; deleteError: string; locale: string;
 }> = {
   zh: {
     writeButton: '寫一篇航海日誌', offline: '⚠️ 離線・顯示快取資料', syncing: '⟳ 同步中…',
@@ -44,7 +45,8 @@ const TIMELINE_TEXT: Record<Lang, {
     errSubmitFail: '發佈失敗，請確認網路連線', submitting: '發佈中…', submitButton: '寫入航海日誌',
     anonymous: '匿名旅客', routeDepart: 'Day1 基隆', routeReturn: 'Day4 基隆', routeNaha: '⛩️那霸', pendingUpload: '待上傳',
     pendingSyncLabel: n => `📦 ${n} 則待上傳・恢復連線後自動補傳`,
-    identityTitle: '設定你的水手身份', identityDesc: '這個頭像和名字會顯示在你之後的每篇日誌、留言和照片旁邊', changeIdentity: '更換', locale: 'zh-TW',
+    identityTitle: '設定你的水手身份', identityDesc: '這個頭像和名字會顯示在你之後的每篇日誌、留言和照片旁邊', changeIdentity: '更換',
+    deleteConfirm: '確定要刪除這張照片嗎？刪除後無法復原。', deleteError: '刪除失敗，請確認網路連線', locale: 'zh-TW',
   },
   en: {
     writeButton: 'Write a Time-Sail Entry', offline: '⚠️ Offline · Showing cached data', syncing: '⟳ Syncing…',
@@ -63,7 +65,8 @@ const TIMELINE_TEXT: Record<Lang, {
     errSubmitFail: 'Failed to post — please check your connection', submitting: 'Posting…', submitButton: 'Post to Time-Sail',
     anonymous: 'Anonymous Traveler', routeDepart: 'Day1 Keelung', routeReturn: 'Day4 Keelung', routeNaha: '⛩️Naha', pendingUpload: 'Pending',
     pendingSyncLabel: n => `📦 ${n} pending — will auto-send once back online`,
-    identityTitle: 'Set Up Your Sailor Identity', identityDesc: 'This avatar and name will show up next to every entry, comment, and photo you post', changeIdentity: 'Change', locale: 'en-US',
+    identityTitle: 'Set Up Your Sailor Identity', identityDesc: 'This avatar and name will show up next to every entry, comment, and photo you post', changeIdentity: 'Change',
+    deleteConfirm: 'Delete this photo? This cannot be undone.', deleteError: 'Failed to delete — please check your connection', locale: 'en-US',
   },
   id: {
     writeButton: 'Tulis Catatan Pelayaran', offline: '⚠️ Offline · Menampilkan data tersimpan', syncing: '⟳ Menyinkronkan…',
@@ -82,7 +85,8 @@ const TIMELINE_TEXT: Record<Lang, {
     errSubmitFail: 'Gagal memposting — periksa koneksi internet Anda', submitting: 'Memposting…', submitButton: 'Posting ke Catatan Pelayaran',
     anonymous: 'Wisatawan Anonim', routeDepart: 'Hari1 Keelung', routeReturn: 'Hari4 Keelung', routeNaha: '⛩️Naha', pendingUpload: 'Tertunda',
     pendingSyncLabel: n => `📦 ${n} tertunda・akan otomatis terkirim saat kembali online`,
-    identityTitle: 'Atur Identitas Pelautmu', identityDesc: 'Avatar dan nama ini akan muncul di setiap catatan, komentar, dan foto yang kamu unggah', changeIdentity: 'Ganti', locale: 'id-ID',
+    identityTitle: 'Atur Identitas Pelautmu', identityDesc: 'Avatar dan nama ini akan muncul di setiap catatan, komentar, dan foto yang kamu unggah', changeIdentity: 'Ganti',
+    deleteConfirm: 'Hapus foto ini? Tindakan ini tidak bisa dibatalkan.', deleteError: 'Gagal menghapus — periksa koneksi internet Anda', locale: 'id-ID',
   },
   th: {
     writeButton: 'เขียนบันทึกการเดินเรือ', offline: '⚠️ ออฟไลน์ · แสดงข้อมูลที่บันทึกไว้', syncing: '⟳ กำลังซิงค์…',
@@ -101,7 +105,8 @@ const TIMELINE_TEXT: Record<Lang, {
     errSubmitFail: 'โพสต์ไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต', submitting: 'กำลังโพสต์…', submitButton: 'โพสต์ลงบันทึกการเดินเรือ',
     anonymous: 'นักเดินทางนิรนาม', routeDepart: 'วันที่1 จีหลง', routeReturn: 'วันที่4 จีหลง', routeNaha: '⛩️นาฮะ', pendingUpload: 'รอส่ง',
     pendingSyncLabel: n => `📦 ${n} รายการรอส่ง・จะส่งอัตโนมัติเมื่อออนไลน์`,
-    identityTitle: 'ตั้งค่าตัวตนกะลาสีของคุณ', identityDesc: 'อวาตาร์และชื่อนี้จะแสดงข้างบันทึก ความคิดเห็น และภาพที่คุณโพสต์ทุกครั้ง', changeIdentity: 'เปลี่ยน', locale: 'th-TH',
+    identityTitle: 'ตั้งค่าตัวตนกะลาสีของคุณ', identityDesc: 'อวาตาร์และชื่อนี้จะแสดงข้างบันทึก ความคิดเห็น และภาพที่คุณโพสต์ทุกครั้ง', changeIdentity: 'เปลี่ยน',
+    deleteConfirm: 'ลบภาพนี้หรือไม่? ไม่สามารถย้อนกลับได้', deleteError: 'ลบไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต', locale: 'th-TH',
   },
 };
 
@@ -197,6 +202,36 @@ function HornButton({ post, light }: { post: Post; light?: boolean }) {
     </button>
   );
 }
+
+// ─── 🗑️ 刪除按鈕：只有上傳者本人（比對這台裝置存的名字）才看得到 ─────────────────
+// 沒有登入機制，這只是比對 localStorage 的名字，不是真正安全的權限控管，跟整個
+// App「沒有登入、互相信任」的設計一致
+function DeletePostButton({ post, lang, onDeleted }: { post: Post; lang: Lang; onDeleted: () => void }) {
+  const t = TIMELINE_TEXT[lang];
+  const [deleting, setDeleting] = useState(false);
+  const isOwner = !!post.authorName && post.authorName === localStorage.getItem('msc-username');
+  if (!isOwner) return null;
+
+  const handleDelete = async () => {
+    if (!window.confirm(t.deleteConfirm)) return;
+    setDeleting(true);
+    try {
+      await deletePost(post);
+      onDeleted();
+    } catch {
+      alert(t.deleteError);
+      setDeleting(false);
+    }
+  };
+
+  return (
+    <button onClick={handleDelete} disabled={deleting}
+      className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors disabled:opacity-50 flex-shrink-0">
+      {deleting ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+    </button>
+  );
+}
+
 // ─── 💬 留言串 ───────────────────────────────────────────────────────────────
 function CommentThread({ postId, lang }: { postId: string; lang: Lang }) {
   const t = TIMELINE_TEXT[lang];
@@ -571,7 +606,10 @@ function PostDetailModal({ post, onClose, lang }: { post: Post; onClose: () => v
                 {post.message && <div className="text-xs text-slate-500 truncate">{post.message}</div>}
               </div>
             </div>
-            <HornButton post={post} />
+            <div className="flex items-center gap-1 flex-shrink-0">
+              <HornButton post={post} />
+              <DeletePostButton post={post} lang={lang} onDeleted={onClose} />
+            </div>
           </div>
           {post.id && <CommentThread postId={post.id} lang={lang} />}
         </div>
@@ -716,7 +754,10 @@ function EventModal({ event, posts, onClose, lang }: { event: TaskEvent; posts: 
                     {big.message && <div className="text-xs text-slate-500 truncate">{big.message}</div>}
                   </div>
                 </div>
-                <HornButton post={big} />
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <HornButton post={big} />
+                  <DeletePostButton post={big} lang={lang} onDeleted={() => setBig(null)} />
+                </div>
               </div>
               {big.id && <CommentThread postId={big.id} lang={lang} />}
             </div>
