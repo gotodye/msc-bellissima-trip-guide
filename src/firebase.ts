@@ -155,3 +155,37 @@ export function subscribePosts(cb: (posts: Post[], lastSync: Date) => void): () 
     cb(snap.docs.map(d => ({ id: d.id, ...d.data() } as Post)), new Date());
   });
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 留言功能：每篇貼文底下掛一個 comments 子集合
+// posts/{postId}/comments/{commentId}
+// ─────────────────────────────────────────────────────────────────────────────
+export interface Comment {
+  id?:         string;
+  authorName:  string;
+  authorEmoji: string;
+  text:        string;
+  timestamp:   any; // Firestore serverTimestamp
+}
+
+// 新增一則留言
+export async function addComment(
+  postId: string,
+  comment: Omit<Comment, 'id' | 'timestamp'>,
+): Promise<void> {
+  await addDoc(collection(db, 'posts', postId, 'comments'), {
+    ...comment,
+    timestamp: serverTimestamp(),
+  });
+}
+
+// 即時訂閱某篇貼文的留言（依時間正序，最舊的在最上面）
+export function subscribeComments(
+  postId: string,
+  cb: (comments: Comment[]) => void,
+): () => void {
+  const q = query(collection(db, 'posts', postId, 'comments'), orderBy('timestamp', 'asc'));
+  return onSnapshot(q, snap => {
+    cb(snap.docs.map(d => ({ id: d.id, ...d.data() } as Comment)));
+  });
+}
