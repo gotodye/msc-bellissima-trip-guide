@@ -201,7 +201,7 @@ export const dictionary: Record<Lang, any> = {
         {
           icon: 'CheckSquare', title: "出門前最後檢查 (點擊打勾)",
           checklist: [
-            "船票 / 登船證（紙本或電子均可）",
+            "船票 / 登船證（需列印 A4 紙本）",
             "護照正本 (效期需大於6個月)",
             "護照影本 (2份A4比例1:1)",
             "台灣居留證 ARC (外籍同仁必備)",
@@ -234,14 +234,18 @@ export const dictionary: Record<Lang, any> = {
           ] 
         },
         { 
-          icon: 'ShieldAlert', title: "絕對禁用物品清單", 
-          text: "延長線、電棒捲、熨斗、對講機、酒類、生鮮肉品。（安檢極其嚴格，違禁品將被沒收至下船才能領回）" 
+          icon: 'ShieldAlert', title: "違禁與限帶物品清單", 
+          text: "【絕對禁止】延長線、電棒捲、熨斗、對講機、生鮮肉品、新鮮蔬果。安檢極其嚴格，違禁品將直接沒收，不會歸還。\n【暫時保管】酒類、飲料會由海關保管，下船後歸還。\n【可以攜帶】礦泉水、素食泡麵。" 
+        },
+        {
+          icon: 'ShoppingBag', title: "行李打包重要提醒",
+          text: "整理行李時記得先把行李條綁好；藥品、證件、登船文件、金錢等緊急用品，請隨身攜帶，不要放進要托運的行李箱。"
         }
       ],
       rules: [
         { 
           icon: 'Sparkles', title: "【公司專屬 VIP 特權】", highlight: true, 
-          text: "本公司享有「VIP 優先登船通道」！請於 7/9 12:00 準時至「台北火車站」搭乘公司專車前往基隆港，走特快通道辦理登船，免去大排長龍！" 
+          text: "本公司享有「VIP 優先登船通道」！請於 7/9 11:45-12:00 至「台北火車站東三門」集合，東南工作人員（藍色背心）將協助點名，12:00 準時發車前往基隆港，走特快通道辦理登船，免去大排長龍！" 
         },
         { 
           icon: 'Ship', title: "登船必做的兩件大事", list: [
@@ -271,6 +275,13 @@ export const dictionary: Record<Lang, any> = {
         }
       ],
       onboard: [
+        {
+          icon: 'Globe', title: "船上重要須知", list: [
+            "護照正本若登船後未發還，請至 5F 服務櫃台領取。",
+            "船上消費使用貨幣為美金 (USD)。",
+            "持非台灣護照的同仁，請務必於回國前三天完成線上入境資料申請。"
+          ]
+        }
       ],
       // ── HACKS TAB: Blogger Insider Tips ──────────────────────────────────
       hacks: [
@@ -541,8 +552,12 @@ export const dictionary: Record<Lang, any> = {
           ] 
         },
         { 
-          icon: 'ShieldAlert', title: "Prohibited Items", 
-          text: "Extension cords, curling irons, irons, walkie-talkies, alcohol, raw meat. Security is strict; confiscated items are only returned at the end of the cruise." 
+          icon: 'ShieldAlert', title: "Prohibited & Restricted Items", 
+          text: "【Strictly Prohibited】Extension cords, curling irons, irons, walkie-talkies, raw meat, fresh fruits & vegetables. Security is very strict — prohibited items will be confiscated permanently.\n【Held by Customs】Alcohol & drinks will be held by customs and returned when you disembark.\n【Allowed】Bottled water, vegetarian instant noodles." 
+        },
+        {
+          icon: 'ShoppingBag', title: "Packing Reminder",
+          text: "Tie your luggage tag securely before check-in. Keep emergency items — medication, documents, boarding papers, and money — with you in your carry-on, not in checked luggage."
         }
       ],
       rules: [
@@ -578,6 +593,13 @@ export const dictionary: Record<Lang, any> = {
         }
       ],
       onboard: [
+        {
+          icon: 'Globe', title: "Important Onboard Notes", list: [
+            "If your original passport isn't returned after boarding, collect it at the 5F service desk.",
+            "The onboard currency is US Dollars (USD).",
+            "Non-Taiwanese passport holders must complete online arrival registration 3 days before returning to Taiwan."
+          ]
+        }
       ],
       hacks: [
         {
@@ -832,8 +854,12 @@ export const dictionary: Record<Lang, any> = {
           ] 
         },
         { 
-          icon: 'ShieldAlert', title: "Barang Terlarang", 
-          text: "Kabel roll, alat catok, setrika, walkie-talkie, alkohol, daging mentah. Keamanan sangat ketat!" 
+          icon: 'ShieldAlert', title: "Barang Terlarang & Dibatasi", 
+          text: "【Dilarang Keras】Kabel roll, catokan rambut, setrika, walkie-talkie, daging mentah, buah & sayur segar. Pemeriksaan keamanan sangat ketat — barang terlarang akan disita permanen.\n【Ditahan Bea Cukai】Minuman beralkohol akan ditahan bea cukai dan dikembalikan saat turun kapal.\n【Boleh Dibawa】Air mineral, mi instan vegetarian." 
+        },
+        {
+          icon: 'ShoppingBag', title: "Pengingat Packing",
+          text: "Ikat label bagasi Anda dengan kencang sebelum check-in. Bawa barang darurat — obat-obatan, dokumen, dokumen boarding, dan uang — di tas jinjing Anda, jangan dimasukkan ke bagasi terdaftar."
         }
       ],
       rules: [
@@ -869,6 +895,13 @@ export const dictionary: Record<Lang, any> = {
         }
       ],
       onboard: [
+        {
+          icon: 'Globe', title: "Catatan Penting di Kapal", list: [
+            "Jika paspor asli Anda tidak dikembalikan setelah naik kapal, ambil di meja layanan 5F.",
+            "Mata uang yang digunakan di kapal adalah Dolar AS (USD).",
+            "Pemegang paspor non-Taiwan wajib menyelesaikan pendaftaran kedatangan online 3 hari sebelum kembali ke Taiwan."
+          ]
+        }
       ],
       hacks: [
         {
@@ -1056,8 +1089,12 @@ export const dictionary: Record<Lang, any> = {
           ] 
         },
         { 
-          icon: 'ShieldAlert', title: "สิ่งของต้องห้าม", 
-          text: "ปลั๊กพ่วง, เครื่องม้วนผม, เตารีด, แอลกอฮอล์, เนื้อสัตว์สด ความปลอดภัยเข้มงวดมาก!" 
+          icon: 'ShieldAlert', title: "สิ่งของต้องห้ามและจำกัด", 
+          text: "【ห้ามเด็ดขาด】ปลั๊กพ่วง เครื่องม้วนผม เตารีด วอล์คกี้ทอล์คกี้ เนื้อสัตว์สด ผักผลไม้สด ตรวจเข้มงวดมาก ของต้องห้ามจะถูกยึดถาวร\n【ศุลกากรเก็บรักษา】เครื่องดื่มแอลกอฮอล์จะถูกศุลกากรเก็บรักษาไว้ และคืนให้เมื่อลงเรือ\n【นำขึ้นเรือได้】น้ำแร่ บะหมี่กึ่งสำเร็จรูปมังสวิรัติ" 
+        },
+        {
+          icon: 'ShoppingBag', title: "ข้อควรจำเรื่องสัมภาระ",
+          text: "มัดป้ายกระเป๋าให้แน่นก่อนเช็คอิน ของใช้จำเป็นฉุกเฉิน เช่น ยา เอกสาร เอกสารขึ้นเรือ และเงิน ควรพกติดตัว ไม่ควรใส่ในกระเป๋าที่โหลด"
         }
       ],
       rules: [
@@ -1093,6 +1130,13 @@ export const dictionary: Record<Lang, any> = {
         }
       ],
       onboard: [
+        {
+          icon: 'Globe', title: "ข้อควรรู้สำคัญบนเรือ", list: [
+            "หากพาสปอร์ตตัวจริงไม่ได้คืนหลังขึ้นเรือ ให้ไปรับที่เคาน์เตอร์บริการชั้น 5F",
+            "สกุลเงินที่ใช้บนเรือคือดอลลาร์สหรัฐ (USD)",
+            "ผู้ถือพาสปอร์ตที่ไม่ใช่ไต้หวัน ต้องลงทะเบียนเข้าประเทศออนไลน์ล่วงหน้า 3 วันก่อนเดินทางกลับไต้หวัน"
+          ]
+        }
       ],
       hacks: [
         {
