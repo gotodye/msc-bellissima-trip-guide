@@ -5,11 +5,12 @@ import {
     AlertTriangle, CheckSquare, ShieldAlert, Ship, Globe,
     Smartphone, MessageCircle, Calendar, Ticket, Coffee,
     Camera, Utensils, Star, MapPin, ShoppingBag, Clock,
-    Sparkles, Trophy, RotateCcw, WifiOff, Download, ImageDown, CheckCheck,
+    Sparkles, Trophy, RotateCcw, WifiOff, Download,
 } from 'lucide-react';
 import { dictionary, targetDateStr, type Lang } from './data';
 import { Timeline } from './Timeline';
 import { BingoCard } from './BingoCard';
+import { TASK_EVENTS, eventText } from './taskSchedule';
 
 // ─── Icon Map ─────────────────────────────────────────────────────────────────
 const iconMap: Record<string, React.ElementType> = {
@@ -136,7 +137,7 @@ function StandardCard({ item, checkedItems, toggleCheck }: { item: any; checkedI
 }
 
 // ─── Hero Section ──────────────────────────────────────────────────────────────
-function HeroSection({ content, countdown, lang, onLangChange, reminderAdded, onReminderClick, isOnline, installPrompt, onInstall, preloaded, preloading, onPreload }: any) {
+function HeroSection({ content, countdown, hasDeparted, lang, onLangChange, reminderAdded, onReminderClick, isOnline, installPrompt, onInstall }: any) {
     const [heroError, setHeroError] = useState(false);
     const [heroIdx, setHeroIdx] = useState(0);
     const units = content.timeUnits || ['天', '時', '分', '秒'];
@@ -145,6 +146,16 @@ function HeroSection({ content, countdown, lang, onLangChange, reminderAdded, on
         if (heroIdx < HERO_IMAGES.length - 1) setHeroIdx(i => i + 1);
         else setHeroError(true);
     };
+
+    // 倒數歸零（已經出發）後，改顯示「今日」實際符合的大事件行程，而不是繼續看倒數
+    const todayEvents = (() => {
+        if (!hasDeparted) return [];
+        const now = new Date();
+        const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+        return TASK_EVENTS
+            .filter(e => e.date === dateStr)
+            .sort((a, b) => (a.startHour * 60 + a.startMin) - (b.startHour * 60 + b.startMin));
+    })();
 
     return (
         <div className="relative" style={{ minHeight: 340 }}>
@@ -203,41 +214,50 @@ function HeroSection({ content, countdown, lang, onLangChange, reminderAdded, on
                     </span>
                 </div>
 
-                {/* Countdown */}
-                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 mb-4">
-                    <p className="text-white/60 text-[11px] font-bold mb-2 tracking-wide">{content.countdownTitle}</p>
-                    <div className="grid grid-cols-4 gap-2">
-                        {[countdown.days, countdown.hours, countdown.minutes, countdown.seconds].map((val, i) => (
-                            <div key={i} className="text-center bg-white/10 rounded-xl py-2.5">
-                                <div className="text-2xl font-bold text-white tabular-nums leading-none">{String(val).padStart(2, '0')}</div>
-                                <div className="text-white/50 text-[10px] font-medium mt-1">{units[i]}</div>
-                            </div>
-                        ))}
+                {/* Countdown → 出發後改顯示今日行程重點 */}
+                {!hasDeparted ? (
+                    <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 mb-4">
+                        <p className="text-white/60 text-[11px] font-bold mb-2 tracking-wide">{content.countdownTitle}</p>
+                        <div className="grid grid-cols-4 gap-2">
+                            {[countdown.days, countdown.hours, countdown.minutes, countdown.seconds].map((val, i) => (
+                                <div key={i} className="text-center bg-white/10 rounded-xl py-2.5">
+                                    <div className="text-2xl font-bold text-white tabular-nums leading-none">{String(val).padStart(2, '0')}</div>
+                                    <div className="text-white/50 text-[10px] font-medium mt-1">{units[i]}</div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </div>
-
-                {/* PWA + Preload strip */}
-                {isOnline && (
-                    <div className="flex gap-2">
-                        {installPrompt && (
-                            <button onClick={onInstall}
-                                className="flex-1 flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/25 text-white text-xs font-bold py-2.5 rounded-xl transition-colors">
-                                <Download className="w-3.5 h-3.5" />
-                                安裝APP
-                            </button>
-                        )}
-                        {!preloaded ? (
-                            <button onClick={onPreload} disabled={preloading}
-                                className={`flex-1 flex items-center justify-center gap-1.5 text-white text-xs font-bold py-2.5 rounded-xl transition-colors ${preloading ? 'bg-white/10 opacity-60 cursor-wait' : 'bg-white/15 hover:bg-white/25'}`}>
-                                <ImageDown className="w-3.5 h-3.5" />
-                                {preloading ? '載入中…' : '預載圖片'}
-                            </button>
-                        ) : (
-                            <div className="flex-1 flex items-center justify-center gap-1.5 bg-green-500/20 text-green-300 text-xs font-bold py-2.5 rounded-xl">
-                                <CheckCheck className="w-3.5 h-3.5" />
-                                圖片已快取 ✓
+                ) : (
+                    <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 mb-4">
+                        <p className="text-white/60 text-[11px] font-bold mb-2 tracking-wide">{content.todayHighlightsTitle}</p>
+                        {todayEvents.length > 0 ? (
+                            <div className="space-y-2">
+                                {todayEvents.map((ev: any) => {
+                                    const et = eventText(ev, lang);
+                                    return (
+                                        <div key={ev.id} className="flex items-start gap-2">
+                                            <span className="text-white/90 text-xs font-bold tabular-nums flex-shrink-0">
+                                                {String(ev.startHour).padStart(2, '0')}:{String(ev.startMin).padStart(2, '0')}
+                                            </span>
+                                            <span className="text-white/80 text-xs leading-snug">{et.title}</span>
+                                        </div>
+                                    );
+                                })}
                             </div>
+                        ) : (
+                            <p className="text-white/70 text-xs">{content.todayNoEvents}</p>
                         )}
+                    </div>
+                )}
+
+                {/* PWA install strip */}
+                {isOnline && installPrompt && (
+                    <div className="flex gap-2">
+                        <button onClick={onInstall}
+                            className="flex-1 flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/25 text-white text-xs font-bold py-2.5 rounded-xl transition-colors">
+                            <Download className="w-3.5 h-3.5" />
+                            安裝APP
+                        </button>
                     </div>
                 )}
             </div>
@@ -276,6 +296,7 @@ export default function App() {
     const [hasBingo, setHasBingo] = useState(false);
     const [reminderAdded, setReminderAdded] = useState(false);
     const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+    const [hasDeparted, setHasDeparted] = useState(false);
     const [isOnline, setIsOnline] = useState(navigator.onLine);
     const [installPrompt, setInstallPrompt] = useState<any>(null);
     const [preloaded, setPreloaded] = useState(() => !!localStorage.getItem('msc-images-cached'));
@@ -290,12 +311,13 @@ export default function App() {
         return s[activeTab] || [];
     })();
 
-    // Countdown
+    // Countdown（歸零/出發後 hasDeparted 轉為 true，Hero 改顯示今日行程重點）
     useEffect(() => {
         const target = new Date(targetDateStr).getTime();
         const tick = () => {
             const diff = Math.max(0, target - Date.now());
             setCountdown({ days: Math.floor(diff / 86400000), hours: Math.floor(diff % 86400000 / 3600000), minutes: Math.floor(diff % 3600000 / 60000), seconds: Math.floor(diff % 60000 / 1000) });
+            setHasDeparted(Date.now() >= target);
         };
         tick(); const id = setInterval(tick, 1000); return () => clearInterval(id);
     }, []);
@@ -337,6 +359,12 @@ export default function App() {
         setPreloading(false); setPreloaded(true); localStorage.setItem('msc-images-cached', '1');
     };
 
+    // 開啟 App 就自動預載圖片，不用等使用者手動點按鈕
+    useEffect(() => {
+        if (preloaded) return;
+        preloadImages();
+    }, []);
+
     const tabs = content.tabs || [];
 
     return (
@@ -356,12 +384,11 @@ export default function App() {
 
             {/* Hero */}
             <HeroSection
-                content={content} countdown={countdown} lang={lang} onLangChange={setLang}
+                content={content} countdown={countdown} hasDeparted={hasDeparted} lang={lang} onLangChange={setLang}
                 reminderAdded={reminderAdded}
                 onReminderClick={() => { addPhoneAlarm(content.reminderMessage, content.reminderError); setReminderAdded(true); }}
                 isOnline={isOnline} installPrompt={installPrompt}
                 onInstall={() => { installPrompt?.prompt(); installPrompt?.userChoice.then(() => setInstallPrompt(null)); }}
-                preloaded={preloaded} preloading={preloading} onPreload={preloadImages}
             />
 
             {/* Reminder bar (visible on onboard + hacks tab) */}
