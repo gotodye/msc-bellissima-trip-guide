@@ -4,37 +4,139 @@ import { Camera, RotateCcw, Trophy, X, AlertCircle } from 'lucide-react';
 import { storage } from './firebase';
 import { ref, uploadString, getDownloadURL } from 'firebase/storage';
 
-// ─── 2 張賓果卡 × 3×3 (共18格，含那霸上岸任務) ────────────────────────────────
-const CARDS = [
-  {
-    id: 'explore', title: '🚢 探索號', color: '#002b5e',
-    items: [
-      { id: 'e1', emoji: '🌅', title: '看日出/落日', task: '在甲板拍下有太陽的海上照片' },
-      { id: 'e2', emoji: '💎', title: '水晶樓梯', task: '在水晶樓梯沒人時打卡合照' },
-      { id: 'e4', emoji: '🎭', title: '看大秀', task: '親眼看完一場表演秀' },
-      { id: 'e9', emoji: '🌃', title: '甲板夜景', task: '甲板夜間拍一張夜景' },
-      { id: 'e16', emoji: '🎮', title: 'VR F1賽車', task: '體驗 F1 虛擬賽車機' },
-      { id: 'e20', emoji: '🦋', title: 'LED天幕', task: '在 Galleria 拍 LED 天幕照' },
-      { id: 'n1', emoji: '⛩️', title: '波上宮打卡', task: '在波上宮或波之上海灘拍照' },
-      { id: 'n2', emoji: '🛍️', title: '國際通戰利品', task: '在國際通買到戰利品拍照' },
-      { id: 'n3', emoji: '🏯', title: '首里城巡禮', task: '造訪首里城拍一張紀念照' },
-    ]
-  },
-  {
-    id: 'together', title: '🍽️ 美食同事號', color: '#9a3412',
-    items: [
-      { id: 'f1', emoji: '🦞', title: '龍蝦打卡', task: '自助餐廳吃到龍蝦並拍照' },
-      { id: 'f3', emoji: '🍰', title: '最美甜點', task: '找到最美甜點拍擺盤照' },
-      { id: 'f12', emoji: '🍦', title: '免費霜淇淋', task: '吃到船上免費霜淇淋' },
-      { id: 'k1', emoji: '🧱', title: '樂高俱樂部', task: '和小朋友一起去樂高俱樂部玩耍' },
-      { id: 't1', emoji: '📸', title: '全員大合照', task: '和全體同事拍一張大合照' },
-      { id: 't11', emoji: '⚪', title: '白色派對', task: '全白打扮參加 White Party' },
-      { id: 't12', emoji: '🇮🇹', title: '義大利之夜', task: '紅白綠裝扮參加義大利之夜' },
-      { id: 's1', emoji: '🎁', title: '血拚戰利品', task: '拍一張這趟旅程的血拚戰利品' },
-      { id: 'f5', emoji: '🥤', title: '飲料排排站', task: '5種飲料排成一列合照' },
-    ]
-  }
-];
+// ─── 2 張賓果卡 × 3×3（共18格，含那霸上岸任務）／ 4 語言版本 ──────────────────
+type BingoItem = { id: string; emoji: string; title: string; task: string };
+type BingoDeck = { id: string; title: string; color: string; items: BingoItem[] };
+
+const CARDS_BY_LANG: Record<string, BingoDeck[]> = {
+  zh: [
+    {
+      id: 'explore', title: '🚢 探索號', color: '#002b5e',
+      items: [
+        { id: 'e1', emoji: '🌅', title: '看日出/落日', task: '在甲板拍下有太陽的海上照片' },
+        { id: 'e2', emoji: '💎', title: '水晶樓梯', task: '在水晶樓梯沒人時打卡合照' },
+        { id: 'e4', emoji: '🎭', title: '看大秀', task: '親眼看完一場表演秀' },
+        { id: 'e9', emoji: '🌃', title: '甲板夜景', task: '甲板夜間拍一張夜景' },
+        { id: 'e16', emoji: '🎮', title: 'VR F1賽車', task: '體驗 F1 虛擬賽車機' },
+        { id: 'e20', emoji: '🦋', title: 'LED天幕', task: '在 Galleria 拍 LED 天幕照' },
+        { id: 'n1', emoji: '⛩️', title: '波上宮打卡', task: '在波上宮或波之上海灘拍照' },
+        { id: 'n2', emoji: '🛍️', title: '國際通戰利品', task: '在國際通買到戰利品拍照' },
+        { id: 'n3', emoji: '🏯', title: '首里城巡禮', task: '造訪首里城拍一張紀念照' },
+      ]
+    },
+    {
+      id: 'together', title: '🍽️ 美食同事號', color: '#9a3412',
+      items: [
+        { id: 'f1', emoji: '🦞', title: '龍蝦打卡', task: '自助餐廳吃到龍蝦並拍照' },
+        { id: 'f3', emoji: '🍰', title: '最美甜點', task: '找到最美甜點拍擺盤照' },
+        { id: 'f12', emoji: '🍦', title: '免費霜淇淋', task: '吃到船上免費霜淇淋' },
+        { id: 'k1', emoji: '🧱', title: '樂高俱樂部', task: '和小朋友一起去樂高俱樂部玩耍' },
+        { id: 't1', emoji: '📸', title: '全員大合照', task: '和全體同事拍一張大合照' },
+        { id: 't11', emoji: '⚪', title: '白色派對', task: '全白打扮參加 White Party' },
+        { id: 't12', emoji: '🇮🇹', title: '義大利之夜', task: '紅白綠裝扮參加義大利之夜' },
+        { id: 's1', emoji: '🎁', title: '血拚戰利品', task: '拍一張這趟旅程的血拚戰利品' },
+        { id: 'f5', emoji: '🥤', title: '飲料排排站', task: '5種飲料排成一列合照' },
+      ]
+    }
+  ],
+  en: [
+    {
+      id: 'explore', title: '🚢 Explorer', color: '#002b5e',
+      items: [
+        { id: 'e1', emoji: '🌅', title: 'Sunrise/Sunset', task: 'Snap a sea photo with the sun from the deck' },
+        { id: 'e2', emoji: '💎', title: 'Crystal Staircase', task: 'Photo at the Crystal Staircase when it\'s empty' },
+        { id: 'e4', emoji: '🎭', title: 'Watch a Show', task: 'See a full theatre show live' },
+        { id: 'e9', emoji: '🌃', title: 'Deck at Night', task: 'Take a night photo from the deck' },
+        { id: 'e16', emoji: '🎮', title: 'VR F1 Racing', task: 'Try the F1 racing simulator' },
+        { id: 'e20', emoji: '🦋', title: 'LED Canopy', task: 'Photo of the LED canopy in the Galleria' },
+        { id: 'n1', emoji: '⛩️', title: 'Naminoue Shrine', task: 'Photo at Naminoue Shrine or Beach' },
+        { id: 'n2', emoji: '🛍️', title: 'Kokusai Dori Haul', task: 'Photo of what you bought on Kokusai Dori' },
+        { id: 'n3', emoji: '🏯', title: 'Shuri Castle', task: 'Take a memorial photo at Shuri Castle' },
+      ]
+    },
+    {
+      id: 'together', title: '🍽️ Food & Friends', color: '#9a3412',
+      items: [
+        { id: 'f1', emoji: '🦞', title: 'Lobster Check-in', task: 'Get lobster at the buffet and snap it' },
+        { id: 'f3', emoji: '🍰', title: 'Prettiest Dessert', task: 'Find and photograph the prettiest dessert' },
+        { id: 'f12', emoji: '🍦', title: 'Free Soft-Serve', task: 'Get the free soft-serve ice cream onboard' },
+        { id: 'k1', emoji: '🧱', title: 'LEGO Club', task: 'Take the kids to play at the LEGO Club' },
+        { id: 't1', emoji: '📸', title: 'Group Photo', task: 'Take a group photo with everyone' },
+        { id: 't11', emoji: '⚪', title: 'White Party', task: 'Dress in all-white for the White Party' },
+        { id: 't12', emoji: '🇮🇹', title: 'Italian Night', task: 'Wear red, white, or green for Italian Night' },
+        { id: 's1', emoji: '🎁', title: 'Shopping Haul', task: 'Photo of your shopping haul from the trip' },
+        { id: 'f5', emoji: '🥤', title: 'Drink Lineup', task: 'Line up 5 different drinks for a photo' },
+      ]
+    }
+  ],
+  id: [
+    {
+      id: 'explore', title: '🚢 Penjelajah', color: '#002b5e',
+      items: [
+        { id: 'e1', emoji: '🌅', title: 'Matahari Terbit/Terbenam', task: 'Foto laut dengan matahari dari dek' },
+        { id: 'e2', emoji: '💎', title: 'Tangga Kristal', task: 'Foto di Tangga Kristal saat sepi' },
+        { id: 'e4', emoji: '🎭', title: 'Nonton Pertunjukan', task: 'Tonton satu pertunjukan sampai selesai' },
+        { id: 'e9', emoji: '🌃', title: 'Dek Malam Hari', task: 'Foto pemandangan malam dari dek' },
+        { id: 'e16', emoji: '🎮', title: 'Balapan VR F1', task: 'Coba simulator balapan F1' },
+        { id: 'e20', emoji: '🦋', title: 'Kanopi LED', task: 'Foto kanopi LED di Galleria' },
+        { id: 'n1', emoji: '⛩️', title: 'Kuil Naminoue', task: 'Foto di Kuil Naminoue atau Pantai' },
+        { id: 'n2', emoji: '🛍️', title: 'Belanjaan Kokusai Dori', task: 'Foto belanjaan dari Kokusai Dori' },
+        { id: 'n3', emoji: '🏯', title: 'Kastil Shuri', task: 'Foto kenangan di Kastil Shuri' },
+      ]
+    },
+    {
+      id: 'together', title: '🍽️ Makanan & Teman', color: '#9a3412',
+      items: [
+        { id: 'f1', emoji: '🦞', title: 'Cek-in Lobster', task: 'Dapatkan lobster di buffet dan foto' },
+        { id: 'f3', emoji: '🍰', title: 'Dessert Tercantik', task: 'Cari dan foto dessert paling cantik' },
+        { id: 'f12', emoji: '🍦', title: 'Es Krim Gratis', task: 'Dapatkan es krim gratis di kapal' },
+        { id: 'k1', emoji: '🧱', title: 'LEGO Club', task: 'Ajak anak-anak main di LEGO Club' },
+        { id: 't1', emoji: '📸', title: 'Foto Bersama', task: 'Foto bersama semua rekan kerja' },
+        { id: 't11', emoji: '⚪', title: 'Pesta Putih', task: 'Pakai baju serba putih ke Pesta Putih' },
+        { id: 't12', emoji: '🇮🇹', title: 'Malam Italia', task: 'Pakai merah, putih, atau hijau ke Malam Italia' },
+        { id: 's1', emoji: '🎁', title: 'Hasil Belanja', task: 'Foto hasil belanja dari perjalanan ini' },
+        { id: 'f5', emoji: '🥤', title: 'Deretan Minuman', task: 'Susun 5 minuman berbeda untuk difoto' },
+      ]
+    }
+  ],
+  th: [
+    {
+      id: 'explore', title: '🚢 นักสำรวจ', color: '#002b5e',
+      items: [
+        { id: 'e1', emoji: '🌅', title: 'พระอาทิตย์ขึ้น/ตก', task: 'ถ่ายรูปทะเลกับพระอาทิตย์จากดาดฟ้า' },
+        { id: 'e2', emoji: '💎', title: 'บันไดคริสตัล', task: 'ถ่ายรูปที่บันไดคริสตัลตอนไม่มีคน' },
+        { id: 'e4', emoji: '🎭', title: 'ดูโชว์', task: 'ดูการแสดงสดจนจบหนึ่งรอบ' },
+        { id: 'e9', emoji: '🌃', title: 'ดาดฟ้ายามค่ำคืน', task: 'ถ่ายรูปวิวกลางคืนจากดาดฟ้า' },
+        { id: 'e16', emoji: '🎮', title: 'แข่งรถ VR F1', task: 'ลองเล่นเครื่องจำลองแข่งรถ F1' },
+        { id: 'e20', emoji: '🦋', title: 'หลังคา LED', task: 'ถ่ายรูปหลังคา LED ที่ Galleria' },
+        { id: 'n1', emoji: '⛩️', title: 'ศาลเจ้านามิโนะอุเอะ', task: 'ถ่ายรูปที่ศาลเจ้านามิโนะอุเอะหรือชายหาด' },
+        { id: 'n2', emoji: '🛍️', title: 'ของฝากจาก Kokusai Dori', task: 'ถ่ายรูปของที่ซื้อจาก Kokusai Dori' },
+        { id: 'n3', emoji: '🏯', title: 'ปราสาทชูริ', task: 'ถ่ายรูปที่ระลึกที่ปราสาทชูริ' },
+      ]
+    },
+    {
+      id: 'together', title: '🍽️ อาหารและเพื่อน', color: '#9a3412',
+      items: [
+        { id: 'f1', emoji: '🦞', title: 'เช็กอินล็อบสเตอร์', task: 'หาล็อบสเตอร์ที่บุฟเฟ่ต์แล้วถ่ายรูป' },
+        { id: 'f3', emoji: '🍰', title: 'ของหวานสวยที่สุด', task: 'หาและถ่ายรูปของหวานที่สวยที่สุด' },
+        { id: 'f12', emoji: '🍦', title: 'ไอศกรีมฟรี', task: 'กินไอศกรีมซอฟต์เสิร์ฟฟรีบนเรือ' },
+        { id: 'k1', emoji: '🧱', title: 'LEGO Club', task: 'พาเด็กๆ ไปเล่นที่ LEGO Club' },
+        { id: 't1', emoji: '📸', title: 'ถ่ายรูปหมู่', task: 'ถ่ายรูปรวมกับเพื่อนร่วมงานทุกคน' },
+        { id: 't11', emoji: '⚪', title: 'White Party', task: 'แต่งชุดขาวล้วนไปงาน White Party' },
+        { id: 't12', emoji: '🇮🇹', title: 'Italian Night', task: 'แต่งชุดแดง ขาว เขียว ไปงาน Italian Night' },
+        { id: 's1', emoji: '🎁', title: 'ของที่ช้อปมา', task: 'ถ่ายรูปของที่ช้อปได้ในทริปนี้' },
+        { id: 'f5', emoji: '🥤', title: 'แถวเครื่องดื่ม', task: 'จัดเครื่องดื่ม 5 ชนิดเรียงกันถ่ายรูป' },
+      ]
+    }
+  ],
+};
+
+const UI_TEXT: Record<string, { done: string; reset: string; viewPhoto: string; uploadError: string }> = {
+  zh: { done: '完成', reset: '重置', viewPhoto: '看大圖', uploadError: '照片上傳失敗，請確認網路連線後再試一次' },
+  en: { done: 'done', reset: 'Reset', viewPhoto: 'View', uploadError: 'Upload failed — check your connection and try again' },
+  id: { done: 'selesai', reset: 'Atur Ulang', viewPhoto: 'Lihat', uploadError: 'Gagal mengunggah — periksa koneksi internet Anda dan coba lagi' },
+  th: { done: 'เสร็จ', reset: 'รีเซ็ต', viewPhoto: 'ดูรูปใหญ่', uploadError: 'อัปโหลดไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ตแล้วลองใหม่' },
+};
 
 // Bingo line indices (3x3 grid)
 const LINES = [
@@ -48,7 +150,7 @@ async function uploadPhoto(file: File, itemId: string): Promise<string> {
     const reader = new FileReader();
     reader.onload = (e) => {
       const img = new Image();
-      img.onerror = () => reject(new Error('無法讀取這張圖片'));
+      img.onerror = () => reject(new Error('image read failed'));
       img.onload = async () => {
         const max = 800;
         const ratio = Math.min(1, max / Math.max(img.width, img.height));
@@ -65,7 +167,7 @@ async function uploadPhoto(file: File, itemId: string): Promise<string> {
       };
       img.src = e.target!.result as string;
     };
-    reader.onerror = () => reject(new Error('無法讀取這個檔案'));
+    reader.onerror = () => reject(new Error('file read failed'));
     reader.readAsDataURL(file);
   });
 }
@@ -77,6 +179,9 @@ function getBingos(checked: Set<string>, items: { id: string }[]): number[][] {
 interface Props { lang: string; }
 
 export function BingoCard({ lang }: Props) {
+  const CARDS = CARDS_BY_LANG[lang] || CARDS_BY_LANG.zh;
+  const t = UI_TEXT[lang] || UI_TEXT.zh;
+
   const [cardIdx, setCardIdx] = useState(0);
   const [checked, setChecked] = useState<Record<string, Set<string>>>({});
   const [photos, setPhotos] = useState<Record<string, string>>({});
@@ -86,7 +191,7 @@ export function BingoCard({ lang }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
   const uploadTarget = useRef('');
 
-  const card = CARDS[cardIdx];
+  const card = CARDS[Math.min(cardIdx, CARDS.length - 1)];
   const myChecked = checked[card.id] ?? new Set<string>();
   const bingos = getBingos(myChecked, card.items);
   const bingoCount = bingos.length;
@@ -114,7 +219,7 @@ export function BingoCard({ lang }: Props) {
         return { ...prev, [card.id]: cur };
       });
     } catch (err) {
-      setUploadError('照片上傳失敗，請確認網路連線後再試一次');
+      setUploadError(t.uploadError);
       setTimeout(() => setUploadError(null), 4000);
     }
     setUploading(null);
@@ -156,11 +261,11 @@ export function BingoCard({ lang }: Props) {
               <Trophy className="w-3 h-3" /> BINGO ×{bingoCount}
             </motion.span>
           )}
-          <span className="text-xs text-slate-500">{doneCount}/{total} 完成</span>
+          <span className="text-xs text-slate-500">{doneCount}/{total} {t.done}</span>
         </div>
         <button onClick={resetCard}
           className="flex items-center gap-1 text-xs text-slate-400 hover:text-red-500">
-          <RotateCcw className="w-3 h-3" /> 重置
+          <RotateCcw className="w-3 h-3" /> {t.reset}
         </button>
       </div>
 
@@ -226,7 +331,7 @@ export function BingoCard({ lang }: Props) {
                 {photo && (
                   <button onClick={e => { e.stopPropagation(); setPreview(photo); }}
                     className="absolute top-1.5 left-1.5 bg-black/40 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                    看大圖
+                    {t.viewPhoto}
                   </button>
                 )}
               </div>
