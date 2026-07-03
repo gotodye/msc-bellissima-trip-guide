@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'motion/react';
 import { MapPin, Send, X, RefreshCw, Camera, Anchor } from 'lucide-react';
 import {
-  addPost, subscribePosts, extractCapturedAt,
+  addPost, subscribePosts, extractCapturedAt, honkPost,
   SHIP_LOCATIONS, AUTHOR_EMOJIS, QUICK_TAGS,
 } from './firebase';
 import type { Post } from './firebase';
@@ -53,7 +53,54 @@ function stableRotate(id: string | undefined): number {
   return (h % 7) - 3; // -3° ~ 3°
 }
 
-// ─── Slot：大事件卡與個人拍立得，依真實時間交錯排列（夾心結構） ───────────────
+// 用 Web Audio 合成鳴笛聲，不需要額外音效素材
+function playHornSound() {
+  try {
+    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+    const ctx = new AudioCtx();
+    const now = ctx.currentTime;
+    [180, 220].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(freq, now);
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.15, now + 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(now + i * 0.05);
+      osc.stop(now + 0.45);
+    });
+  } catch { /* Web Audio 不可用時靜默略過 */ }
+}
+
+// ─── ⚓ 鳴笛按鈕（取代讚） ────────────────────────────────────────────────────
+function HornButton({ post, light }: { post: Post; light?: boolean }) {
+  const [firing, setFiring] = useState(false);
+
+  const honk = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!post.id) return;
+    setFiring(true);
+    playHornSound();
+    vibrate(15);
+    setTimeout(() => setFiring(false), 350);
+    honkPost(post.id).catch(() => { /* 鳴笛失敗不打斷體驗，安靜略過 */ });
+  };
+
+  return (
+    <button onClick={honk}
+      className={`flex items-center gap-1 text-[10px] font-bold active:scale-90 transition-transform ${
+        light ? 'text-white' : 'text-[#00a0e3]'
+      }`}>
+      <motion.span
+        animate={firing ? { scale: [1, 1.35, 1], rotate: [0, -10, 10, 0] } : {}}
+        transition={{ duration: 0.35 }}
+        className="text-xs">⚓</motion.span>
+      {post.hornCount ?? 0}
+    </button>
+  );
+}
 type Slot =
   | { type: 'event'; event: TaskEvent; posts: Post[]; sortMs: number }
   | { type: 'post'; post: Post; sortMs: number };
@@ -146,6 +193,9 @@ function PolaroidCard({ post }: { post: Post }) {
         <p className="text-[9px] text-[#00a0e3] text-center truncate">{post.location}</p>
       )}
       {post.message && <p className="text-[9px] text-slate-400 text-center truncate px-1">{post.message}</p>}
+      <div className="flex justify-center mt-1">
+        <HornButton post={post} />
+      </div>
     </motion.div>
   );
 }
@@ -179,12 +229,15 @@ function EventModal({ event, posts, onClose }: { event: TaskEvent; posts: Post[]
             <div>
               <button onClick={() => setBig(null)} className="text-xs text-[#00a0e3] font-semibold mb-2">← 返回總覽</button>
               <img src={big.photoURL} className="w-full rounded-2xl mb-3" alt="" />
-              <div className="flex items-center gap-2">
-                <span className="text-xl">{big.authorEmoji}</span>
-                <div className="min-w-0">
-                  <div className="text-sm font-bold text-[#002b5e]">{big.authorName}</div>
-                  {big.message && <div className="text-xs text-slate-500 truncate">{big.message}</div>}
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="text-xl">{big.authorEmoji}</span>
+                  <div className="min-w-0">
+                    <div className="text-sm font-bold text-[#002b5e]">{big.authorName}</div>
+                    {big.message && <div className="text-xs text-slate-500 truncate">{big.message}</div>}
+                  </div>
                 </div>
+                <HornButton post={big} />
               </div>
             </div>
           ) : posts.length === 0 ? (
