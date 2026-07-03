@@ -8,9 +8,9 @@
 export interface TaskEvent {
   id: string;
   day: 1 | 2 | 3 | 4;
-  dayLabel: string;   // 顯示用的天數標籤
-  title: string;      // 大事件任務名稱
-  hint: string;       // 拍照與互動引導文字
+  dayLabel: string;   // 顯示用的天數標籤（中文，向下相容；其他語言請透過 eventText() 取得）
+  title: string;      // 大事件任務名稱（中文，向下相容）
+  hint: string;       // 拍照與互動引導文字（中文，向下相容）
   date: string;       // 'YYYY-MM-DD'（該事件發生的當地日曆日期）
   startHour: number; startMin: number;
   endHour: number; endMin: number;
@@ -66,6 +66,46 @@ export const TASK_EVENTS: TaskEvent[] = [
     date: '2026-07-12', startHour: 8, startMin: 0, endHour: 10, endMin: 0,
   },
 ];
+
+// ─── 大事件卡顯示文字（4 語言），依 event.id 對照。找不到就退回中文 ────────────
+type EventText = { dayLabel: string; title: string; hint: string };
+const EVENT_TEXT: Record<string, Record<string, EventText>> = {
+  en: {
+    'd1-depart':   { dayLabel: 'Day 1 · Keelung Departure', title: 'Farewell Taiwan! Deck Departure Party', hint: '17:30 departure — capture the moment with the Keelung skyline' },
+    'd1-crystal':  { dayLabel: 'Day 1 · Keelung Departure', title: 'Shine On! Crystal Staircase / Sky Show Debut', hint: '6F Swarovski crystal staircase / LED Galleria ceiling light show' },
+    'd2-morning':  { dayLabel: 'Day 2 · At Sea → Naha', title: "Sunny Days at Sea! Find the Ship's Chillest Spot", hint: 'Poolside sunbathing, ocean-view gym, or the lavish breakfast buffet' },
+    'd2-naha':     { dayLabel: 'Day 2 · At Sea → Naha', title: 'Okinawa, Here We Come! Your First Shore Photo', hint: 'Photo with the ship at Naha port / first ice cream or awamori on Kokusai Street' },
+    'd2-night':    { dayLabel: 'Day 2 · At Sea → Naha', title: 'Okinawa Nights from the Bellissima', hint: 'Okinawan izakaya nightlife, Naha night market, or the harbor view from the deck' },
+    'd3-shopping': { dayLabel: 'Day 3 · Naha Departure → At Sea', title: 'Last Call to Shop! Final Okinawa Highlights', hint: 'Drugstore & brown sugar haul, or splashing down the waterpark slides' },
+    'd3-gala':     { dayLabel: 'Day 3 · Naha Departure → At Sea', title: 'Glamour Night! Dressed to Impress', hint: 'Formal wear, group photo in the atrium or main dining room' },
+    'd4-farewell': { dayLabel: 'Day 4 · Back to Keelung', title: 'Farewell Bellissima! One Last Look Back', hint: 'Your favorite photo from the trip, or all your souvenirs together' },
+  },
+  id: {
+    'd1-depart':   { dayLabel: 'Hari 1 · Keberangkatan Keelung', title: 'Selamat Tinggal Taiwan! Pesta Keberangkatan di Dek', hint: 'Berangkat 17:30 — abadikan momen dengan latar Keelung' },
+    'd1-crystal':  { dayLabel: 'Hari 1 · Keberangkatan Keelung', title: 'Bersinar! Tangga Kristal / Debut Pertunjukan Langit', hint: 'Tangga kristal Swarovski lantai 6 / pertunjukan lampu langit-langit LED Galleria' },
+    'd2-morning':  { dayLabel: 'Hari 2 · Berlayar → Naha', title: 'Hari Cerah di Laut! Cari Sudut Paling Santai di Kapal', hint: 'Berjemur di kolam renang, gym dengan pemandangan laut, atau sarapan prasmanan mewah' },
+    'd2-naha':     { dayLabel: 'Hari 2 · Berlayar → Naha', title: 'Okinawa, Kami Datang! Foto Pertama di Darat', hint: 'Foto dengan kapal di pelabuhan Naha / es krim atau awamori pertama di Kokusai Street' },
+    'd2-night':    { dayLabel: 'Hari 2 · Berlayar → Naha', title: 'Malam Okinawa dari Bellissima', hint: 'Kehidupan malam izakaya Okinawa, pasar malam Naha, atau pemandangan pelabuhan dari dek' },
+    'd3-shopping': { dayLabel: 'Hari 3 · Keberangkatan Naha → Berlayar', title: 'Belanja Terakhir! Jelajah Terakhir Okinawa', hint: 'Belanja apotek & gula merah, atau seru-seruan di perosotan taman air Arizona' },
+    'd3-gala':     { dayLabel: 'Hari 3 · Keberangkatan Naha → Berlayar', title: 'Pesta Gemerlap! Tampil Terbaik Malam Ini', hint: 'Busana formal, foto bersama di atrium atau restoran utama' },
+    'd4-farewell': { dayLabel: 'Hari 4 · Kembali ke Keelung', title: 'Selamat Tinggal Bellissima! Kilas Balik Terakhir', hint: 'Foto favoritmu selama 4 hari, atau kumpulan oleh-oleh' },
+  },
+  th: {
+    'd1-depart':   { dayLabel: 'วันที่ 1 · ออกเดินทางจากจีหลง', title: 'ลาก่อนไต้หวัน! ปาร์ตี้ออกเรือบนดาดฟ้า', hint: 'ออกเรือ 17:30 น. — เก็บภาพประทับใจกับฉากหลังจีหลง' },
+    'd1-crystal':  { dayLabel: 'วันที่ 1 · ออกเดินทางจากจีหลง', title: 'ประกายแห่งความรุ่งโรจน์! บันไดคริสตัล/โชว์แสงเพดานครั้งแรก', hint: 'บันไดคริสตัล Swarovski ชั้น 6 / โชว์แสงเพดาน LED ที่ Galleria' },
+    'd2-morning':  { dayLabel: 'วันที่ 2 · ล่องทะเล → นาฮะ', title: 'แดดสวยกลางทะเล! ตามหามุมชิลที่สุดบนเรือ', hint: 'อาบแดดริมสระ ยิมวิวทะเล หรือมื้อเช้าบุฟเฟต์สุดหรู' },
+    'd2-naha':     { dayLabel: 'วันที่ 2 · ล่องทะเล → นาฮะ', title: 'โอกินาว่ามาแล้ว! ภาพแรกบนฝั่ง', hint: 'ถ่ายรูปกับเรือที่ท่านาฮะ / ไอศกรีมหรืออาวาโมริแก้วแรกที่ถนนโคคุไซ' },
+    'd2-night':    { dayLabel: 'วันที่ 2 · ล่องทะเล → นาฮะ', title: 'ค่ำคืนโอกินาว่าจาก Bellissima', hint: 'ชีวิตกลางคืนอิซากายะโอกินาว่า ตลาดกลางคืนนาฮะ หรือวิวท่าเรือยามค่ำจากดาดฟ้า' },
+    'd3-shopping': { dayLabel: 'วันที่ 3 · ออกจากนาฮะ → ล่องทะเล', title: 'ช้อปครั้งสุดท้าย! เที่ยวโอกินาว่าครั้งสุดท้าย', hint: 'ช้อปยาและน้ำตาลทรายแดง หรือสนุกกับสไลเดอร์สวนน้ำ Arizona' },
+    'd3-gala':     { dayLabel: 'วันที่ 3 · ออกจากนาฮะ → ล่องทะเล', title: 'ค่ำคืนแกลม! แต่งตัวสวยเด่นที่สุด', hint: 'ชุดทางการ ถ่ายรูปหมู่ที่ห้องโถงหรือห้องอาหารหลัก' },
+    'd4-farewell': { dayLabel: 'วันที่ 4 · กลับถึงจีหลง', title: 'ลาก่อน Bellissima! มองย้อนครั้งสุดท้ายก่อนลงเรือ', hint: 'ภาพโปรดตลอด 4 วัน หรือรวมของฝากทั้งหมด' },
+  },
+};
+
+/** 依語言取得大事件卡顯示文字；en/id/th 找不到時退回 TaskEvent 內建的中文欄位。 */
+export function eventText(event: TaskEvent, lang: string): EventText {
+  return EVENT_TEXT[lang]?.[event.id] ?? { dayLabel: event.dayLabel, title: event.title, hint: event.hint };
+}
 
 /** 依照片實際拍攝時間（本地牆鐘時間）比對任務時段；找不到回傳 null（B 軌）。 */
 export function classifyEvent(capturedAt: Date): TaskEvent | null {

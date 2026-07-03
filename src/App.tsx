@@ -409,7 +409,7 @@ export default function App() {
                     <motion.div key={activeTab + lang} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.22 }} className="space-y-4">
 
                         {activeTab === 'social' ? (
-                            <Timeline isOnline={isOnline} />
+                            <Timeline isOnline={isOnline} lang={lang} />
                         ) : activeTab === 'bingo' ? (
                             <BingoCard lang={lang} />
                         ) : activeTab === 'hacks' ? (

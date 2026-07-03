@@ -4,24 +4,109 @@ import { MapPin, Send, X, RefreshCw, Camera, Anchor } from 'lucide-react';
 import {
   addPost, subscribePosts, extractCapturedAt, honkPost,
   addComment, subscribeComments,
-  SHIP_LOCATIONS, SAILOR_AVATARS, DEFAULT_AVATAR, QUICK_TAGS,
+  SHIP_LOCATIONS_BY_LANG, SAILOR_AVATARS, DEFAULT_AVATAR, QUICK_TAGS_BY_LANG,
 } from './firebase';
 import type { Post, Comment } from './firebase';
-import { TASK_EVENTS, classifyEvent } from './taskSchedule';
+import { TASK_EVENTS, classifyEvent, eventText } from './taskSchedule';
 import type { TaskEvent } from './taskSchedule';
+import type { Lang } from './data';
+
+// ─── Timeline 全區塊 UI 文字（4 語言，找不到時退回中文） ───────────────────────
+const TIMELINE_TEXT: Record<Lang, {
+  writeButton: string; offline: string; syncing: string; synced: (time: string) => string;
+  emptyTitle: string; emptyDesc: string; loading: string;
+  commentsLabel: (n: number) => string; noComments: string; namePlaceholder: string;
+  confirm: string; commentPlaceholder: string; sailorAlt: string;
+  uploadToMoment: string; uploading: string; uploadError: string;
+  backToOverview: string; eventEmpty: string; cardEmpty: string; postDiaryTitle: (name: string) => string;
+  formTitle: string; chooseAvatar: string; yourName: string; locationPlaceholder: string;
+  messagePlaceholder: string; previewAlt: string; classifying: string;
+  classifiedEvent: (title: string) => string; classifiedGeneral: string; uploadPhoto: string;
+  errNoName: string; errNoContent: string; errSubmitFail: string; submitting: string; submitButton: string;
+  anonymous: string; keelung: string; naha: string; locale: string;
+}> = {
+  zh: {
+    writeButton: '寫一篇航海日誌', offline: '⚠️ 離線・顯示快取資料', syncing: '⟳ 同步中…',
+    synced: t => `✓ 最後更新 ${t}`,
+    emptyTitle: '航海日誌還是空的', emptyDesc: '成為第一個寫日誌的人吧！', loading: '載入航海日誌中…',
+    commentsLabel: n => `💬 留言${n > 0 ? `（${n}）` : ''}`, noComments: '還沒有留言，當第一個留言的人吧！',
+    namePlaceholder: '先取個名字才能留言…', confirm: '確定', commentPlaceholder: '留言…', sailorAlt: '水手人物',
+    uploadToMoment: '拍照 / 上傳照片到這個時刻', uploading: '上傳中…', uploadError: '上傳失敗，請確認網路連線',
+    backToOverview: '← 返回總覽', eventEmpty: '還沒有人上傳這個時刻的照片，快來搶頭香！', cardEmpty: '還沒人上傳，搶頭香！',
+    postDiaryTitle: name => `${name} 的航海日誌`,
+    formTitle: '✍️ 寫一篇航海日誌', chooseAvatar: '選一個水手人物', yourName: '你的名字',
+    locationPlaceholder: '📍 標記地點（選填）', messagePlaceholder: '說點什麼吧…（選填）', previewAlt: '預覽',
+    classifying: '判斷這張照片屬於哪個時刻…',
+    classifiedEvent: title => `🎉 這張會歸入大事件卡「${title}」`, classifiedGeneral: '🌊 這張會放進一般航海誌',
+    uploadPhoto: '上傳照片（選填）', errNoName: '請填寫你的名字', errNoContent: '請填寫訊息、選地點或上傳照片',
+    errSubmitFail: '發佈失敗，請確認網路連線', submitting: '發佈中…', submitButton: '寫入航海日誌',
+    anonymous: '匿名旅客', keelung: '⚓ 基隆', naha: '⛩️ 那霸', locale: 'zh-TW',
+  },
+  en: {
+    writeButton: 'Write a Time-Sail Entry', offline: '⚠️ Offline · Showing cached data', syncing: '⟳ Syncing…',
+    synced: t => `✓ Last updated ${t}`,
+    emptyTitle: 'The Time-Sail log is empty', emptyDesc: 'Be the first to write an entry!', loading: 'Loading Time-Sail…',
+    commentsLabel: n => `💬 Comments${n > 0 ? ` (${n})` : ''}`, noComments: 'No comments yet — be the first!',
+    namePlaceholder: 'Pick a name to comment…', confirm: 'OK', commentPlaceholder: 'Add a comment…', sailorAlt: 'Sailor avatar',
+    uploadToMoment: 'Take / Upload a Photo for This Moment', uploading: 'Uploading…', uploadError: 'Upload failed — please check your connection',
+    backToOverview: '← Back to overview', eventEmpty: 'No photos yet for this moment — be the first!', cardEmpty: 'No photos yet — be the first!',
+    postDiaryTitle: name => `${name}'s Time-Sail entry`,
+    formTitle: '✍️ Write a Time-Sail Entry', chooseAvatar: 'Pick a sailor avatar', yourName: 'Your name',
+    locationPlaceholder: '📍 Tag a location (optional)', messagePlaceholder: 'Say something… (optional)', previewAlt: 'Preview',
+    classifying: 'Figuring out which moment this belongs to…',
+    classifiedEvent: title => `🎉 This will be filed under "${title}"`, classifiedGeneral: '🌊 This will go into the general Time-Sail feed',
+    uploadPhoto: 'Upload a photo (optional)', errNoName: 'Please enter your name', errNoContent: 'Please add a message, location, or photo',
+    errSubmitFail: 'Failed to post — please check your connection', submitting: 'Posting…', submitButton: 'Post to Time-Sail',
+    anonymous: 'Anonymous Traveler', keelung: '⚓ Keelung', naha: '⛩️ Naha', locale: 'en-US',
+  },
+  id: {
+    writeButton: 'Tulis Catatan Pelayaran', offline: '⚠️ Offline · Menampilkan data tersimpan', syncing: '⟳ Menyinkronkan…',
+    synced: t => `✓ Terakhir diperbarui ${t}`,
+    emptyTitle: 'Catatan Pelayaran masih kosong', emptyDesc: 'Jadilah yang pertama menulis!', loading: 'Memuat Catatan Pelayaran…',
+    commentsLabel: n => `💬 Komentar${n > 0 ? ` (${n})` : ''}`, noComments: 'Belum ada komentar — jadilah yang pertama!',
+    namePlaceholder: 'Isi nama dulu untuk berkomentar…', confirm: 'OK', commentPlaceholder: 'Tulis komentar…', sailorAlt: 'Avatar pelaut',
+    uploadToMoment: 'Foto / Unggah Foto untuk Momen Ini', uploading: 'Mengunggah…', uploadError: 'Gagal mengunggah — periksa koneksi internet Anda',
+    backToOverview: '← Kembali ke ringkasan', eventEmpty: 'Belum ada foto untuk momen ini — jadilah yang pertama!', cardEmpty: 'Belum ada yang unggah — jadilah yang pertama!',
+    postDiaryTitle: name => `Catatan Pelayaran ${name}`,
+    formTitle: '✍️ Tulis Catatan Pelayaran', chooseAvatar: 'Pilih avatar pelaut', yourName: 'Nama Anda',
+    locationPlaceholder: '📍 Tandai lokasi (opsional)', messagePlaceholder: 'Tulis sesuatu… (opsional)', previewAlt: 'Pratinjau',
+    classifying: 'Mengecek momen mana foto ini termasuk…',
+    classifiedEvent: title => `🎉 Foto ini akan masuk ke kartu momen "${title}"`, classifiedGeneral: '🌊 Foto ini akan masuk ke feed umum',
+    uploadPhoto: 'Unggah foto (opsional)', errNoName: 'Mohon isi nama Anda', errNoContent: 'Mohon isi pesan, lokasi, atau unggah foto',
+    errSubmitFail: 'Gagal memposting — periksa koneksi internet Anda', submitting: 'Memposting…', submitButton: 'Posting ke Catatan Pelayaran',
+    anonymous: 'Wisatawan Anonim', keelung: '⚓ Keelung', naha: '⛩️ Naha', locale: 'id-ID',
+  },
+  th: {
+    writeButton: 'เขียนบันทึกการเดินเรือ', offline: '⚠️ ออฟไลน์ · แสดงข้อมูลที่บันทึกไว้', syncing: '⟳ กำลังซิงค์…',
+    synced: t => `✓ อัปเดตล่าสุด ${t}`,
+    emptyTitle: 'บันทึกการเดินเรือยังว่างอยู่', emptyDesc: 'เป็นคนแรกที่เขียนบันทึกสิ!', loading: 'กำลังโหลดบันทึกการเดินเรือ…',
+    commentsLabel: n => `💬 ความคิดเห็น${n > 0 ? `（${n}）` : ''}`, noComments: 'ยังไม่มีความคิดเห็น เป็นคนแรกเลยสิ!',
+    namePlaceholder: 'ตั้งชื่อก่อนถึงจะแสดงความคิดเห็นได้…', confirm: 'ตกลง', commentPlaceholder: 'แสดงความคิดเห็น…', sailorAlt: 'อวาตาร์กะลาสี',
+    uploadToMoment: 'ถ่ายภาพ / อัปโหลดภาพสำหรับช่วงเวลานี้', uploading: 'กำลังอัปโหลด…', uploadError: 'อัปโหลดไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต',
+    backToOverview: '← กลับไปหน้ารวม', eventEmpty: 'ยังไม่มีใครอัปโหลดภาพช่วงเวลานี้ มาเป็นคนแรกกันเถอะ!', cardEmpty: 'ยังไม่มีใครอัปโหลด มาเป็นคนแรกกันเถอะ!',
+    postDiaryTitle: name => `บันทึกการเดินเรือของ ${name}`,
+    formTitle: '✍️ เขียนบันทึกการเดินเรือ', chooseAvatar: 'เลือกอวาตาร์กะลาสี', yourName: 'ชื่อของคุณ',
+    locationPlaceholder: '📍 ระบุสถานที่ (ไม่บังคับ)', messagePlaceholder: 'พูดอะไรสักหน่อย… (ไม่บังคับ)', previewAlt: 'ตัวอย่าง',
+    classifying: 'กำลังตรวจสอบว่าภาพนี้อยู่ช่วงเวลาไหน…',
+    classifiedEvent: title => `🎉 ภาพนี้จะถูกจัดเข้าการ์ด "${title}"`, classifiedGeneral: '🌊 ภาพนี้จะไปอยู่ในฟีดทั่วไป',
+    uploadPhoto: 'อัปโหลดภาพ (ไม่บังคับ)', errNoName: 'กรุณากรอกชื่อของคุณ', errNoContent: 'กรุณากรอกข้อความ เลือกสถานที่ หรืออัปโหลดภาพ',
+    errSubmitFail: 'โพสต์ไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต', submitting: 'กำลังโพสต์…', submitButton: 'โพสต์ลงบันทึกการเดินเรือ',
+    anonymous: 'นักเดินทางนิรนาม', keelung: '⚓ จีหลง', naha: '⛩️ นาฮะ', locale: 'th-TH',
+  },
+};
 
 // ─── 小工具 ─────────────────────────────────────────────────────────────────
 function vibrate(ms = 12) {
   try { navigator.vibrate?.(ms); } catch { /* iOS 不支援，靜默略過 */ }
 }
 
-function fmtHM(post: Post): string {
+function fmtHM(post: Post, locale: string): string {
   if (post.capturedAt) {
     const d = new Date(post.capturedAt);
-    if (!isNaN(d.getTime())) return d.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
+    if (!isNaN(d.getTime())) return d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
   }
   if (post.timestamp?.seconds) {
-    return new Date(post.timestamp.seconds * 1000).toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
+    return new Date(post.timestamp.seconds * 1000).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
   }
   return '';
 }
@@ -103,7 +188,8 @@ function HornButton({ post, light }: { post: Post; light?: boolean }) {
   );
 }
 // ─── 💬 留言串 ───────────────────────────────────────────────────────────────
-function CommentThread({ postId }: { postId: string }) {
+function CommentThread({ postId, lang }: { postId: string; lang: Lang }) {
+  const t = TIMELINE_TEXT[lang];
   const [comments, setComments] = useState<Comment[]>([]);
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
@@ -117,7 +203,7 @@ function CommentThread({ postId }: { postId: string }) {
 
   const fmtCommentTime = (c: Comment) => {
     if (c.timestamp?.seconds) {
-      return new Date(c.timestamp.seconds * 1000).toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
+      return new Date(c.timestamp.seconds * 1000).toLocaleTimeString(t.locale, { hour: '2-digit', minute: '2-digit' });
     }
     return '';
   };
@@ -147,14 +233,14 @@ function CommentThread({ postId }: { postId: string }) {
   return (
     <div className="mt-4 pt-4 border-t border-slate-100">
       <p className="text-xs font-bold text-slate-400 mb-2">
-        💬 留言{comments.length > 0 ? `（${comments.length}）` : ''}
+        {t.commentsLabel(comments.length)}
       </p>
       <div className="space-y-2 mb-3 max-h-48 overflow-y-auto">
         {comments.length === 0 ? (
-          <p className="text-xs text-slate-300 text-center py-2">還沒有留言，當第一個留言的人吧！</p>
+          <p className="text-xs text-slate-300 text-center py-2">{t.noComments}</p>
         ) : comments.map(c => (
           <div key={c.id} className="flex items-start gap-2">
-            <span className="flex-shrink-0 mt-0.5"><Avatar id={c.authorEmoji} size={22} /></span>
+            <span className="flex-shrink-0 mt-0.5"><Avatar id={c.authorEmoji} size={22} lang={lang} /></span>
             <div className="min-w-0 flex-1 bg-slate-50 rounded-xl px-3 py-1.5">
               <div className="flex items-baseline gap-1.5">
                 <span className="text-xs font-bold text-[#002b5e]">{c.authorName}</span>
@@ -169,18 +255,18 @@ function CommentThread({ postId }: { postId: string }) {
         <div className="flex items-center gap-2">
           <input value={nameInput} onChange={e => setNameInput(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') saveName(); }}
-            placeholder="先取個名字才能留言…"
+            placeholder={t.namePlaceholder}
             className="flex-1 bg-slate-50 border border-slate-200 rounded-full px-3.5 py-2 text-xs text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-[#00a0e3]" />
           <button onClick={saveName} disabled={!nameInput.trim()}
             className="bg-[#002b5e] disabled:opacity-40 text-white text-xs font-bold rounded-full px-3.5 py-2 flex-shrink-0 transition-opacity">
-            確定
+            {t.confirm}
           </button>
         </div>
       ) : (
       <div className="flex items-center gap-2">
         <input value={text} onChange={e => setText(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter') send(); }}
-          placeholder="留言…"
+          placeholder={t.commentPlaceholder}
           className="flex-1 bg-slate-50 border border-slate-200 rounded-full px-3.5 py-2 text-xs text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-[#00a0e3]" />
         <button onClick={send} disabled={sending || !text.trim()}
           className="bg-[#002b5e] disabled:opacity-40 text-white rounded-full p-2 flex-shrink-0 transition-opacity">
@@ -193,10 +279,10 @@ function CommentThread({ postId }: { postId: string }) {
 }
 
 // ─── 水手頭像（新資料是圖片 id，舊資料可能還是實際 emoji 字元，兩種都要能顯示） ──
-function Avatar({ id, size = 32 }: { id?: string; size?: number }) {
+function Avatar({ id, size = 32, lang = 'zh' }: { id?: string; size?: number; lang?: Lang }) {
   if (id && /^sailor-\d+$/.test(id)) {
     return (
-      <img src={`/avatars/${id}.png`} alt="水手人物" loading="lazy"
+      <img src={`/avatars/${id}.png`} alt={TIMELINE_TEXT[lang].sailorAlt} loading="lazy"
         style={{ width: size, height: size }} className="rounded-full flex-shrink-0 object-cover" />
     );
   }
@@ -269,15 +355,16 @@ function buildSlots(posts: Post[]): Slot[] {
 }
 
 // ─── 航線圖 + 移動中的小船 ──────────────────────────────────────────────────
-function RouteStrip({ containerRef }: { containerRef: React.RefObject<HTMLDivElement> }) {
+function RouteStrip({ containerRef, lang }: { containerRef: React.RefObject<HTMLDivElement>; lang: Lang }) {
+  const t = TIMELINE_TEXT[lang];
   const { scrollXProgress } = useScroll({ container: containerRef });
   const smooth = useSpring(scrollXProgress, { stiffness: 120, damping: 22, mass: 0.3 });
   const left = useTransform(smooth, [0, 1], ['3%', '95%']);
   return (
     <div className="relative h-9 mb-2 px-1">
       <div className="absolute top-1/2 left-1 right-1 h-[2px] bg-white/40 -translate-y-1/2 rounded-full" />
-      <span className="absolute top-1/2 left-1 -translate-y-1/2 text-[10px] font-bold text-white/90 drop-shadow">⚓ 基隆</span>
-      <span className="absolute top-1/2 right-1 -translate-y-1/2 text-[10px] font-bold text-white/90 drop-shadow">⛩️ 那霸</span>
+      <span className="absolute top-1/2 left-1 -translate-y-1/2 text-[10px] font-bold text-white/90 drop-shadow">{t.keelung}</span>
+      <span className="absolute top-1/2 right-1 -translate-y-1/2 text-[10px] font-bold text-white/90 drop-shadow">{t.naha}</span>
       <motion.div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 text-lg drop-shadow" style={{ left }}>
         🚢
       </motion.div>
@@ -286,7 +373,9 @@ function RouteStrip({ containerRef }: { containerRef: React.RefObject<HTMLDivEle
 }
 
 // ─── 大事件卡（A 軌） ────────────────────────────────────────────────────────
-function EventCard({ event, posts, onOpen }: { event: TaskEvent; posts: Post[]; onOpen: () => void }) {
+function EventCard({ event, posts, onOpen, lang }: { event: TaskEvent; posts: Post[]; onOpen: () => void; lang: Lang }) {
+  const t = TIMELINE_TEXT[lang];
+  const et = eventText(event, lang);
   return (
     <motion.button
       whileTap={{ scale: 0.97 }}
@@ -314,11 +403,11 @@ function EventCard({ event, posts, onOpen }: { event: TaskEvent; posts: Post[]; 
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center text-white/90 px-4">
             <Camera className="w-7 h-7 mb-1.5 opacity-90" />
-            <p className="text-[11px] font-semibold opacity-90 text-center">還沒人上傳，搶頭香！</p>
+            <p className="text-[11px] font-semibold opacity-90 text-center">{t.cardEmpty}</p>
           </div>
         )}
         <div className="absolute top-2 left-2 bg-black/45 text-white text-[10px] font-bold px-2 py-1 rounded-full backdrop-blur">
-          {event.dayLabel}
+          {et.dayLabel}
         </div>
         {posts.length > 0 && (
           <div className="absolute bottom-2 right-2 bg-black/45 text-white text-[10px] font-bold px-2 py-1 rounded-full">
@@ -327,8 +416,8 @@ function EventCard({ event, posts, onOpen }: { event: TaskEvent; posts: Post[]; 
         )}
       </div>
       <div className="p-3.5">
-        <h3 className="font-bold text-[#002b5e] text-[14px] leading-snug">{event.title}</h3>
-        <p className="text-[11px] text-slate-500 mt-1 leading-snug">{event.hint}</p>
+        <h3 className="font-bold text-[#002b5e] text-[14px] leading-snug">{et.title}</h3>
+        <p className="text-[11px] text-slate-500 mt-1 leading-snug">{et.hint}</p>
         <p className="text-[10px] text-[#00a0e3] font-bold mt-2">
           {String(event.startHour).padStart(2, '0')}:{String(event.startMin).padStart(2, '0')}–{String(event.endHour).padStart(2, '0')}:{String(event.endMin).padStart(2, '0')}
         </p>
@@ -339,7 +428,8 @@ function EventCard({ event, posts, onOpen }: { event: TaskEvent; posts: Post[]; 
 
 // ─── 個人拍立得卡（B 軌） ────────────────────────────────────────────────────
 // ─── 個人拍立得卡（B 軌）點擊可放大看＋留言 ─────────────────────────────────
-function PostDetailModal({ post, onClose }: { post: Post; onClose: () => void }) {
+function PostDetailModal({ post, onClose, lang }: { post: Post; onClose: () => void; lang: Lang }) {
+  const t = TIMELINE_TEXT[lang];
   return (
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
@@ -353,8 +443,8 @@ function PostDetailModal({ post, onClose }: { post: Post; onClose: () => void })
       >
         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 flex-shrink-0">
           <div className="min-w-0">
-            <div className="text-[10px] font-bold text-[#00a0e3]">{fmtHM(post)}</div>
-            <h3 className="font-bold text-[#002b5e] text-[15px] truncate">{post.authorName} 的航海日誌</h3>
+            <div className="text-[10px] font-bold text-[#00a0e3]">{fmtHM(post, t.locale)}</div>
+            <h3 className="font-bold text-[#002b5e] text-[15px] truncate">{t.postDiaryTitle(post.authorName)}</h3>
           </div>
           <button onClick={onClose} className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex-shrink-0">
             <X className="w-4 h-4" />
@@ -364,11 +454,11 @@ function PostDetailModal({ post, onClose }: { post: Post; onClose: () => void })
         <div className="overflow-y-auto p-4">
           {post.photoURL
             ? <img src={post.photoURL} className="w-full rounded-2xl mb-3" alt="" />
-            : <div className="w-full h-40 bg-slate-50 rounded-2xl mb-3 flex items-center justify-center"><Avatar id={post.authorEmoji} size={64} /></div>
+            : <div className="w-full h-40 bg-slate-50 rounded-2xl mb-3 flex items-center justify-center"><Avatar id={post.authorEmoji} size={64} lang={lang} /></div>
           }
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 min-w-0">
-              <Avatar id={post.authorEmoji} size={28} />
+              <Avatar id={post.authorEmoji} size={28} lang={lang} />
               <div className="min-w-0">
                 <div className="text-sm font-bold text-[#002b5e]">{post.authorName}</div>
                 {post.location && <div className="text-xs text-[#00a0e3] truncate">{post.location}</div>}
@@ -377,14 +467,14 @@ function PostDetailModal({ post, onClose }: { post: Post; onClose: () => void })
             </div>
             <HornButton post={post} />
           </div>
-          {post.id && <CommentThread postId={post.id} />}
+          {post.id && <CommentThread postId={post.id} lang={lang} />}
         </div>
       </motion.div>
     </motion.div>
   );
 }
 
-function PolaroidCard({ post }: { post: Post }) {
+function PolaroidCard({ post, lang }: { post: Post; lang: Lang }) {
   const rotate = useMemo(() => stableRotate(post.id), [post.id]);
   const [open, setOpen] = useState(false);
   return (
@@ -395,9 +485,9 @@ function PolaroidCard({ post }: { post: Post }) {
       <div className="w-full h-[128px] bg-slate-100 rounded-sm overflow-hidden flex items-center justify-center">
         {post.photoURL
           ? <img src={post.photoURL} className="w-full h-full object-cover" loading="lazy" alt="" />
-          : <Avatar id={post.authorEmoji} size={40} />}
+          : <Avatar id={post.authorEmoji} size={40} lang={lang} />}
       </div>
-      <p className="text-[10px] text-slate-500 mt-1.5 text-center truncate">{post.authorName} · {fmtHM(post)}</p>
+      <p className="text-[10px] text-slate-500 mt-1.5 text-center truncate">{post.authorName} · {fmtHM(post, TIMELINE_TEXT[lang].locale)}</p>
       {post.location && (
         <p className="text-[9px] text-[#00a0e3] text-center truncate">{post.location}</p>
       )}
@@ -407,14 +497,14 @@ function PolaroidCard({ post }: { post: Post }) {
       </div>
       </motion.div>
       <AnimatePresence>
-        {open && <PostDetailModal post={post} onClose={() => setOpen(false)} />}
+        {open && <PostDetailModal post={post} onClose={() => setOpen(false)} lang={lang} />}
       </AnimatePresence>
     </>
   );
 }
 
 // ─── 散開拍立得：大事件卡展開瞬間，照片從中心「炸開」飛散到各自的位置 ───────────
-function ScatteredPolaroid({ post, index, count, onOpen }: { post: Post; index: number; count: number; onOpen: () => void }) {
+function ScatteredPolaroid({ post, index, count, onOpen, lang }: { post: Post; index: number; count: number; onOpen: () => void; lang: Lang }) {
   const { x, y, rotate } = useMemo(() => scatterOffset(post.id, index, count), [post.id, index, count]);
   return (
     <motion.button
@@ -431,14 +521,15 @@ function ScatteredPolaroid({ post, index, count, onOpen }: { post: Post; index: 
         <img src={post.photoURL} className="w-full h-full object-cover" loading="lazy" alt="" />
       </div>
       <p className="text-[8px] text-slate-500 mt-1 flex items-center justify-center gap-1 truncate">
-        <Avatar id={post.authorEmoji} size={12} /> {post.authorName}
+        <Avatar id={post.authorEmoji} size={12} lang={lang} /> {post.authorName}
       </p>
     </motion.button>
   );
 }
 
 // ─── 直接為這張大事件卡拍照／上傳照片，不用等 EXIF 時間自動判斷 ─────────────────
-function EventUploadButton({ eventId }: { eventId: string }) {
+function EventUploadButton({ eventId, lang }: { eventId: string; lang: Lang }) {
+  const t = TIMELINE_TEXT[lang];
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
@@ -449,12 +540,12 @@ function EventUploadButton({ eventId }: { eventId: string }) {
     if (!file) return;
     setUploading(true); setError('');
     try {
-      const authorName  = localStorage.getItem('msc-username') || '匿名旅客';
+      const authorName  = localStorage.getItem('msc-username') || t.anonymous;
       const authorEmoji = localStorage.getItem('msc-emoji')    || DEFAULT_AVATAR;
       await addPost({ authorName, authorEmoji, location: '', message: '' }, file, eventId);
       vibrate();
     } catch {
-      setError('上傳失敗，請確認網路連線');
+      setError(t.uploadError);
     } finally { setUploading(false); }
   };
 
@@ -463,17 +554,19 @@ function EventUploadButton({ eventId }: { eventId: string }) {
       <button onClick={() => fileRef.current?.click()} disabled={uploading}
         className="w-full py-3 rounded-xl border-2 border-dashed border-[#00a0e3]/40 text-[#00a0e3] text-sm font-bold flex items-center justify-center gap-2 hover:border-[#00a0e3] hover:bg-[#00a0e3]/5 transition-colors disabled:opacity-50">
         {uploading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
-        {uploading ? '上傳中…' : '拍照 / 上傳照片到這個時刻'}
+        {uploading ? t.uploading : t.uploadToMoment}
       </button>
       {error && <p className="text-red-500 text-xs font-medium mt-1.5 text-center">{error}</p>}
-      <input ref={fileRef} type="file" accept="image/*" capture="environment"
+      <input ref={fileRef} type="file" accept="image/*"
         className="hidden" onChange={pick} />
     </div>
   );
 }
 
 // ─── 大事件卡展開檢視（Module B：進場時照片從馬賽克拼圖「炸開」成散落拍立得） ──────
-function EventModal({ event, posts, onClose }: { event: TaskEvent; posts: Post[]; onClose: () => void }) {
+function EventModal({ event, posts, onClose, lang }: { event: TaskEvent; posts: Post[]; onClose: () => void; lang: Lang }) {
+  const t = TIMELINE_TEXT[lang];
+  const et = eventText(event, lang);
   const [big, setBig] = useState<Post | null>(null);
   return (
     <motion.div
@@ -488,8 +581,8 @@ function EventModal({ event, posts, onClose }: { event: TaskEvent; posts: Post[]
       >
         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 flex-shrink-0">
           <div className="min-w-0">
-            <div className="text-[10px] font-bold text-[#00a0e3]">{event.dayLabel}</div>
-            <h3 className="font-bold text-[#002b5e] text-[15px] truncate">{event.title}</h3>
+            <div className="text-[10px] font-bold text-[#00a0e3]">{et.dayLabel}</div>
+            <h3 className="font-bold text-[#002b5e] text-[15px] truncate">{et.title}</h3>
           </div>
           <button onClick={onClose} className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex-shrink-0">
             <X className="w-4 h-4" />
@@ -497,14 +590,14 @@ function EventModal({ event, posts, onClose }: { event: TaskEvent; posts: Post[]
         </div>
 
         <div className="overflow-y-auto p-4">
-          {!big && <EventUploadButton eventId={event.id} />}
+          {!big && <EventUploadButton eventId={event.id} lang={lang} />}
           {big ? (
             <div>
-              <button onClick={() => setBig(null)} className="text-xs text-[#00a0e3] font-semibold mb-2">← 返回總覽</button>
+              <button onClick={() => setBig(null)} className="text-xs text-[#00a0e3] font-semibold mb-2">{t.backToOverview}</button>
               <img src={big.photoURL} className="w-full rounded-2xl mb-3" alt="" />
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2 min-w-0">
-                  <Avatar id={big.authorEmoji} size={28} />
+                  <Avatar id={big.authorEmoji} size={28} lang={lang} />
                   <div className="min-w-0">
                     <div className="text-sm font-bold text-[#002b5e]">{big.authorName}</div>
                     {big.message && <div className="text-xs text-slate-500 truncate">{big.message}</div>}
@@ -512,18 +605,18 @@ function EventModal({ event, posts, onClose }: { event: TaskEvent; posts: Post[]
                 </div>
                 <HornButton post={big} />
               </div>
-              {big.id && <CommentThread postId={big.id} />}
+              {big.id && <CommentThread postId={big.id} lang={lang} />}
             </div>
           ) : posts.length === 0 ? (
             <div className="text-center py-10 text-slate-400 text-sm">
               <Camera className="w-8 h-8 mx-auto mb-2 opacity-50" />
-              還沒有人上傳這個時刻的照片，快來搶頭香！
+              {t.eventEmpty}
             </div>
           ) : (
             <div className="relative mx-auto" style={{ width: STAGE_W, height: STAGE_H }}>
               {posts.map((p, i) => (
                 <div key={p.id}>
-                  <ScatteredPolaroid post={p} index={i} count={posts.length} onOpen={() => setBig(p)} />
+                  <ScatteredPolaroid post={p} index={i} count={posts.length} onOpen={() => setBig(p)} lang={lang} />
                 </div>
               ))}
             </div>
@@ -535,7 +628,10 @@ function EventModal({ event, posts, onClose }: { event: TaskEvent; posts: Post[]
 }
 
 // ─── 發文表單（水手人物 + 地點 + 快捷標籤 + EXIF 分類預覽） ───────────────────
-function PostForm({ onClose }: { onClose: () => void }) {
+function PostForm({ onClose, lang }: { onClose: () => void; lang: Lang }) {
+  const t = TIMELINE_TEXT[lang];
+  const locations = SHIP_LOCATIONS_BY_LANG[lang] || SHIP_LOCATIONS_BY_LANG.zh;
+  const quickTags = QUICK_TAGS_BY_LANG[lang] || QUICK_TAGS_BY_LANG.zh;
   const [name,     setName]    = useState(() => localStorage.getItem('msc-username') || '');
   const [emoji,    setEmoji]   = useState(() => localStorage.getItem('msc-emoji')    || DEFAULT_AVATAR);
   const [location, setLocation]= useState('');
@@ -555,18 +651,18 @@ function PostForm({ onClose }: { onClose: () => void }) {
     reader.onload = (ev) => setPreview(ev.target?.result as string);
     reader.readAsDataURL(file);
 
-    setClassifyLabel('判斷這張照片屬於哪個時刻…');
+    setClassifyLabel(t.classifying);
     extractCapturedAt(file).then(capturedAt => {
       const ev2 = classifyEvent(capturedAt);
-      setClassifyLabel(ev2 ? `🎉 這張會歸入大事件卡「${ev2.title}」` : '🌊 這張會放進一般航海誌');
+      setClassifyLabel(ev2 ? t.classifiedEvent(eventText(ev2, lang).title) : t.classifiedGeneral);
     }).catch(() => setClassifyLabel(null));
   };
 
   const addTag = (tag: string) => setMessage(m => (m.includes(tag) ? m : `${m ? m + ' ' : ''}${tag}`));
 
   const submit = async () => {
-    if (!name.trim()) { setError('請填寫你的名字'); return; }
-    if (!message.trim() && !photo && !location) { setError('請填寫訊息、選地點或上傳照片'); return; }
+    if (!name.trim()) { setError(t.errNoName); return; }
+    if (!message.trim() && !photo && !location) { setError(t.errNoContent); return; }
     setLoading(true); setError('');
     try {
       localStorage.setItem('msc-username', name.trim());
@@ -577,7 +673,7 @@ function PostForm({ onClose }: { onClose: () => void }) {
       );
       onClose();
     } catch {
-      setError('發佈失敗，請確認網路連線');
+      setError(t.errSubmitFail);
     } finally { setLoading(false); }
   };
 
@@ -587,7 +683,7 @@ function PostForm({ onClose }: { onClose: () => void }) {
       className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden mb-4"
     >
       <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
-        <h3 className="font-bold text-[#002b5e] text-[15px]">✍️ 寫一篇航海日誌</h3>
+        <h3 className="font-bold text-[#002b5e] text-[15px]">{t.formTitle}</h3>
         <button onClick={onClose} className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors">
           <X className="w-4 h-4" />
         </button>
@@ -596,11 +692,11 @@ function PostForm({ onClose }: { onClose: () => void }) {
       <div className="px-5 py-4 space-y-3">
         {/* 水手人物 + 姓名 */}
         <div>
-          <p className="text-[10px] text-slate-400 mb-1.5 ml-0.5">選一個水手人物</p>
+          <p className="text-[10px] text-slate-400 mb-1.5 ml-0.5">{t.chooseAvatar}</p>
           <div className="flex items-center gap-3 mb-2">
-            <Avatar id={emoji} size={44} />
+            <Avatar id={emoji} size={44} lang={lang} />
             <input value={name} onChange={e => setName(e.target.value)}
-              placeholder="你的名字"
+              placeholder={t.yourName}
               className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-[#00a0e3]" />
           </div>
           <div className="flex gap-2 overflow-x-auto pb-1 [&::-webkit-scrollbar]:hidden">
@@ -610,7 +706,7 @@ function PostForm({ onClose }: { onClose: () => void }) {
                 className={`flex-shrink-0 rounded-full p-0.5 transition-all ${
                   emoji === a.id ? 'ring-2 ring-[#00a0e3]' : 'ring-1 ring-transparent'
                 }`}>
-                <Avatar id={a.id} size={40} />
+                <Avatar id={a.id} size={40} lang={lang} />
               </button>
             ))}
           </div>
@@ -621,14 +717,14 @@ function PostForm({ onClose }: { onClose: () => void }) {
           <MapPin className="w-4 h-4 text-[#00a0e3] flex-shrink-0" />
           <select value={location} onChange={e => setLocation(e.target.value)}
             className="flex-1 bg-transparent py-2.5 text-sm text-slate-600 border-none focus:outline-none cursor-pointer">
-            <option value="">📍 標記地點（選填）</option>
-            {SHIP_LOCATIONS.map(l => <option key={l} value={l}>{l}</option>)}
+            <option value="">{t.locationPlaceholder}</option>
+            {locations.map(l => <option key={l} value={l}>{l}</option>)}
           </select>
         </div>
 
         {/* 快捷標籤 */}
         <div className="flex flex-wrap gap-1.5">
-          {QUICK_TAGS.map(tag => (
+          {quickTags.map(tag => (
             <button key={tag} type="button" onClick={() => addTag(tag)}
               className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 hover:bg-[#00a0e3]/10 hover:text-[#00a0e3] transition-colors">
               {tag}
@@ -638,14 +734,14 @@ function PostForm({ onClose }: { onClose: () => void }) {
 
         {/* 訊息 */}
         <textarea value={message} onChange={e => setMessage(e.target.value)}
-          placeholder="說點什麼吧…（選填）" rows={3}
+          placeholder={t.messagePlaceholder} rows={3}
           className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-700 placeholder:text-slate-400 resize-none focus:outline-none focus:border-[#00a0e3]" />
 
         {/* 照片 */}
         {preview ? (
           <div>
             <div className="relative rounded-xl overflow-hidden">
-              <img src={preview} className="w-full max-h-56 object-cover" alt="預覽" />
+              <img src={preview} className="w-full max-h-56 object-cover" alt={t.previewAlt} />
               <button onClick={() => { setPhoto(null); setPreview(''); setClassifyLabel(null); }}
                 className="absolute top-2 right-2 bg-black/50 text-white rounded-full p-1.5 hover:bg-black/70 transition-colors">
                 <X className="w-3.5 h-3.5" />
@@ -657,7 +753,7 @@ function PostForm({ onClose }: { onClose: () => void }) {
           <button onClick={() => fileRef.current?.click()}
             className="w-full py-3 rounded-xl border-2 border-dashed border-slate-200 text-slate-400 text-sm font-medium flex items-center justify-center gap-2 hover:border-[#00a0e3] hover:text-[#00a0e3] transition-colors">
             <Camera className="w-4 h-4" />
-            上傳照片（選填）
+            {t.uploadPhoto}
           </button>
         )}
         <input ref={fileRef} type="file" accept="image/*"
@@ -668,7 +764,7 @@ function PostForm({ onClose }: { onClose: () => void }) {
         <button onClick={submit} disabled={loading}
           className="w-full bg-[#002b5e] hover:bg-[#003a7a] disabled:opacity-50 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all">
           {loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-          {loading ? '發佈中…' : '寫入航海日誌'}
+          {loading ? t.submitting : t.submitButton}
         </button>
       </div>
     </motion.div>
@@ -676,7 +772,8 @@ function PostForm({ onClose }: { onClose: () => void }) {
 }
 
 // ─── 航海日誌主元件（橫向時間軸） ───────────────────────────────────────────
-export function Timeline({ isOnline }: { isOnline: boolean }) {
+export function Timeline({ isOnline, lang }: { isOnline: boolean; lang: Lang }) {
+  const t = TIMELINE_TEXT[lang];
   const [posts,    setPosts]    = useState<Post[]>([]);
   const [lastSync, setLastSync] = useState<Date | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -741,10 +838,10 @@ export function Timeline({ isOnline }: { isOnline: boolean }) {
     : undefined;
 
   const syncLabel = () => {
-    if (!isOnline) return '⚠️ 離線・顯示快取資料';
-    if (syncing)   return '⟳ 同步中…';
+    if (!isOnline) return t.offline;
+    if (syncing)   return t.syncing;
     if (!lastSync) return '';
-    return `✓ 最後更新 ${lastSync.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })}`;
+    return t.synced(lastSync.toLocaleTimeString(t.locale, { hour: '2-digit', minute: '2-digit' }));
   };
 
   return (
@@ -754,7 +851,7 @@ export function Timeline({ isOnline }: { isOnline: boolean }) {
         <button onClick={() => setShowForm(v => !v)}
           className="flex items-center gap-2 bg-[#002b5e] hover:bg-[#003a7a] text-white font-bold px-4 py-2.5 rounded-xl text-sm transition-all shadow-sm">
           <Anchor className="w-4 h-4" />
-          寫一篇航海日誌
+          {t.writeButton}
         </button>
         <span className={`text-[11px] font-medium px-3 py-1.5 rounded-full ${
           !isOnline ? 'bg-amber-100 text-amber-700' :
@@ -763,7 +860,7 @@ export function Timeline({ isOnline }: { isOnline: boolean }) {
       </div>
 
       <AnimatePresence>
-        {showForm && <PostForm onClose={() => setShowForm(false)} />}
+        {showForm && <PostForm onClose={() => setShowForm(false)} lang={lang} />}
       </AnimatePresence>
 
       {/* 橫向轉舵時間軸 */}
@@ -783,13 +880,13 @@ export function Timeline({ isOnline }: { isOnline: boolean }) {
           }}
         />
 
-        <RouteStrip containerRef={scrollRef} />
+        <RouteStrip containerRef={scrollRef} lang={lang} />
 
         {posts.length === 0 && !syncing ? (
           <div className="text-center py-14 text-slate-500 relative">
             <div className="text-4xl mb-3">🚢</div>
-            <p className="text-sm font-medium">航海日誌還是空的</p>
-            <p className="text-xs mt-1 opacity-70">成為第一個寫日誌的人吧！</p>
+            <p className="text-sm font-medium">{t.emptyTitle}</p>
+            <p className="text-xs mt-1 opacity-70">{t.emptyDesc}</p>
           </div>
         ) : (
           <div
@@ -808,8 +905,8 @@ export function Timeline({ isOnline }: { isOnline: boolean }) {
                   className={`snap-center shrink-0 ${slot.type === 'event' ? 'w-[76vw] max-w-[300px]' : 'w-[128px]'}`}
                 >
                   {slot.type === 'event'
-                    ? <EventCard event={slot.event} posts={slot.posts} onOpen={() => setOpenEvent(slot.event)} />
-                    : <PolaroidCard post={slot.post} />}
+                    ? <EventCard event={slot.event} posts={slot.posts} onOpen={() => setOpenEvent(slot.event)} lang={lang} />
+                    : <PolaroidCard post={slot.post} lang={lang} />}
                 </div>
               );
             })}
@@ -820,7 +917,7 @@ export function Timeline({ isOnline }: { isOnline: boolean }) {
         {syncing && posts.length === 0 && (
           <div className="text-center py-10 text-slate-400 text-sm relative">
             <RefreshCw className="w-5 h-5 animate-spin mx-auto mb-2" />
-            載入航海日誌中…
+            {t.loading}
           </div>
         )}
       </div>
@@ -831,6 +928,7 @@ export function Timeline({ isOnline }: { isOnline: boolean }) {
             event={openEvent}
             posts={openSlot?.posts ?? []}
             onClose={() => setOpenEvent(null)}
+            lang={lang}
           />
         )}
       </AnimatePresence>

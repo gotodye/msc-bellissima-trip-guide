@@ -46,15 +46,39 @@ export interface Post {
   hornCount?:   number;      // ⚓ 鳴笛數
 }
 
-// 對應規格書「時空錨點」快速勾選位置
-export const SHIP_LOCATIONS = [
-  '11F 中央泳池 🌊', '6F 施華洛世奇水晶中庭 💎', '星空劇院 🎭',
-  '主餐廳 🍽️', '5F 免稅店 🛍️', '7F 老船長酒吧 🍺',
-  '甲板觀景台 🌅', '那霸國際通 🇯🇵', '波上宮神社 ⛩️',
-];
+// 對應規格書「時空錨點」快速勾選位置（4 語言，找不到時退回中文）
+export const SHIP_LOCATIONS_BY_LANG: Record<string, string[]> = {
+  zh: [
+    '11F 中央泳池 🌊', '6F 施華洛世奇水晶中庭 💎', '星空劇院 🎭',
+    '主餐廳 🍽️', '5F 免稅店 🛍️', '7F 老船長酒吧 🍺',
+    '甲板觀景台 🌅', '那霸國際通 🇯🇵', '波上宮神社 ⛩️',
+  ],
+  en: [
+    '11F Main Pool 🌊', '6F Swarovski Atrium 💎', 'Theater 🎭',
+    'Main Dining Room 🍽️', '5F Duty Free 🛍️', '7F Captain\'s Bar 🍺',
+    'Deck Observation Point 🌅', 'Naha Kokusai Street 🇯🇵', 'Naminoue Shrine ⛩️',
+  ],
+  id: [
+    'Kolam Utama Lt.11 🌊', 'Atrium Kristal Swarovski Lt.6 💎', 'Teater 🎭',
+    'Restoran Utama 🍽️', 'Duty Free Lt.5 🛍️', 'Captain\'s Bar Lt.7 🍺',
+    'Titik Pandang Dek 🌅', 'Kokusai Street Naha 🇯🇵', 'Kuil Naminoue ⛩️',
+  ],
+  th: [
+    'สระว่ายน้ำหลัก ชั้น 11 🌊', 'ห้องโถงคริสตัล Swarovski ชั้น 6 💎', 'โรงละคร 🎭',
+    'ห้องอาหารหลัก 🍽️', 'ดิวตี้ฟรี ชั้น 5 🛍️', 'บาร์กัปตัน ชั้น 7 🍺',
+    'จุดชมวิวดาดฟ้า 🌅', 'ถนนโคคุไซ นาฮะ 🇯🇵', 'ศาลเจ้านามิโนะอุเอะ ⛩️',
+  ],
+};
+export const SHIP_LOCATIONS = SHIP_LOCATIONS_BY_LANG.zh;
 
-// 快捷心情／活動 Hashtag
-export const QUICK_TAGS = ['#微醺時刻', '#日出大景', '#美食爭霸', '#戰利品', '#盛裝登場'];
+// 快捷心情／活動 Hashtag（4 語言，找不到時退回中文）
+export const QUICK_TAGS_BY_LANG: Record<string, string[]> = {
+  zh: ['#微醺時刻', '#日出大景', '#美食爭霸', '#戰利品', '#盛裝登場'],
+  en: ['#TipsyMoment', '#SunriseView', '#FoodBattle', '#Souvenirs', '#AllDressedUp'],
+  id: ['#MabukRingan', '#PemandanganMatahariTerbit', '#PerangKuliner', '#OlehOleh', '#TampilMewah'],
+  th: ['#ยามเมามาย', '#วิวพระอาทิตย์ขึ้น', '#สงครามอาหาร', '#ของฝาก', '#แต่งตัวจัดเต็ม'],
+};
+export const QUICK_TAGS = QUICK_TAGS_BY_LANG.zh;
 
 // 10 個手繪水手頭像（圖片存在 public/avatars/），authorEmoji 欄位存放頭像 id（如 'sailor-1'）
 // 舊資料若還是存實際 emoji 字元，畫面端會自動判斷並直接顯示文字，不會壞掉
