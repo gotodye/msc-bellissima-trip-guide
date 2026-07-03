@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Camera, RotateCcw, Trophy, X, AlertCircle } from 'lucide-react';
 import { storage } from './firebase';
@@ -176,6 +176,28 @@ function getBingos(checked: Set<string>, items: { id: string }[]): number[][] {
   return LINES.filter(line => line.every(i => checked.has(items[i]?.id)));
 }
 
+// ─── 進度存到 localStorage，避免切分頁或重新整理後打勾跟照片就不見 ──────────────
+const STORAGE_KEY = 'msc-bingo-progress-v2';
+
+function loadProgress(): { checked: Record<string, string[]>; photos: Record<string, string> } {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      return { checked: parsed.checked ?? {}, photos: parsed.photos ?? {} };
+    }
+  } catch { /* ignore corrupt/missing storage */ }
+  return { checked: {}, photos: {} };
+}
+
+function saveProgress(checked: Record<string, Set<string>>, photos: Record<string, string>) {
+  try {
+    const checkedArr: Record<string, string[]> = {};
+    Object.entries(checked).forEach(([k, v]) => { checkedArr[k] = Array.from(v); });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ checked: checkedArr, photos }));
+  } catch { /* storage full or unavailable — progress just won't persist this session */ }
+}
+
 interface Props { lang: string; }
 
 export function BingoCard({ lang }: Props) {
@@ -183,13 +205,23 @@ export function BingoCard({ lang }: Props) {
   const t = UI_TEXT[lang] || UI_TEXT.zh;
 
   const [cardIdx, setCardIdx] = useState(0);
-  const [checked, setChecked] = useState<Record<string, Set<string>>>({});
-  const [photos, setPhotos] = useState<Record<string, string>>({});
+  const [checked, setChecked] = useState<Record<string, Set<string>>>(() => {
+    const saved = loadProgress();
+    const result: Record<string, Set<string>> = {};
+    Object.entries(saved.checked).forEach(([k, v]) => { result[k] = new Set(v); });
+    return result;
+  });
+  const [photos, setPhotos] = useState<Record<string, string>>(() => loadProgress().photos);
   const [uploading, setUploading] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const uploadTarget = useRef('');
+
+  // 每次打勾或上傳照片的狀態變動，就存進 localStorage，切分頁或重新整理都不會不見
+  useEffect(() => {
+    saveProgress(checked, photos);
+  }, [checked, photos]);
 
   const card = CARDS[Math.min(cardIdx, CARDS.length - 1)];
   const myChecked = checked[card.id] ?? new Set<string>();

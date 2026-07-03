@@ -56,7 +56,22 @@ export const SHIP_LOCATIONS = [
 // 快捷心情／活動 Hashtag
 export const QUICK_TAGS = ['#微醺時刻', '#日出大景', '#美食爭霸', '#戰利品', '#盛裝登場'];
 
-export const AUTHOR_EMOJIS = ['😊','🎉','🌊','🍕','😎','🏄','✨','🥂','📸','🌺','🦞','💎'];
+// 10 個手繪水手頭像（圖片存在 public/avatars/），authorEmoji 欄位存放頭像 id（如 'sailor-1'）
+// 舊資料若還是存實際 emoji 字元，畫面端會自動判斷並直接顯示文字，不會壞掉
+export interface SailorAvatar { id: string; label: string; }
+export const SAILOR_AVATARS: SailorAvatar[] = [
+  { id: 'sailor-1',  label: '揮手男孩' },
+  { id: 'sailor-2',  label: '敬禮女孩' },
+  { id: 'sailor-3',  label: '海鷗小水手' },
+  { id: 'sailor-4',  label: '船錨船長' },
+  { id: 'sailor-5',  label: '眨眼女孩' },
+  { id: 'sailor-6',  label: '救生圈男孩' },
+  { id: 'sailor-7',  label: '望遠鏡水手' },
+  { id: 'sailor-8',  label: '比讚女孩' },
+  { id: 'sailor-9',  label: '敬禮男孩' },
+  { id: 'sailor-10', label: '指南針水手' },
+];
+export const DEFAULT_AVATAR = SAILOR_AVATARS[0].id;
 
 // 壓縮圖片（上傳前強制降至寬度 ≤1080px、檔案 ≤500KB，供多人同時連線防呆）
 const MAX_DIM = 1080;
@@ -153,5 +168,39 @@ export function subscribePosts(cb: (posts: Post[], lastSync: Date) => void): () 
   const q = query(collection(db, 'posts'), orderBy('timestamp', 'desc'), limit(80));
   return onSnapshot(q, snap => {
     cb(snap.docs.map(d => ({ id: d.id, ...d.data() } as Post)), new Date());
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 留言功能：每篇貼文底下掛一個 comments 子集合
+// posts/{postId}/comments/{commentId}
+// ─────────────────────────────────────────────────────────────────────────────
+export interface Comment {
+  id?:         string;
+  authorName:  string;
+  authorEmoji: string;
+  text:        string;
+  timestamp:   any; // Firestore serverTimestamp
+}
+
+// 新增一則留言
+export async function addComment(
+  postId: string,
+  comment: Omit<Comment, 'id' | 'timestamp'>,
+): Promise<void> {
+  await addDoc(collection(db, 'posts', postId, 'comments'), {
+    ...comment,
+    timestamp: serverTimestamp(),
+  });
+}
+
+// 即時訂閱某篇貼文的留言（依時間正序，最舊的在最上面）
+export function subscribeComments(
+  postId: string,
+  cb: (comments: Comment[]) => void,
+): () => void {
+  const q = query(collection(db, 'posts', postId, 'comments'), orderBy('timestamp', 'asc'));
+  return onSnapshot(q, snap => {
+    cb(snap.docs.map(d => ({ id: d.id, ...d.data() } as Comment)));
   });
 }

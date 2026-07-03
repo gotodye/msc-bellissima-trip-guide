@@ -2,10 +2,11 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'motion/react';
 import { MapPin, Send, X, RefreshCw, Camera, Anchor } from 'lucide-react';
 import {
-  addPost, subscribePosts, extractCapturedAt,
-  SHIP_LOCATIONS, AUTHOR_EMOJIS, QUICK_TAGS,
+  addPost, subscribePosts, extractCapturedAt, honkPost,
+  addComment, subscribeComments,
+  SHIP_LOCATIONS, SAILOR_AVATARS, DEFAULT_AVATAR, QUICK_TAGS,
 } from './firebase';
-import type { Post } from './firebase';
+import type { Post, Comment } from './firebase';
 import { TASK_EVENTS, classifyEvent } from './taskSchedule';
 import type { TaskEvent } from './taskSchedule';
 
@@ -51,6 +52,134 @@ function stableRotate(id: string | undefined): number {
   let h = 0;
   for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) % 997;
   return (h % 7) - 3; // -3° ~ 3°
+}
+
+// 用 Web Audio 合成鳴笛聲，不需要額外音效素材
+function playHornSound() {
+  try {
+    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+    const ctx = new AudioCtx();
+    const now = ctx.currentTime;
+    [180, 220].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(freq, now);
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.15, now + 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(now + i * 0.05);
+      osc.stop(now + 0.45);
+    });
+  } catch { /* Web Audio 不可用時靜默略過 */ }
+}
+
+// ─── ⚓ 鳴笛按鈕（取代讚） ────────────────────────────────────────────────────
+function HornButton({ post, light }: { post: Post; light?: boolean }) {
+  const [firing, setFiring] = useState(false);
+
+  const honk = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!post.id) return;
+    setFiring(true);
+    playHornSound();
+    vibrate(15);
+    setTimeout(() => setFiring(false), 350);
+    honkPost(post.id).catch(() => { /* 鳴笛失敗不打斷體驗，安靜略過 */ });
+  };
+
+  return (
+    <button onClick={honk}
+      className={`flex items-center gap-1 text-[10px] font-bold active:scale-90 transition-transform ${
+        light ? 'text-white' : 'text-[#00a0e3]'
+      }`}>
+      <motion.span
+        animate={firing ? { scale: [1, 1.35, 1], rotate: [0, -10, 10, 0] } : {}}
+        transition={{ duration: 0.35 }}
+        className="text-xs">⚓</motion.span>
+      {post.hornCount ?? 0}
+    </button>
+  );
+}
+// ─── 💬 留言串 ───────────────────────────────────────────────────────────────
+function CommentThread({ postId }: { postId: string }) {
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [text, setText] = useState('');
+  const [sending, setSending] = useState(false);
+
+  useEffect(() => {
+    const unsub = subscribeComments(postId, setComments);
+    return unsub;
+  }, [postId]);
+
+  const fmtCommentTime = (c: Comment) => {
+    if (c.timestamp?.seconds) {
+      return new Date(c.timestamp.seconds * 1000).toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
+    }
+    return '';
+  };
+
+  const send = async () => {
+    const value = text.trim();
+    if (!value || sending) return;
+    const authorName = localStorage.getItem('msc-username') || '匿名旅客';
+    const authorEmoji = localStorage.getItem('msc-emoji') || DEFAULT_AVATAR;
+    setSending(true);
+    setText('');
+    try {
+      await addComment(postId, { authorName, authorEmoji, text: value });
+    } catch {
+      setText(value); // 送出失敗把文字還給使用者，不用重打
+    }
+    setSending(false);
+  };
+
+  return (
+    <div className="mt-4 pt-4 border-t border-slate-100">
+      <p className="text-xs font-bold text-slate-400 mb-2">
+        💬 留言{comments.length > 0 ? `（${comments.length}）` : ''}
+      </p>
+      <div className="space-y-2 mb-3 max-h-48 overflow-y-auto">
+        {comments.length === 0 ? (
+          <p className="text-xs text-slate-300 text-center py-2">還沒有留言，當第一個留言的人吧！</p>
+        ) : comments.map(c => (
+          <div key={c.id} className="flex items-start gap-2">
+            <span className="flex-shrink-0 mt-0.5"><Avatar id={c.authorEmoji} size={22} /></span>
+            <div className="min-w-0 flex-1 bg-slate-50 rounded-xl px-3 py-1.5">
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-xs font-bold text-[#002b5e]">{c.authorName}</span>
+                <span className="text-[9px] text-slate-400">{fmtCommentTime(c)}</span>
+              </div>
+              <p className="text-xs text-slate-600 break-words">{c.text}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="flex items-center gap-2">
+        <input value={text} onChange={e => setText(e.target.value)}
+          onKeyDown={e => { if (e.key === 'Enter') send(); }}
+          placeholder="留言…"
+          className="flex-1 bg-slate-50 border border-slate-200 rounded-full px-3.5 py-2 text-xs text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-[#00a0e3]" />
+        <button onClick={send} disabled={sending || !text.trim()}
+          className="bg-[#002b5e] disabled:opacity-40 text-white rounded-full p-2 flex-shrink-0 transition-opacity">
+          <Send className="w-3.5 h-3.5" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── 水手頭像（新資料是圖片 id，舊資料可能還是實際 emoji 字元，兩種都要能顯示） ──
+function Avatar({ id, size = 32 }: { id?: string; size?: number }) {
+  if (id && /^sailor-\d+$/.test(id)) {
+    return (
+      <img src={`/avatars/${id}.png`} alt="水手人物" loading="lazy"
+        style={{ width: size, height: size }} className="rounded-full flex-shrink-0 object-cover" />
+    );
+  }
+  // 舊資料相容：直接顯示原本存的 emoji 文字
+  return <span style={{ fontSize: size * 0.7, lineHeight: 1 }}>{id || '😊'}</span>;
 }
 
 // 依 id + salt 產生穩定的 0~1 亂數（同一張照片每次 render 結果一致）
@@ -187,22 +316,78 @@ function EventCard({ event, posts, onOpen }: { event: TaskEvent; posts: Post[]; 
 }
 
 // ─── 個人拍立得卡（B 軌） ────────────────────────────────────────────────────
+// ─── 個人拍立得卡（B 軌）點擊可放大看＋留言 ─────────────────────────────────
+function PostDetailModal({ post, onClose }: { post: Post; onClose: () => void }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-3"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 30, opacity: 0 }}
+        onClick={e => e.stopPropagation()}
+        className="bg-white rounded-3xl w-full max-w-lg max-h-[85vh] overflow-hidden flex flex-col"
+      >
+        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 flex-shrink-0">
+          <div className="min-w-0">
+            <div className="text-[10px] font-bold text-[#00a0e3]">{fmtHM(post)}</div>
+            <h3 className="font-bold text-[#002b5e] text-[15px] truncate">{post.authorName} 的航海日誌</h3>
+          </div>
+          <button onClick={onClose} className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex-shrink-0">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        <div className="overflow-y-auto p-4">
+          {post.photoURL
+            ? <img src={post.photoURL} className="w-full rounded-2xl mb-3" alt="" />
+            : <div className="w-full h-40 bg-slate-50 rounded-2xl mb-3 flex items-center justify-center"><Avatar id={post.authorEmoji} size={64} /></div>
+          }
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <Avatar id={post.authorEmoji} size={28} />
+              <div className="min-w-0">
+                <div className="text-sm font-bold text-[#002b5e]">{post.authorName}</div>
+                {post.location && <div className="text-xs text-[#00a0e3] truncate">{post.location}</div>}
+                {post.message && <div className="text-xs text-slate-500 truncate">{post.message}</div>}
+              </div>
+            </div>
+            <HornButton post={post} />
+          </div>
+          {post.id && <CommentThread postId={post.id} />}
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 function PolaroidCard({ post }: { post: Post }) {
   const rotate = useMemo(() => stableRotate(post.id), [post.id]);
+  const [open, setOpen] = useState(false);
   return (
-    <motion.div style={{ rotate }} whileTap={{ scale: 0.96 }}
-      className="bg-white p-2 pb-5 rounded-sm shadow-md border border-slate-100">
+    <>
+      <motion.div style={{ rotate }} whileTap={{ scale: 0.96 }}
+        onClick={() => setOpen(true)}
+        className="bg-white p-2 pb-5 rounded-sm shadow-md border border-slate-100 cursor-pointer">
       <div className="w-full h-[128px] bg-slate-100 rounded-sm overflow-hidden flex items-center justify-center">
         {post.photoURL
           ? <img src={post.photoURL} className="w-full h-full object-cover" loading="lazy" alt="" />
-          : <span className="text-2xl">{post.authorEmoji}</span>}
+          : <Avatar id={post.authorEmoji} size={40} />}
       </div>
       <p className="text-[10px] text-slate-500 mt-1.5 text-center truncate">{post.authorName} · {fmtHM(post)}</p>
       {post.location && (
         <p className="text-[9px] text-[#00a0e3] text-center truncate">{post.location}</p>
       )}
       {post.message && <p className="text-[9px] text-slate-400 text-center truncate px-1">{post.message}</p>}
-    </motion.div>
+      <div className="flex justify-center mt-1">
+        <HornButton post={post} />
+      </div>
+      </motion.div>
+      <AnimatePresence>
+        {open && <PostDetailModal post={post} onClose={() => setOpen(false)} />}
+      </AnimatePresence>
+    </>
   );
 }
 
@@ -223,7 +408,9 @@ function ScatteredPolaroid({ post, index, count, onOpen }: { post: Post; index: 
       <div className="w-full h-[76px] bg-slate-100 rounded-sm overflow-hidden">
         <img src={post.photoURL} className="w-full h-full object-cover" loading="lazy" alt="" />
       </div>
-      <p className="text-[8px] text-slate-500 mt-1 text-center truncate">{post.authorEmoji} {post.authorName}</p>
+      <p className="text-[8px] text-slate-500 mt-1 flex items-center justify-center gap-1 truncate">
+        <Avatar id={post.authorEmoji} size={12} /> {post.authorName}
+      </p>
     </motion.button>
   );
 }
@@ -257,13 +444,17 @@ function EventModal({ event, posts, onClose }: { event: TaskEvent; posts: Post[]
             <div>
               <button onClick={() => setBig(null)} className="text-xs text-[#00a0e3] font-semibold mb-2">← 返回總覽</button>
               <img src={big.photoURL} className="w-full rounded-2xl mb-3" alt="" />
-              <div className="flex items-center gap-2">
-                <span className="text-xl">{big.authorEmoji}</span>
-                <div className="min-w-0">
-                  <div className="text-sm font-bold text-[#002b5e]">{big.authorName}</div>
-                  {big.message && <div className="text-xs text-slate-500 truncate">{big.message}</div>}
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <Avatar id={big.authorEmoji} size={28} />
+                  <div className="min-w-0">
+                    <div className="text-sm font-bold text-[#002b5e]">{big.authorName}</div>
+                    {big.message && <div className="text-xs text-slate-500 truncate">{big.message}</div>}
+                  </div>
                 </div>
+                <HornButton post={big} />
               </div>
+              {big.id && <CommentThread postId={big.id} />}
             </div>
           ) : posts.length === 0 ? (
             <div className="text-center py-10 text-slate-400 text-sm">
@@ -288,7 +479,7 @@ function EventModal({ event, posts, onClose }: { event: TaskEvent; posts: Post[]
 // ─── 發文表單（水手人物 + 地點 + 快捷標籤 + EXIF 分類預覽） ───────────────────
 function PostForm({ onClose }: { onClose: () => void }) {
   const [name,     setName]    = useState(() => localStorage.getItem('msc-username') || '');
-  const [emoji,    setEmoji]   = useState(() => localStorage.getItem('msc-emoji')    || '😊');
+  const [emoji,    setEmoji]   = useState(() => localStorage.getItem('msc-emoji')    || DEFAULT_AVATAR);
   const [location, setLocation]= useState('');
   const [message,  setMessage] = useState('');
   const [photo,    setPhoto]   = useState<File | null>(null);
@@ -347,15 +538,23 @@ function PostForm({ onClose }: { onClose: () => void }) {
       <div className="px-5 py-4 space-y-3">
         {/* 水手人物 + 姓名 */}
         <div>
-          <p className="text-[10px] text-slate-400 mb-1 ml-0.5">選一個水手人物</p>
-          <div className="flex items-center gap-3">
-            <select value={emoji} onChange={e => setEmoji(e.target.value)}
-              className="w-14 h-12 bg-slate-100 rounded-xl text-2xl text-center cursor-pointer border-none appearance-none">
-              {AUTHOR_EMOJIS.map(em => <option key={em} value={em}>{em}</option>)}
-            </select>
+          <p className="text-[10px] text-slate-400 mb-1.5 ml-0.5">選一個水手人物</p>
+          <div className="flex items-center gap-3 mb-2">
+            <Avatar id={emoji} size={44} />
             <input value={name} onChange={e => setName(e.target.value)}
               placeholder="你的名字"
               className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-[#00a0e3]" />
+          </div>
+          <div className="flex gap-2 overflow-x-auto pb-1 [&::-webkit-scrollbar]:hidden">
+            {SAILOR_AVATARS.map(a => (
+              <button key={a.id} type="button" onClick={() => setEmoji(a.id)}
+                title={a.label}
+                className={`flex-shrink-0 rounded-full p-0.5 transition-all ${
+                  emoji === a.id ? 'ring-2 ring-[#00a0e3]' : 'ring-1 ring-transparent'
+                }`}>
+                <Avatar id={a.id} size={40} />
+              </button>
+            ))}
           </div>
         </div>
 
@@ -403,7 +602,7 @@ function PostForm({ onClose }: { onClose: () => void }) {
             上傳照片（選填）
           </button>
         )}
-        <input ref={fileRef} type="file" accept="image/*" capture="environment"
+        <input ref={fileRef} type="file" accept="image/*"
           className="hidden" onChange={pickPhoto} />
 
         {error && <p className="text-red-500 text-xs font-medium">{error}</p>}
