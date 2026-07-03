@@ -41,7 +41,7 @@ const TIMELINE_TEXT: Record<Lang, {
     classifiedEvent: title => `🎉 這張會歸入大事件卡「${title}」`, classifiedGeneral: '🌊 這張會放進一般航海誌',
     uploadPhoto: '上傳照片（選填）', errNoName: '請填寫你的名字', errNoContent: '請填寫訊息、選地點或上傳照片',
     errSubmitFail: '發佈失敗，請確認網路連線', submitting: '發佈中…', submitButton: '寫入航海日誌',
-    anonymous: '匿名旅客', routeDepart: '⚓Day1 基隆', routeReturn: '⚓Day4 基隆', routeNaha: '⛩️那霸', pendingUpload: '待上傳',
+    anonymous: '匿名旅客', routeDepart: 'Day1 基隆', routeReturn: 'Day4 基隆', routeNaha: '⛩️那霸', pendingUpload: '待上傳',
     pendingSyncLabel: n => `📦 ${n} 則待上傳・恢復連線後自動補傳`, locale: 'zh-TW',
   },
   en: {
@@ -59,7 +59,7 @@ const TIMELINE_TEXT: Record<Lang, {
     classifiedEvent: title => `🎉 This will be filed under "${title}"`, classifiedGeneral: '🌊 This will go into the general Time-Sail feed',
     uploadPhoto: 'Upload a photo (optional)', errNoName: 'Please enter your name', errNoContent: 'Please add a message, location, or photo',
     errSubmitFail: 'Failed to post — please check your connection', submitting: 'Posting…', submitButton: 'Post to Time-Sail',
-    anonymous: 'Anonymous Traveler', routeDepart: '⚓Day1 Keelung', routeReturn: '⚓Day4 Keelung', routeNaha: '⛩️Naha', pendingUpload: 'Pending',
+    anonymous: 'Anonymous Traveler', routeDepart: 'Day1 Keelung', routeReturn: 'Day4 Keelung', routeNaha: '⛩️Naha', pendingUpload: 'Pending',
     pendingSyncLabel: n => `📦 ${n} pending — will auto-send once back online`, locale: 'en-US',
   },
   id: {
@@ -77,7 +77,7 @@ const TIMELINE_TEXT: Record<Lang, {
     classifiedEvent: title => `🎉 Foto ini akan masuk ke kartu momen "${title}"`, classifiedGeneral: '🌊 Foto ini akan masuk ke feed umum',
     uploadPhoto: 'Unggah foto (opsional)', errNoName: 'Mohon isi nama Anda', errNoContent: 'Mohon isi pesan, lokasi, atau unggah foto',
     errSubmitFail: 'Gagal memposting — periksa koneksi internet Anda', submitting: 'Memposting…', submitButton: 'Posting ke Catatan Pelayaran',
-    anonymous: 'Wisatawan Anonim', routeDepart: '⚓Hari1 Keelung', routeReturn: '⚓Hari4 Keelung', routeNaha: '⛩️Naha', pendingUpload: 'Tertunda',
+    anonymous: 'Wisatawan Anonim', routeDepart: 'Hari1 Keelung', routeReturn: 'Hari4 Keelung', routeNaha: '⛩️Naha', pendingUpload: 'Tertunda',
     pendingSyncLabel: n => `📦 ${n} tertunda・akan otomatis terkirim saat kembali online`, locale: 'id-ID',
   },
   th: {
@@ -95,7 +95,7 @@ const TIMELINE_TEXT: Record<Lang, {
     classifiedEvent: title => `🎉 ภาพนี้จะถูกจัดเข้าการ์ด "${title}"`, classifiedGeneral: '🌊 ภาพนี้จะไปอยู่ในฟีดทั่วไป',
     uploadPhoto: 'อัปโหลดภาพ (ไม่บังคับ)', errNoName: 'กรุณากรอกชื่อของคุณ', errNoContent: 'กรุณากรอกข้อความ เลือกสถานที่ หรืออัปโหลดภาพ',
     errSubmitFail: 'โพสต์ไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต', submitting: 'กำลังโพสต์…', submitButton: 'โพสต์ลงบันทึกการเดินเรือ',
-    anonymous: 'นักเดินทางนิรนาม', routeDepart: '⚓วันที่1 จีหลง', routeReturn: '⚓วันที่4 จีหลง', routeNaha: '⛩️นาฮะ', pendingUpload: 'รอส่ง',
+    anonymous: 'นักเดินทางนิรนาม', routeDepart: 'วันที่1 จีหลง', routeReturn: 'วันที่4 จีหลง', routeNaha: '⛩️นาฮะ', pendingUpload: 'รอส่ง',
     pendingSyncLabel: n => `📦 ${n} รายการรอส่ง・จะส่งอัตโนมัติเมื่อออนไลน์`, locale: 'th-TH',
   },
 };
@@ -379,6 +379,20 @@ function buildSlots(posts: Post[]): Slot[] {
   return [...eventSlots, ...soloSlots].sort((a, b) => a.sortMs - b.sortMs);
 }
 
+// 基隆用小燈塔圖示（lucide 沒有對應圖示、也沒有標準燈塔 emoji，自己畫一個極簡版）
+function LighthouseIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
+      <path d="M9.5 2h5l1 3h-7l1-3z" fill="currentColor" />
+      <path d="M8.5 5h7l1.2 5H7.3l1.2-5z" fill="currentColor" opacity="0.85" />
+      <path d="M7.3 10h9.4l1.8 11H5.5l1.8-11z" fill="currentColor" opacity="0.7" />
+      <rect x="9" y="12.5" width="6" height="1.6" fill="white" opacity="0.9" />
+      <rect x="9" y="16.5" width="6" height="1.6" fill="white" opacity="0.9" />
+      <path d="M9.5 2 L7 0.5 M14.5 2 L17 0.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" opacity="0.6" />
+    </svg>
+  );
+}
+
 // ─── 航線圖 + 移動中的小船 ──────────────────────────────────────────────────
 function RouteStrip({ containerRef, lang }: { containerRef: React.RefObject<HTMLDivElement>; lang: Lang }) {
   const t = TIMELINE_TEXT[lang];
@@ -406,8 +420,12 @@ function RouteStrip({ containerRef, lang }: { containerRef: React.RefObject<HTML
   return (
     <div className="relative h-9 mb-2 px-1">
       <div className="absolute top-1/2 left-1 right-1 h-[2px] bg-white/40 -translate-y-1/2 rounded-full" />
-      <span className="absolute top-1/2 left-1 -translate-y-1/2 text-[10px] font-bold text-white/90 drop-shadow">{t.routeDepart}</span>
-      <span className="absolute top-1/2 right-1 -translate-y-1/2 text-[10px] font-bold text-white/90 drop-shadow">{t.routeReturn}</span>
+      <span className="absolute top-1/2 left-1 -translate-y-1/2 flex items-center gap-0.5 text-[10px] font-bold text-white/90 drop-shadow whitespace-nowrap">
+        <LighthouseIcon className="w-3 h-3 flex-shrink-0" />{t.routeDepart}
+      </span>
+      <span className="absolute top-1/2 right-1 -translate-y-1/2 flex items-center gap-0.5 text-[10px] font-bold text-white/90 drop-shadow whitespace-nowrap">
+        <LighthouseIcon className="w-3 h-3 flex-shrink-0" />{t.routeReturn}
+      </span>
       {/* 那霸是航程中途的定點標記，固定畫在正中間，跟時間比例無關 */}
       <span
         className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-[10px] font-bold text-white/80 drop-shadow whitespace-nowrap">

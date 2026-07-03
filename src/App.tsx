@@ -34,23 +34,12 @@ const HERO_IMAGES = [
 ];
 
 // ─── ICS download (iOS / 其他裝置的退路：行事曆提醒) ──────────────────────────
-// iOS Safari 對「Blob + createObjectURL + <a download>」這種下載方式支援不完整，
-// 常會顯示「無法下載此檔案」；改用 data: URI 直接導覽過去，Safari 才會正確辨識出
-// 這是行事曆資料，跳出「加入日曆」的選項。
+// iOS Safari 對前端自己產生的 Blob/data URI「假下載」支援不完整，常顯示「無法下載
+// 此檔案」；改成導覽到後端 /api/calendar（見 api/calendar.ts），由伺服器真的回應
+// text/calendar，Safari 才會正確辨識並跳出「加入日曆」。
 function downloadICS(message: string, errorMsg: string) {
-    const target = new Date(targetDateStr);
-    const alarmDates: Date[] = [];
-    for (let i = 0; i < 4; i++) {
-        const d = new Date(target); d.setDate(d.getDate() + i); d.setHours(23, 55, 0, 0); alarmDates.push(d);
-    }
-    const fmt = (d: Date) => d.toISOString().replace(/[-:]/g, '').replace('.000', '');
-    const events = alarmDates.map((d, i) => {
-        const s = fmt(d); const e = fmt(new Date(d.getTime() + 60000));
-        return `BEGIN:VEVENT\r\nDTSTART:${s}Z\r\nDTEND:${e}Z\r\nSUMMARY:🎭 MSC 大秀提醒 Day ${i + 1}\r\nDESCRIPTION:${message}\r\nEND:VEVENT`;
-    }).join('\r\n');
-    const ics = `BEGIN:VCALENDAR\r\nVERSION:2.0\r\n${events}\r\nEND:VCALENDAR`;
     try {
-        window.location.href = `data:text/calendar;charset=utf-8,${encodeURIComponent(ics)}`;
+        window.location.href = `/api/calendar?msg=${encodeURIComponent(message)}`;
     } catch { alert(errorMsg); }
 }
 
@@ -275,7 +264,9 @@ const ALL_IMAGES = [
 // ─── Main App ──────────────────────────────────────────────────────────────────
 export default function App() {
     const [lang, setLang] = useState<Lang>('zh');
-    const [activeTab, setActiveTab] = useState('depart');
+    // 手機背景閒置一段時間後，瀏覽器常會把分頁整個回收重載，記住上次選的分頁，
+    // 重新載入時才不會每次都跳回第一個分頁
+    const [activeTab, setActiveTab] = useState(() => localStorage.getItem('msc-active-tab') || 'depart');
     const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>(() => {
         try { return JSON.parse(localStorage.getItem('msc-checklist') || '{}'); } catch { return {}; }
     });
@@ -394,7 +385,7 @@ export default function App() {
                 <div className="max-w-lg mx-auto overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
                     <div className="flex px-4 py-2 gap-1.5 min-w-max">
                         {tabs.map((tab: any) => (
-                            <button key={tab.id} onClick={() => { setActiveTab(tab.id); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                            <button key={tab.id} onClick={() => { setActiveTab(tab.id); localStorage.setItem('msc-active-tab', tab.id); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                                 className={`px-4 py-2 rounded-full text-sm font-semibold transition-all whitespace-nowrap ${activeTab === tab.id ? 'bg-[#002b5e] text-white shadow-md' : 'text-slate-500 hover:text-[#002b5e] hover:bg-slate-100'}`}>
                                 {tab.label}
                             </button>
