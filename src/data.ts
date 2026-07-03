@@ -271,40 +271,6 @@ export const dictionary: Record<Lang, any> = {
         }
       ],
       onboard: [
-        {
-          image: IMG.show,
-          icon: 'Ticket', title: "大秀預約 (強烈建議加入鬧鐘)", 
-          text: "每天晚上的劇場表演非常精彩，記得前一天傍晚透過APP搶先預約（比看紙本的郵輪日報預約還要快）。名額有限，網路上大家分享通常在 5 分鐘內就會秒殺！建議點擊上方按鈕加入 23:55 的手機行事曆鬧鐘提醒。"
-        },
-        {
-          image: IMG.coffee,
-          icon: 'Coffee', title: "達人密技：飲水與充電", list: [
-            "飲水攻略：船上的常溫水是海水淡化，喝起來會有微鹹的口感。強烈建議自備保溫瓶，第一天用客房送來的熱水壺，或直接去15樓自助餐廳裝熱水，放涼後再喝就不會有鹹味了。",
-            "充電攻略：房間內有台灣適用的插座與 USB 孔，但【絕對禁止】攜帶延長線（安檢會沒收）。達人建議攜帶「多孔 USB 充電頭」即可解決全家充電需求。",
-            "暈船對策：榮耀號非常平穩，若仍感不適，可至 5 樓服務台索取免費暈船藥，或在餐廳吃點青蘋果緩解。"
-          ]
-        },
-        {
-          image: IMG.camera,
-          icon: 'Camera', title: "拍照打卡與紀念品", 
-          text: "【網紅拍照秘訣】6樓有著名的「施華洛世奇水晶樓梯」，想拍美照建議趁半夜12點過後人潮散去時前往。\n【紀念品】免稅店內有賣MSC限定版的樂高積木和郵輪模型，是很有紀念價值的伴手禮。"
-        },
-        { 
-          image: IMG.food,
-          icon: 'Utensils', title: "餐飲攻略與達人激推美食", list: [
-            "15樓自助餐廳 (Buffet)：每天開放20小時，特色是手工現烤披薩出餐快又非常好吃，還有豐富的切塊水果與台灣美食區（如蘿蔔糕、包子）。找座位時千萬不要擠在門口，盡量往餐廳後方走，座位非常多且寬敞。",
-            "主餐廳 (免費西餐廳)：分為櫻桃、燈塔等多間，菜色相同。採固定時段、固定座位，且有服裝規定（需休閒正裝或正式服裝，不可穿拖鞋短褲）。主餐廳的餐點是無限量供應的，建議一開始就點齊，以免加點需等20分鐘。航程第二天晚上通常會提供「龍蝦尾」，千萬別錯過。",
-            "陽台房專屬：可享有免費的「房間外送早餐」服務，前一晚把早餐卡掛在門外，享受在陽台看海吃早餐的度假感。",
-            "付費特色餐廳：網友最推薦的是「美式牛排屋」與「海渡火鍋」，但非常搶手，建議登船第一天馬上預約，否則很容易向隅。"
-          ] 
-        },
-        {
-          image: IMG.show,
-          icon: 'Star', title: "船上娛樂與托育設施", list: [
-            "托育服務（樂高俱樂部）：家長放風的神隊友！有多國語言的大哥哥大姊姊帶活動，但嚴格規定孩童不能包尿布（必須能自行脫褲子上廁所）。",
-            "付費電子遊樂區：包含F1賽車、VR射擊遊戲、保齡球等。建議可以採取「儲值方案」（例如儲值70美元送20美元額度），玩起來比較划算。"
-          ]
-        }
       ],
       // ── HACKS TAB: Blogger Insider Tips ──────────────────────────────────
       hacks: [
@@ -612,32 +578,6 @@ export const dictionary: Record<Lang, any> = {
         }
       ],
       onboard: [
-        {
-          image: IMG.show,
-          icon: 'Ticket', title: "Show Reservations (Use Alarm)", 
-          text: "[Vlogger Tip] London Theatre shows must be booked via the APP at 00:00 midnight for the next day. Spots vanish in 5 minutes! Click the button above to add a 23:55 alarm to your phone calendar."
-        },
-        {
-          image: IMG.coffee,
-          icon: 'Coffee', title: "Pro Hacks: Water & Charging", list: [
-            "Water: Free bottled water is NOT provided in cabins. Bring a thermos and refill it for free with hot/cold water or ice at the Deck 15 Buffet.",
-            "Charging: Cabins have USB ports and universal sockets. Extension cords are STRICTLY FORBIDDEN. Bring a multi-port USB charger instead.",
-            "Seasickness: The ship is very stable. If needed, get free medication at the Deck 5 Reception or eat green apples at the buffet."
-          ]
-        },
-        {
-          image: IMG.camera,
-          icon: 'Camera', title: "Swarovski Stairs & Parties", 
-          text: "[Influencer Secret] To get the perfect empty-staircase photo, go during dinner hours (6:00 PM or 8:00 PM) or late at night. Avoid the crowds!\n[Theme Parties] There are nightly themes (e.g., White Party, Italian Night). Pack accordingly!"
-        },
-        { 
-          image: IMG.food,
-          icon: 'Utensils', title: "Dining Perks & Secrets", list: [
-            "Deck 15 Buffet: Foodies highly recommend the fresh Mozzarella made daily onboard, and the late-night freshly baked pizza.",
-            "Main Restaurant: Unlimited orders! Look out for 'Lobster Day' on the menu and order as much as you like.",
-            "Balcony Cabins: Enjoy complimentary room service breakfast. Use the door hanger to order the night before."
-          ] 
-        }
       ],
       hacks: [
         {
@@ -929,32 +869,6 @@ export const dictionary: Record<Lang, any> = {
         }
       ],
       onboard: [
-        {
-          image: IMG.show,
-          icon: 'Ticket', title: "Reservasi Pertunjukan (Gunakan Alarm!)", 
-          text: "[Tips Vlogger] Pesan di aplikasi jam 00:00. Penuh dalam 5 menit! Gunakan tombol di atas untuk pasang alarm 23:55."
-        },
-        {
-          image: IMG.coffee,
-          icon: 'Coffee', title: "Trik Rahasia: Air & Baterai", list: [
-            "Air Minum: Kabin TIDAK menyediakan air botol gratis. Bawa botol minum dan isi ulang gratis di Buffet Dek 15.",
-            "Stopkontak: Jangan bawa kabel roll (akan disita). Bawa charger USB multi-port.",
-            "Mabuk Laut: Minta obat gratis di Resepsionis Dek 5 atau makan apel hijau di buffet."
-          ]
-        },
-        {
-          image: IMG.camera,
-          icon: 'Camera', title: "Foto & Pesta Tema", 
-          text: "[Rahasia Influencer] Berfoto di tangga Swarovski saat jam makan malam (18:00 atau 20:00).\n[Pesta] Siapkan baju untuk Pesta Putih dan Pesta Italia!"
-        },
-        { 
-          image: IMG.food,
-          icon: 'Utensils', title: "Keistimewaan Makan", list: [
-            "Buffet Dek 15: Jangan lewatkan mozzarella segar buatan kapal dan pizza tengah malam!",
-            "Restoran Utama: Jangan lewatkan 'Hari Lobster' dan pesan sepuasnya.",
-            "Kabin Balkon: Sarapan layanan kamar gratis — gantung kartu pemesanan di malam sebelumnya."
-          ] 
-        }
       ],
       hacks: [
         {
@@ -1179,32 +1093,6 @@ export const dictionary: Record<Lang, any> = {
         }
       ],
       onboard: [
-        {
-          image: IMG.show,
-          icon: 'Ticket', title: "จองโชว์ (ตั้งปลุกเลย!)", 
-          text: "[ทริคจาก Vlogger] ต้องจองโชว์ตอน 00:00 น. เต็มเร็วใน 5 นาที! กดปุ่มด้านบนเพื่อเพิ่มแจ้งเตือนในปฏิทิน"
-        },
-        {
-          image: IMG.coffee,
-          icon: 'Coffee', title: "ทริคพิเศษ: น้ำดื่มและชาร์จแบต", list: [
-            "น้ำดื่ม: ไม่มีน้ำขวดฟรีในห้อง! ให้นำกระบอกน้ำไปเติมน้ำร้อน/เย็นฟรีที่บุฟเฟ่ต์ชั้น 15",
-            "ชาร์จแบต: ห้ามนำปลั๊กพ่วงมาเด็ดขาด (จะถูกยึด) ให้นำหัวชาร์จ USB แบบหลายช่องมาแทน",
-            "เมาเรือ: ขอยาฟรีได้ที่เคาน์เตอร์ชั้น 5 หรือทานแอปเปิ้ลเขียวในบุฟเฟ่ต์"
-          ]
-        },
-        {
-          image: IMG.camera,
-          icon: 'Camera', title: "บันไดคริสตัล & ปาร์ตี้", 
-          text: "[เคล็ดลับ] ถ่ายรูปบันไดคริสตัลช่วงอาหารเย็น (18:00/20:00) จะไม่มีคน!\n[ปาร์ตี้] มีปาร์ตี้ธีมทุกคืน เตรียมชุดมาให้พร้อม!"
-        },
-        { 
-          image: IMG.food,
-          icon: 'Utensils', title: "เคล็ดลับอาหาร", list: [
-            "บุฟเฟ่ต์ชั้น 15: แนะนำชีสมอสซาเรลล่าทำสดใหม่ทุกวัน และพิซซ่ารอบดึก",
-            "ห้องอาหารหลัก: อย่าพลาด 'วันกุ้งล็อบสเตอร์' สั่งได้ไม่อั้น!",
-            "ห้องระเบียง: บริการอาหารเช้าส่งถึงห้องพักฟรี"
-          ] 
-        }
       ],
       hacks: [
         {
