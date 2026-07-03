@@ -53,6 +53,53 @@ function stableRotate(id: string | undefined): number {
   return (h % 7) - 3; // -3° ~ 3°
 }
 
+// 依 id + salt 產生穩定的 0~1 亂數（同一張照片每次 render 結果一致）
+function seededRand(id: string, salt: number): number {
+  let h = 0;
+  const s = `${id}_${salt}`;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return (h % 1000) / 1000;
+}
+
+// ─── 大事件卡封面「馬賽克拼圖」：4 格不規則拼貼（1 大 + N 小），取代單調的等分網格 ─────
+type MosaicTile = { gridColumn: string; gridRow: string };
+function mosaicTiles(n: number): MosaicTile[] {
+  switch (Math.min(n, 4)) {
+    case 1: return [{ gridColumn: '1 / 5', gridRow: '1 / 3' }];
+    case 2: return [
+      { gridColumn: '1 / 3', gridRow: '1 / 3' },
+      { gridColumn: '3 / 5', gridRow: '1 / 3' },
+    ];
+    case 3: return [
+      { gridColumn: '1 / 3', gridRow: '1 / 3' },
+      { gridColumn: '3 / 5', gridRow: '1 / 2' },
+      { gridColumn: '3 / 5', gridRow: '2 / 3' },
+    ];
+    default: return [
+      { gridColumn: '1 / 3', gridRow: '1 / 3' },
+      { gridColumn: '3 / 4', gridRow: '1 / 2' },
+      { gridColumn: '4 / 5', gridRow: '1 / 2' },
+      { gridColumn: '3 / 5', gridRow: '2 / 3' },
+    ];
+  }
+}
+
+// ─── 炸開特效：把大事件卡照片依穩定亂數，散開成一桌拍立得的位置 ──────────────────
+const STAGE_W = 300;
+const STAGE_H = 230;
+const TILE_W = 92;
+const TILE_H = 104;
+function scatterOffset(id: string | undefined, index: number, count: number) {
+  const seed = id ?? String(index);
+  const angle = (index / Math.max(count, 1)) * Math.PI * 2 + seededRand(seed, 1) * 1.4;
+  const radius = 50 + seededRand(seed, 2) * 40;
+  return {
+    x: Math.cos(angle) * radius,
+    y: Math.sin(angle) * radius * 0.65,
+    rotate: (seededRand(seed, 3) - 0.5) * 36,
+  };
+}
+
 // ─── Slot：大事件卡與個人拍立得，依真實時間交錯排列（夾心結構） ───────────────
 type Slot =
   | { type: 'event'; event: TaskEvent; posts: Post[]; sortMs: number }
@@ -97,12 +144,21 @@ function EventCard({ event, posts, onOpen }: { event: TaskEvent; posts: Post[]; 
     >
       <div className="relative h-40 bg-gradient-to-br from-[#002b5e] to-[#00a0e3] overflow-hidden">
         {posts.length > 0 ? (
-          <div className="grid grid-cols-2 grid-rows-2 gap-0.5 w-full h-full">
-            {Array.from({ length: 4 }).map((_, i) => (
-              posts[i]
-                ? <img key={posts[i].id} src={posts[i].photoURL} className="w-full h-full object-cover" loading="lazy" />
-                : <div key={i} className="w-full h-full bg-white/10" />
-            ))}
+          <div className="grid gap-0.5 w-full h-full" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gridTemplateRows: 'repeat(2, 1fr)' }}>
+            {mosaicTiles(posts.length).map((tile, i, arr) => {
+              const post = posts[i];
+              const overflow = i === arr.length - 1 ? posts.length - arr.length : 0;
+              return (
+                <div key={post.id ?? i} className="relative overflow-hidden" style={tile}>
+                  <img src={post.photoURL} className="w-full h-full object-cover" loading="lazy" />
+                  {overflow > 0 && (
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white font-bold text-sm">
+                      +{overflow}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center text-white/90 px-4">
@@ -150,7 +206,29 @@ function PolaroidCard({ post }: { post: Post }) {
   );
 }
 
-// ─── 大事件卡展開檢視（Module B 之前的簡化版：只做網格瀏覽，還沒做馬賽克拼圖與炸開特效） ──
+// ─── 散開拍立得：大事件卡展開瞬間，照片從中心「炸開」飛散到各自的位置 ───────────
+function ScatteredPolaroid({ post, index, count, onOpen }: { post: Post; index: number; count: number; onOpen: () => void }) {
+  const { x, y, rotate } = useMemo(() => scatterOffset(post.id, index, count), [post.id, index, count]);
+  return (
+    <motion.button
+      onClick={onOpen}
+      style={{ position: 'absolute', left: STAGE_W / 2 - TILE_W / 2, top: STAGE_H / 2 - TILE_H / 2, width: TILE_W }}
+      initial={{ x: 0, y: 0, rotate: 0, scale: 0.25, opacity: 0 }}
+      animate={{ x, y, rotate, scale: 1, opacity: 1 }}
+      transition={{ type: 'spring', stiffness: 190, damping: 17, delay: index * 0.06 }}
+      whileHover={{ scale: 1.06, zIndex: 20 }}
+      whileTap={{ scale: 0.94 }}
+      className="bg-white p-1.5 pb-4 rounded-sm shadow-lg border border-slate-100"
+    >
+      <div className="w-full h-[76px] bg-slate-100 rounded-sm overflow-hidden">
+        <img src={post.photoURL} className="w-full h-full object-cover" loading="lazy" alt="" />
+      </div>
+      <p className="text-[8px] text-slate-500 mt-1 text-center truncate">{post.authorEmoji} {post.authorName}</p>
+    </motion.button>
+  );
+}
+
+// ─── 大事件卡展開檢視（Module B：進場時照片從馬賽克拼圖「炸開」成散落拍立得） ──────
 function EventModal({ event, posts, onClose }: { event: TaskEvent; posts: Post[]; onClose: () => void }) {
   const [big, setBig] = useState<Post | null>(null);
   return (
@@ -193,11 +271,11 @@ function EventModal({ event, posts, onClose }: { event: TaskEvent; posts: Post[]
               還沒有人上傳這個時刻的照片，快來搶頭香！
             </div>
           ) : (
-            <div className="grid grid-cols-3 gap-1.5">
-              {posts.map(p => (
-                <button key={p.id} onClick={() => setBig(p)} className="aspect-square rounded-lg overflow-hidden">
-                  <img src={p.photoURL} className="w-full h-full object-cover" loading="lazy" alt="" />
-                </button>
+            <div className="relative mx-auto" style={{ width: STAGE_W, height: STAGE_H }}>
+              {posts.map((p, i) => (
+                <div key={p.id}>
+                  <ScatteredPolaroid post={p} index={i} count={posts.length} onOpen={() => setBig(p)} />
+                </div>
               ))}
             </div>
           )}
