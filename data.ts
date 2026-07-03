@@ -4,29 +4,25 @@ export type Lang = 'zh' | 'en' | 'id' | 'th';
 
 export const targetDateStr = '2026-07-09T11:30:00+08:00';
 
-// ─── Image URLs (all Unsplash – stable, no hotlink protection) ───────────────
+// ─── Image URLs (real MSC Bellissima photos + Unsplash) ─────────────────────────
 const IMG = {
-  // Ship interior / facilities
-  crystal:    'https://images.unsplash.com/photo-1578774204375-826dc5d996ed?auto=format&fit=crop&q=80&w=800',
-  galleria:   'https://images.unsplash.com/photo-1567016432779-094069958ea5?auto=format&fit=crop&q=80&w=800',
-  lego:       'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&q=80&w=800',
-  waterpark:  'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&q=80&w=800',
-  broadway:   'https://images.unsplash.com/photo-1507676184212-d0330a15673c?auto=format&fit=crop&q=80&w=800',
-  f1:         'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&q=80&w=800',
-  spa:        'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=80&w=800',
-  gym:        'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=800',
-  track:      'https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&q=80&w=800',
-  buffet:     'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=800',
-  cherry:     'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&q=80&w=800',
-  lighthouse: 'https://images.unsplash.com/photo-1548574505-5e2627dafbf3?auto=format&fit=crop&q=80&w=800',
-  japanese:   'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=800',
-  steak:      'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80&w=800',
+  // 真實 MSC Bellissima 現場照片 (from cruisedeckplans.com)
+  crystal:    '/crystal-staircase.jpg',   // 奧地利水晶旋轉樓梯   // 水晶大廳
+  galleria:   '/galleria.jpg',   // 香榭麗舍榮耀大道 LED 天幕
+  lighthouse: '/lighthouse.jpg',   // 主餐廳龍蝦
+  buffet:     '/buffet.jpg',   // 15F 市集自助餐廳
+  waterpark:  'https://www.cruisedeckplans.com/DP/deckpictures/165/org/MSCDec-77442-1676645380.jpg',   // 亞利桑那水上樂園
+  spa:        'https://www.cruisedeckplans.com/DP/deckpictures/133/org/MSCDec-74883-1633026056.jpg',   // Aurea SPA
+
+  // Unsplash 補充照片
+  steak:      '/steak.jpg',   // 付費特色餐廳
   chocolate:  'https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&q=80&w=800',
-  captainBar: 'https://images.unsplash.com/photo-1514362448893-3e283e4f0a9c?auto=format&fit=crop&q=80&w=800',
-  skyLounge:  'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&q=80&w=800',
+  broadway:   '/broadway.jpg',
+  f1:         '/f1.jpg',
+  track:      'https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&q=80&w=800',
   cocktail:   'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?auto=format&fit=crop&q=80&w=800',
-  balcony:    'https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&q=80&w=800',
-  // Preparation / info tabs
+
+  // 行前/規則/APP/下船 tabs 照片
   passport:   'https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?auto=format&fit=crop&q=80&w=800',
   luggage:    'https://images.unsplash.com/photo-1552858725-2758b5fb1286?auto=format&fit=crop&q=80&w=800',
   phone:      'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&q=80&w=800',
@@ -35,8 +31,6 @@ const IMG = {
   coffee:     'https://images.unsplash.com/photo-1523362628745-0c100150b504?auto=format&fit=crop&q=80&w=800',
   camera:     'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=800',
   food:       'https://images.unsplash.com/photo-1414235077428-338988a2e8c0?auto=format&fit=crop&q=80&w=800',
-  okinawa:    'https://images.unsplash.com/photo-1542051812871-75528045a9a3?auto=format&fit=crop&q=80&w=800',
-  naha:       'https://images.unsplash.com/photo-1590559899731-a382839e5549?auto=format&fit=crop&q=80&w=800',
   ship:       'https://images.unsplash.com/photo-1548690312-e3b507d8c110?auto=format&fit=crop&q=80&w=800',
 };
 
@@ -170,8 +164,8 @@ export const dictionary: Record<Lang, any> = {
       { id: 'depart',   label: "📋 出發前" },
       { id: 'onboard',  label: "🚢 船上" },
       { id: 'hacks',    label: "✨ 密技" },
-      { id: 'social',   label: "📍 同樂" },
-      { id: 'local',    label: "🏁 那霸" },
+      { id: 'social',   label: "⚓ 航海日誌" },
+      { id: 'bingo',    label: "🎴 賓果" },
     ],
     // ── Together (Bingo + Quick Share) ───────────────────────────────────────
     together: {
@@ -207,6 +201,7 @@ export const dictionary: Record<Lang, any> = {
         {
           icon: 'CheckSquare', title: "出門前最後檢查 (點擊打勾)",
           checklist: [
+            "船票 / 登船證（紙本或電子均可）",
             "護照正本 (效期需大於6個月)",
             "護照影本 (2份A4比例1:1)",
             "台灣居留證 ARC (外籍同仁必備)",
@@ -246,7 +241,7 @@ export const dictionary: Record<Lang, any> = {
       rules: [
         { 
           icon: 'Sparkles', title: "【公司專屬 VIP 特權】", highlight: true, 
-          text: "本公司享有「VIP 優先登船通道」。請於 7/9 11:30 準時至「基隆港西岸旅客中心」集合，我們將走特快通道辦理登船，免去大排長龍！" 
+          text: "本公司享有「VIP 優先登船通道」！請於 7/9 12:00 準時至「台北火車站」搭乘公司專車前往基隆港，走特快通道辦理登船，免去大排長龍！" 
         },
         { 
           icon: 'Ship', title: "登船必做的兩件大事", list: [
@@ -276,40 +271,6 @@ export const dictionary: Record<Lang, any> = {
         }
       ],
       onboard: [
-        {
-          image: IMG.show,
-          icon: 'Ticket', title: "大秀預約 (強烈建議加入鬧鐘)", 
-          text: "每天晚上的劇場表演非常精彩，記得前一天傍晚透過APP搶先預約（比看紙本的郵輪日報預約還要快）。名額有限，網路上大家分享通常在 5 分鐘內就會秒殺！建議點擊上方按鈕加入 23:55 的手機行事曆鬧鐘提醒。"
-        },
-        {
-          image: IMG.coffee,
-          icon: 'Coffee', title: "達人密技：飲水與充電", list: [
-            "飲水攻略：船上的常溫水是海水淡化，喝起來會有微鹹的口感。強烈建議自備保溫瓶，第一天用客房送來的熱水壺，或直接去15樓自助餐廳裝熱水，放涼後再喝就不會有鹹味了。",
-            "充電攻略：房間內有台灣適用的插座與 USB 孔，但【絕對禁止】攜帶延長線（安檢會沒收）。達人建議攜帶「多孔 USB 充電頭」即可解決全家充電需求。",
-            "暈船對策：榮耀號非常平穩，若仍感不適，可至 5 樓服務台索取免費暈船藥，或在餐廳吃點青蘋果緩解。"
-          ]
-        },
-        {
-          image: IMG.camera,
-          icon: 'Camera', title: "拍照打卡與紀念品", 
-          text: "【網紅拍照秘訣】6樓有著名的「施華洛世奇水晶樓梯」，想拍美照建議趁半夜12點過後人潮散去時前往。\n【紀念品】免稅店內有賣MSC限定版的樂高積木和郵輪模型，是很有紀念價值的伴手禮。"
-        },
-        { 
-          image: IMG.food,
-          icon: 'Utensils', title: "餐飲攻略與達人激推美食", list: [
-            "15樓自助餐廳 (Buffet)：每天開放20小時，特色是手工現烤披薩出餐快又非常好吃，還有豐富的切塊水果與台灣美食區（如蘿蔔糕、包子）。找座位時千萬不要擠在門口，盡量往餐廳後方走，座位非常多且寬敞。",
-            "主餐廳 (免費西餐廳)：分為櫻桃、燈塔等多間，菜色相同。採固定時段、固定座位，且有服裝規定（需休閒正裝或正式服裝，不可穿拖鞋短褲）。主餐廳的餐點是無限量供應的，建議一開始就點齊，以免加點需等20分鐘。航程第二天晚上通常會提供「龍蝦尾」，千萬別錯過。",
-            "陽台房專屬：可享有免費的「房間外送早餐」服務，前一晚把早餐卡掛在門外，享受在陽台看海吃早餐的度假感。",
-            "付費特色餐廳：網友最推薦的是「美式牛排屋」與「海渡火鍋」，但非常搶手，建議登船第一天馬上預約，否則很容易向隅。"
-          ] 
-        },
-        {
-          image: IMG.show,
-          icon: 'Star', title: "船上娛樂與托育設施", list: [
-            "托育服務（樂高俱樂部）：家長放風的神隊友！有多國語言的大哥哥大姊姊帶活動，但嚴格規定孩童不能包尿布（必須能自行脫褲子上廁所）。",
-            "付費電子遊樂區：包含F1賽車、VR射擊遊戲、保齡球等。建議可以採取「儲值方案」（例如儲值70美元送20美元額度），玩起來比較划算。"
-          ]
-        }
       ],
       // ── HACKS TAB: Blogger Insider Tips ──────────────────────────────────
       hacks: [
@@ -512,8 +473,8 @@ export const dictionary: Record<Lang, any> = {
       { id: 'depart',   label: "📋 Before" },
       { id: 'onboard',  label: "🚢 Onboard" },
       { id: 'hacks',    label: "✨ Hacks" },
-      { id: 'social',   label: "📍 Fun" },
-      { id: 'local',    label: "🏁 Naha" },
+      { id: 'social',   label: "⚓ Time-Sail" },
+      { id: 'bingo',    label: "🎴 Bingo" },
     ],
     together: {
       bingoTitle: "Trip Bingo Challenge",
@@ -617,32 +578,6 @@ export const dictionary: Record<Lang, any> = {
         }
       ],
       onboard: [
-        {
-          image: IMG.show,
-          icon: 'Ticket', title: "Show Reservations (Use Alarm)", 
-          text: "[Vlogger Tip] London Theatre shows must be booked via the APP at 00:00 midnight for the next day. Spots vanish in 5 minutes! Click the button above to add a 23:55 alarm to your phone calendar."
-        },
-        {
-          image: IMG.coffee,
-          icon: 'Coffee', title: "Pro Hacks: Water & Charging", list: [
-            "Water: Free bottled water is NOT provided in cabins. Bring a thermos and refill it for free with hot/cold water or ice at the Deck 15 Buffet.",
-            "Charging: Cabins have USB ports and universal sockets. Extension cords are STRICTLY FORBIDDEN. Bring a multi-port USB charger instead.",
-            "Seasickness: The ship is very stable. If needed, get free medication at the Deck 5 Reception or eat green apples at the buffet."
-          ]
-        },
-        {
-          image: IMG.camera,
-          icon: 'Camera', title: "Swarovski Stairs & Parties", 
-          text: "[Influencer Secret] To get the perfect empty-staircase photo, go during dinner hours (6:00 PM or 8:00 PM) or late at night. Avoid the crowds!\n[Theme Parties] There are nightly themes (e.g., White Party, Italian Night). Pack accordingly!"
-        },
-        { 
-          image: IMG.food,
-          icon: 'Utensils', title: "Dining Perks & Secrets", list: [
-            "Deck 15 Buffet: Foodies highly recommend the fresh Mozzarella made daily onboard, and the late-night freshly baked pizza.",
-            "Main Restaurant: Unlimited orders! Look out for 'Lobster Day' on the menu and order as much as you like.",
-            "Balcony Cabins: Enjoy complimentary room service breakfast. Use the door hanger to order the night before."
-          ] 
-        }
       ],
       hacks: [
         {
@@ -830,8 +765,8 @@ export const dictionary: Record<Lang, any> = {
       { id: 'depart',   label: "📋 Sebelum" },
       { id: 'onboard',  label: "🚢 Di Kapal" },
       { id: 'hacks',    label: "✨ Tips" },
-      { id: 'social',   label: "📍 Seru" },
-      { id: 'local',    label: "🏁 Naha" },
+      { id: 'social',   label: "⚓ Catatan Pelayaran" },
+      { id: 'bingo',    label: "🎴 Bingo" },
     ],
     together: {
       bingoTitle: "Tantangan Bingo Pelayaran",
@@ -934,32 +869,6 @@ export const dictionary: Record<Lang, any> = {
         }
       ],
       onboard: [
-        {
-          image: IMG.show,
-          icon: 'Ticket', title: "Reservasi Pertunjukan (Gunakan Alarm!)", 
-          text: "[Tips Vlogger] Pesan di aplikasi jam 00:00. Penuh dalam 5 menit! Gunakan tombol di atas untuk pasang alarm 23:55."
-        },
-        {
-          image: IMG.coffee,
-          icon: 'Coffee', title: "Trik Rahasia: Air & Baterai", list: [
-            "Air Minum: Kabin TIDAK menyediakan air botol gratis. Bawa botol minum dan isi ulang gratis di Buffet Dek 15.",
-            "Stopkontak: Jangan bawa kabel roll (akan disita). Bawa charger USB multi-port.",
-            "Mabuk Laut: Minta obat gratis di Resepsionis Dek 5 atau makan apel hijau di buffet."
-          ]
-        },
-        {
-          image: IMG.camera,
-          icon: 'Camera', title: "Foto & Pesta Tema", 
-          text: "[Rahasia Influencer] Berfoto di tangga Swarovski saat jam makan malam (18:00 atau 20:00).\n[Pesta] Siapkan baju untuk Pesta Putih dan Pesta Italia!"
-        },
-        { 
-          image: IMG.food,
-          icon: 'Utensils', title: "Keistimewaan Makan", list: [
-            "Buffet Dek 15: Jangan lewatkan mozzarella segar buatan kapal dan pizza tengah malam!",
-            "Restoran Utama: Jangan lewatkan 'Hari Lobster' dan pesan sepuasnya.",
-            "Kabin Balkon: Sarapan layanan kamar gratis — gantung kartu pemesanan di malam sebelumnya."
-          ] 
-        }
       ],
       hacks: [
         {
@@ -1080,8 +989,8 @@ export const dictionary: Record<Lang, any> = {
       { id: 'depart',   label: "📋 ก่อนออก" },
       { id: 'onboard',  label: "🚢 บนเรือ" },
       { id: 'hacks',    label: "✨ เคล็ดลับ" },
-      { id: 'social',   label: "📍 สนุก" },
-      { id: 'local',    label: "🏁 นาฮะ" },
+      { id: 'social',   label: "⚓ บันทึกการเดินเรือ" },
+      { id: 'bingo',    label: "🎴 บิงโก" },
     ],
     together: {
       bingoTitle: "บิงโกท้าทายการเดินทาง",
@@ -1184,32 +1093,6 @@ export const dictionary: Record<Lang, any> = {
         }
       ],
       onboard: [
-        {
-          image: IMG.show,
-          icon: 'Ticket', title: "จองโชว์ (ตั้งปลุกเลย!)", 
-          text: "[ทริคจาก Vlogger] ต้องจองโชว์ตอน 00:00 น. เต็มเร็วใน 5 นาที! กดปุ่มด้านบนเพื่อเพิ่มแจ้งเตือนในปฏิทิน"
-        },
-        {
-          image: IMG.coffee,
-          icon: 'Coffee', title: "ทริคพิเศษ: น้ำดื่มและชาร์จแบต", list: [
-            "น้ำดื่ม: ไม่มีน้ำขวดฟรีในห้อง! ให้นำกระบอกน้ำไปเติมน้ำร้อน/เย็นฟรีที่บุฟเฟ่ต์ชั้น 15",
-            "ชาร์จแบต: ห้ามนำปลั๊กพ่วงมาเด็ดขาด (จะถูกยึด) ให้นำหัวชาร์จ USB แบบหลายช่องมาแทน",
-            "เมาเรือ: ขอยาฟรีได้ที่เคาน์เตอร์ชั้น 5 หรือทานแอปเปิ้ลเขียวในบุฟเฟ่ต์"
-          ]
-        },
-        {
-          image: IMG.camera,
-          icon: 'Camera', title: "บันไดคริสตัล & ปาร์ตี้", 
-          text: "[เคล็ดลับ] ถ่ายรูปบันไดคริสตัลช่วงอาหารเย็น (18:00/20:00) จะไม่มีคน!\n[ปาร์ตี้] มีปาร์ตี้ธีมทุกคืน เตรียมชุดมาให้พร้อม!"
-        },
-        { 
-          image: IMG.food,
-          icon: 'Utensils', title: "เคล็ดลับอาหาร", list: [
-            "บุฟเฟ่ต์ชั้น 15: แนะนำชีสมอสซาเรลล่าทำสดใหม่ทุกวัน และพิซซ่ารอบดึก",
-            "ห้องอาหารหลัก: อย่าพลาด 'วันกุ้งล็อบสเตอร์' สั่งได้ไม่อั้น!",
-            "ห้องระเบียง: บริการอาหารเช้าส่งถึงห้องพักฟรี"
-          ] 
-        }
       ],
       hacks: [
         {
