@@ -1,14 +1,20 @@
 // Vercel Serverless Function：產生大秀提醒的 .ics 行事曆檔案
 // iOS Safari 對前端用 Blob/data URI 產生的「假下載」支援不完整，常顯示「無法下載此檔案」；
 // 改成真的從伺服器回應 text/calendar，Safari 才會正確辨識並跳出「加入日曆」。
-import { targetDateStr } from '../src/data';
+//
+// 注意：這支檔案刻意不 import 任何 src/ 底下的東西（即使只是一個常數）。
+// 先前版本 import 了 ../src/data，該檔案開頭有 import { ReactNode } from 'react'，
+// 混進了給前端用的 react 依賴，導致 Vercel 打包/執行這支 Serverless Function 時
+// 直接 500（FUNCTION_INVOCATION_FAILED）。改成常數直接寫死在這裡，讓這支函式
+// 完全自包含，不依賴任何跨界打包。
+const TARGET_DATE_STR = '2026-07-09T11:30:00+08:00';
 
 export default function handler(req: any, res: any) {
   const message = typeof req.query?.msg === 'string' && req.query.msg
     ? req.query.msg
     : '時間到囉！快打開 MSC for Me APP 預約明天的大秀！';
 
-  const target = new Date(targetDateStr);
+  const target = new Date(TARGET_DATE_STR);
   const alarmDates: Date[] = [];
   for (let i = 0; i < 4; i++) {
     const d = new Date(target);
