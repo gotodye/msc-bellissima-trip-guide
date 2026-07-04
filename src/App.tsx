@@ -34,61 +34,6 @@ const HERO_IMAGES = [
     'https://images.unsplash.com/photo-1548574505-5e239809ee19?auto=format&fit=crop&q=80&w=1600',
 ];
 
-// ─── ICS 下載（iOS / 其他裝置的退路：行事曆提醒） ──────────────────────────────
-// 「加到主畫面」的獨立模式（standalone PWA）用的 WebView 比真正的 Safari 分頁限制更多，
-// 不管是原地導覽（location.href）還是開新分頁（window.open）到這種「非網頁內容」的
-// 回應，都可能被整個攔住、完全沒反應。改用 Web Share API：把 /api/calendar 回應的
-// ICS 內容包成檔案，直接呼叫 iOS 原生的分享清單，使用者可以從裡面選「加入日曆」或
-// 用「行事曆」App 開啟——這條路徑不經過「網頁導覽」，不受 PWA 獨立模式限制。
-async function downloadICS(message: string, errorMsg: string) {
-    const url = `/api/calendar?msg=${encodeURIComponent(message)}`;
-    try {
-        const nav = navigator as any;
-        if (nav.canShare) {
-            const res = await fetch(url);
-            if (res.ok) {
-                const text = await res.text();
-                const file = new File([text], 'msc-show-alarm.ics', { type: 'text/calendar' });
-                if (nav.canShare({ files: [file] })) {
-                    try {
-                        await nav.share({ files: [file] });
-                        return;
-                    } catch (shareErr: any) {
-                        if (shareErr?.name === 'AbortError') return; // 使用者自己取消分享，不算失敗
-                    }
-                }
-            }
-        }
-        // 不支援分享檔案的裝置，退回原本的導覽方式
-        const win = window.open(url, '_blank');
-        if (!win) window.location.href = url;
-    } catch { alert(errorMsg); }
-}
-
-// ─── Android 手機鬧鐘（直接跳系統時鐘 App 新增鬧鐘，Android 專屬能力）───────────
-function isAndroidDevice() {
-    return /Android/i.test(navigator.userAgent);
-}
-
-function setAndroidAlarm(message: string) {
-    const intentUrl =
-        'intent://alarm/set#Intent;action=android.intent.action.SET_ALARM;' +
-        'i.android.intent.extra.alarm.HOUR=23;i.android.intent.extra.alarm.MINUTES=55;' +
-        `S.android.intent.extra.alarm.MESSAGE=${encodeURIComponent(message)};end`;
-    // Chrome 只會攔截「真正的頂層導航」去解析 intent:// scheme；建立 <a> 但不插入 DOM
-    // 再呼叫 .click() 屬於未附加節點的合成點擊，不會被當成有效導航，鬧鐘 App 也就打不開。
-    window.location.href = intentUrl;
-}
-
-// 統一入口：Android 直接開時鐘 App 設鬧鐘；其他裝置（iOS 等）退回下載行事曆提醒
-function addPhoneAlarm(message: string, errorMsg: string) {
-    if (isAndroidDevice()) {
-        setAndroidAlarm(message);
-    } else {
-        downloadICS(message, errorMsg);
-    }
-}
-
 // ─── Bingo helpers ─────────────────────────────────────────────────────────────
 function checkBingo(items: Record<string, boolean>, cells: any[]): boolean {
     const ok = (i: number) => cells[i]?.text === 'FREE' || !!items[`b${i}`];
@@ -158,7 +103,7 @@ function StandardCard({ item, checkedItems, toggleCheck }: { item: any; checkedI
 }
 
 // ─── Hero Section ──────────────────────────────────────────────────────────────
-function HeroSection({ content, countdown, hasDeparted, lang, onLangChange, reminderAdded, onReminderClick, isOnline, installPrompt, onInstall }: any) {
+function HeroSection({ content, countdown, hasDeparted, lang, onLangChange, isOnline, installPrompt, onInstall }: any) {
     const [heroError, setHeroError] = useState(false);
     const [heroIdx, setHeroIdx] = useState(0);
     const units = content.timeUnits || ['天', '時', '分', '秒'];
@@ -315,7 +260,6 @@ export default function App() {
         try { return JSON.parse(localStorage.getItem('msc-bingo') || '{}'); } catch { return {}; }
     });
     const [hasBingo, setHasBingo] = useState(false);
-    const [reminderAdded, setReminderAdded] = useState(false);
     const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
     const [hasDeparted, setHasDeparted] = useState(false);
     const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -406,23 +350,18 @@ export default function App() {
             {/* Hero */}
             <HeroSection
                 content={content} countdown={countdown} hasDeparted={hasDeparted} lang={lang} onLangChange={setLang}
-                reminderAdded={reminderAdded}
-                onReminderClick={() => { addPhoneAlarm(content.reminderMessage, content.reminderError); setReminderAdded(true); }}
                 isOnline={isOnline} installPrompt={installPrompt}
                 onInstall={() => { installPrompt?.prompt(); installPrompt?.userChoice.then(() => setInstallPrompt(null)); }}
             />
 
-            {/* Reminder bar (visible on onboard + hacks tab) */}
+            {/* Reminder bar（純文字提醒，不含加入手機鬧鐘功能——iOS PWA 獨立模式下反覆無法
+                觸發系統層級的加入日曆/鬧鐘，放棄這條路，只留文字提醒使用者自己設定） */}
             {(activeTab === 'onboard' || activeTab === 'hacks') && (
                 <div className="bg-[#002b5e] px-4 py-3">
                     <div className="max-w-lg mx-auto">
                         <div className="bg-white/10 rounded-2xl p-4">
                             <p className="text-white font-bold text-sm mb-1">{content.reminderTitle}</p>
-                            <p className="text-white/65 text-xs mb-3 leading-relaxed">{content.reminderDesc}</p>
-                            <button onClick={() => { addPhoneAlarm(content.reminderMessage, content.reminderError); setReminderAdded(true); }}
-                                className={`w-full py-2.5 rounded-xl font-bold text-sm transition-all ${reminderAdded ? 'bg-green-500 text-white' : 'bg-white text-[#002b5e] hover:bg-blue-50'}`}>
-                                {reminderAdded ? content.reminderToggleOn : content.reminderToggleOff}
-                            </button>
+                            <p className="text-white/65 text-xs leading-relaxed">{content.reminderDesc}</p>
                         </div>
                     </div>
                 </div>

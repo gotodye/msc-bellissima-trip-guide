@@ -156,12 +156,8 @@ export const dictionary: Record<Lang, any> = {
     timeUnits: ["天", "時", "分", "秒"],
     todayHighlightsTitle: "今日行程重點",
     todayNoEvents: "今天沒有安排的大事件，好好放鬆吧！",
-    reminderTitle: "大秀預約手機鬧鐘",
-    reminderDesc: "每天午夜 00:00 開放預約隔天大秀，強烈建議加入手機行事曆鬧鐘提醒，以免向隅！",
-    reminderToggleOn: "已設定鬧鐘提醒",
-    reminderToggleOff: "加入手機鬧鐘 (23:55)",
-    reminderMessage: "時間到囉！快打開 MSC for Me APP 預約明天的大秀！",
-    reminderError: "設定失敗，請手動設定鬧鐘。",
+    reminderTitle: "大秀預約提醒",
+    reminderDesc: "每天午夜 00:00 開放預約隔天大秀，強烈建議自己設定手機鬧鐘或行事曆提醒（23:55），以免向隅！",
     tabs: [
       { id: 'depart',   label: "📋 出發前" },
       { id: 'onboard',  label: "🚢 船上" },
@@ -359,7 +355,7 @@ export const dictionary: Record<Lang, any> = {
           tips: [
             "⏰ 核心規則：每天【午夜 00:00】才開放預約「隔天」的表演，早一秒都沒用",
             "⚡ 速度警告：根據大量旅客回報，名額通常在 5 分鐘內全部搶完，不誇張",
-            "🔔 立刻行動：點上方「加入手機鬧鐘」按鈕，設定 23:55 提醒自己準時守候",
+            "🔔 立刻行動：自己設定手機鬧鐘或行事曆提醒 23:55，準時守候搶票",
             "🎭 兩場次策略：通常一天有早晚兩個場次，兩個都去搶，搶到任何一場都算贏",
             "📱 注意事項：必須在飛航模式 + 船上內網的狀態下用 APP，確認已連上內網再開始搶"
           ]
@@ -467,12 +463,8 @@ export const dictionary: Record<Lang, any> = {
     timeUnits: ["Days", "Hrs", "Min", "Sec"],
     todayHighlightsTitle: "Today's Highlights",
     todayNoEvents: "No big events scheduled today — kick back and relax!",
-    reminderTitle: "Show Booking Phone Alarm",
-    reminderDesc: "Show bookings open at 00:00 midnight daily. We strongly suggest adding an alarm to your phone calendar to secure your seats!",
-    reminderToggleOn: "Alarm Reminder Set",
-    reminderToggleOff: "Add Phone Alarm (23:55)",
-    reminderMessage: "Time to book tomorrow's show on the MSC for Me app!",
-    reminderError: "Failed to set alarm. Please set it manually.",
+    reminderTitle: "Show Booking Reminder",
+    reminderDesc: "Show bookings open at 00:00 midnight daily. We strongly suggest setting your own phone alarm or calendar reminder (23:55) to secure your seats!",
     tabs: [
       { id: 'depart',   label: "📋 Before" },
       { id: 'onboard',  label: "🚢 Onboard" },
@@ -665,7 +657,7 @@ export const dictionary: Record<Lang, any> = {
           tips: [
             "⏰ Bookings open at EXACTLY 00:00 midnight for the following day's shows",
             "⚡ Speed alert: Spots typically sell out within 5 minutes — this is not an exaggeration",
-            "🔔 Set it now: Tap the 'Add Alarm' button above to get a 23:55 reminder",
+            "🔔 Set it now: Set your own phone alarm or calendar reminder for 23:55",
             "🎭 Two showtimes daily: go for both time slots at midnight; accept whichever one you land",
             "📱 Must be on airplane mode + ship Wi-Fi when you try — confirm your connection first"
           ]
@@ -773,12 +765,8 @@ export const dictionary: Record<Lang, any> = {
     timeUnits: ["Hari", "Jam", "Mnt", "Dtk"],
     todayHighlightsTitle: "Sorotan Hari Ini",
     todayNoEvents: "Tidak ada acara besar hari ini — bersantailah!",
-    reminderTitle: "Alarm HP Pesan Pertunjukan",
-    reminderDesc: "Pemesanan dibuka jam 00:00 tengah malam. Tambahkan alarm ke kalender HP Anda agar tidak kehabisan tempat!",
-    reminderToggleOn: "Alarm Ditambahkan",
-    reminderToggleOff: "Tambah Alarm (23:55)",
-    reminderMessage: "Waktunya memesan pertunjukan besok di aplikasi MSC for Me!",
-    reminderError: "Gagal mengatur alarm. Harap atur secara manual.",
+    reminderTitle: "Pengingat Pemesanan Pertunjukan",
+    reminderDesc: "Pemesanan dibuka jam 00:00 tengah malam. Sangat disarankan untuk mengatur alarm HP atau pengingat kalender Anda sendiri (23:55) agar tidak kehabisan tempat!",
     tabs: [
       { id: 'depart',   label: "📋 Sebelum" },
       { id: 'onboard',  label: "🚢 Di Kapal" },
@@ -970,7 +958,7 @@ export const dictionary: Record<Lang, any> = {
           tips: [
             "⏰ Pemesanan dibuka tepat pukul 00:00 untuk pertunjukan keesokan harinya",
             "⚡ Tiket habis dalam 5 menit — ini bukan lebay, ini fakta",
-            "🔔 Segera: Tap tombol 'Tambah Alarm' di atas untuk pengingat 23:55",
+            "🔔 Segera: Atur alarm HP atau pengingat kalender Anda sendiri untuk 23:55",
             "📱 Harus dalam mode pesawat + Wi-Fi kapal saat mencoba"
           ]
         },
@@ -1073,12 +1061,8 @@ export const dictionary: Record<Lang, any> = {
     timeUnits: ["วัน", "ชม", "นาที", "วินาที"],
     todayHighlightsTitle: "ไฮไลต์วันนี้",
     todayNoEvents: "วันนี้ไม่มีกิจกรรมใหญ่ พักผ่อนให้เต็มที่!",
-    reminderTitle: "ตั้งนาฬิกาปลุกจองโชว์",
-    reminderDesc: "จองการแสดงเปิดเวลา 00:00 น. แนะนำให้เพิ่มการแจ้งเตือนในปฏิทินมือถือ!",
-    reminderToggleOn: "เพิ่มการแจ้งเตือนแล้ว",
-    reminderToggleOff: "เพิ่มนาฬิกาปลุก (23:55)",
-    reminderMessage: "ได้เวลาจองการแสดงสำหรับวันพรุ่งนี้ในแอป MSC for Me แล้ว!",
-    reminderError: "ไม่สามารถตั้งค่าได้ โปรดตั้งค่าด้วยตนเอง",
+    reminderTitle: "เตือนการจองโชว์",
+    reminderDesc: "จองการแสดงเปิดเวลา 00:00 น. แนะนำให้ตั้งนาฬิกาปลุกหรือการแจ้งเตือนในปฏิทินของคุณเอง (23:55) เพื่อไม่ให้พลาด!",
     tabs: [
       { id: 'depart',   label: "📋 ก่อนออก" },
       { id: 'onboard',  label: "🚢 บนเรือ" },
@@ -1268,7 +1252,7 @@ export const dictionary: Record<Lang, any> = {
           tips: [
             "⏰ จองเปิดเวลา 00:00 น. ตรงสำหรับการแสดงวันถัดไป",
             "⚡ ตั๋วหมดภายใน 5 นาที — ไม่ได้พูดเกินจริง",
-            "🔔 กดปุ่ม 'เพิ่มนาฬิกาปลุก' ด้านบนเพื่อแจ้งเตือน 23:55 น.",
+            "🔔 ตั้งนาฬิกาปลุกหรือการแจ้งเตือนในปฏิทินของคุณเองเวลา 23:55 น.",
             "📱 ต้องอยู่ในโหมดเครื่องบิน + Wi-Fi เรือเมื่อพยายามจอง"
           ]
         },
