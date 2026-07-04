@@ -33,9 +33,9 @@ export default defineConfig({
         ],
       },
       manifest: {
-        name: 'MSC 榮耀號 同事旅遊指南',
-        short_name: 'MSC 指南',
-        description: '2026 公司郵輪旅行專屬指南',
+        name: 'My Cruise-MSC 榮耀號',
+        short_name: 'My Cruise',
+        description: '20260709 Our Cruise in MSC',
         theme_color: '#002b5e',
         background_color: '#e8f4ff',
         display: 'standalone',
