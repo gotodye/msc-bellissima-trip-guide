@@ -39,8 +39,14 @@ const HERO_IMAGES = [
 // 此檔案」；改成導覽到後端 /api/calendar（見 api/calendar.ts），由伺服器真的回應
 // text/calendar，Safari 才會正確辨識並跳出「加入日曆」。
 function downloadICS(message: string, errorMsg: string) {
+    const url = `/api/calendar?msg=${encodeURIComponent(message)}`;
     try {
-        window.location.href = `/api/calendar?msg=${encodeURIComponent(message)}`;
+        // 「加到主畫面」的獨立模式（standalone PWA）用的 WebView 比真正的 Safari 分頁
+        // 限制更多，原地導覽（location.href）到這種「非網頁內容」的回應常常完全沒反應。
+        // 用 window.open 把這個動作踢出去交給真正的 Safari 處理，系統層級的「加入日曆」
+        // 才會正常跳出來；萬一被攔截（極少見，因為是使用者點擊觸發）才退回原地導覽。
+        const win = window.open(url, '_blank');
+        if (!win) window.location.href = url;
     } catch { alert(errorMsg); }
 }
 
