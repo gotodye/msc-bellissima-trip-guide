@@ -12,6 +12,9 @@ import type { TaskEvent } from './taskSchedule';
 import type { Lang } from './data';
 
 // ─── Timeline 全區塊 UI 文字（4 語言，找不到時退回中文） ───────────────────────
+// 地點下拉選單裡「自己輸入」選項的特殊值，不會跟真實地點字串撞名
+const CUSTOM_LOCATION_VALUE = '__custom_location__';
+
 const TIMELINE_TEXT: Record<Lang, {
   writeButton: string; offline: string; syncing: string; synced: (time: string) => string;
   emptyTitle: string; emptyDesc: string; loading: string;
@@ -20,6 +23,7 @@ const TIMELINE_TEXT: Record<Lang, {
   uploadToMoment: string; uploading: string; uploadError: string;
   backToOverview: string; eventEmpty: string; cardEmpty: string; postDiaryTitle: (name: string) => string;
   formTitle: string; yourName: string; locationPlaceholder: string;
+  customLocationOption: string; customLocationPlaceholder: string;
   messagePlaceholder: string; previewAlt: string; classifying: string;
   classifiedEvent: (title: string) => string; classifiedGeneral: string; uploadPhoto: string;
   errNoContent: string; errSubmitFail: string; submitting: string; submitButton: string;
@@ -38,7 +42,9 @@ const TIMELINE_TEXT: Record<Lang, {
     backToOverview: '← 返回總覽', eventEmpty: '還沒有人上傳這個時刻的照片，快來搶頭香！', cardEmpty: '還沒人上傳，搶頭香！',
     postDiaryTitle: name => `${name} 的航海日誌`,
     formTitle: '✍️ 寫一篇航海日誌', yourName: '你的名字',
-    locationPlaceholder: '📍 標記地點（選填）', messagePlaceholder: '說點什麼吧…（選填）', previewAlt: '預覽',
+    locationPlaceholder: '📍 標記地點（選填）',
+    customLocationOption: '✏️ 自己輸入…', customLocationPlaceholder: '輸入地點名稱',
+    messagePlaceholder: '說點什麼吧…（選填）', previewAlt: '預覽',
     classifying: '判斷這張照片屬於哪個時刻…',
     classifiedEvent: title => `🎉 這張會歸入大事件卡「${title}」`, classifiedGeneral: '🌊 這張會放進一般航海誌',
     uploadPhoto: '上傳照片（選填）', errNoContent: '請填寫訊息、選地點或上傳照片',
@@ -58,7 +64,9 @@ const TIMELINE_TEXT: Record<Lang, {
     backToOverview: '← Back to overview', eventEmpty: 'No photos yet for this moment — be the first!', cardEmpty: 'No photos yet — be the first!',
     postDiaryTitle: name => `${name}'s Time-Sail entry`,
     formTitle: '✍️ Write a Time-Sail Entry', yourName: 'Your name',
-    locationPlaceholder: '📍 Tag a location (optional)', messagePlaceholder: 'Say something… (optional)', previewAlt: 'Preview',
+    locationPlaceholder: '📍 Tag a location (optional)',
+    customLocationOption: '✏️ Type your own…', customLocationPlaceholder: 'Enter a location',
+    messagePlaceholder: 'Say something… (optional)', previewAlt: 'Preview',
     classifying: 'Figuring out which moment this belongs to…',
     classifiedEvent: title => `🎉 This will be filed under "${title}"`, classifiedGeneral: '🌊 This will go into the general Time-Sail feed',
     uploadPhoto: 'Upload a photo (optional)', errNoContent: 'Please add a message, location, or photo',
@@ -78,7 +86,9 @@ const TIMELINE_TEXT: Record<Lang, {
     backToOverview: '← Kembali ke ringkasan', eventEmpty: 'Belum ada foto untuk momen ini — jadilah yang pertama!', cardEmpty: 'Belum ada yang unggah — jadilah yang pertama!',
     postDiaryTitle: name => `Catatan Pelayaran ${name}`,
     formTitle: '✍️ Tulis Catatan Pelayaran', yourName: 'Nama Anda',
-    locationPlaceholder: '📍 Tandai lokasi (opsional)', messagePlaceholder: 'Tulis sesuatu… (opsional)', previewAlt: 'Pratinjau',
+    locationPlaceholder: '📍 Tandai lokasi (opsional)',
+    customLocationOption: '✏️ Ketik sendiri…', customLocationPlaceholder: 'Masukkan nama lokasi',
+    messagePlaceholder: 'Tulis sesuatu… (opsional)', previewAlt: 'Pratinjau',
     classifying: 'Mengecek momen mana foto ini termasuk…',
     classifiedEvent: title => `🎉 Foto ini akan masuk ke kartu momen "${title}"`, classifiedGeneral: '🌊 Foto ini akan masuk ke feed umum',
     uploadPhoto: 'Unggah foto (opsional)', errNoContent: 'Mohon isi pesan, lokasi, atau unggah foto',
@@ -98,7 +108,9 @@ const TIMELINE_TEXT: Record<Lang, {
     backToOverview: '← กลับไปหน้ารวม', eventEmpty: 'ยังไม่มีใครอัปโหลดภาพช่วงเวลานี้ มาเป็นคนแรกกันเถอะ!', cardEmpty: 'ยังไม่มีใครอัปโหลด มาเป็นคนแรกกันเถอะ!',
     postDiaryTitle: name => `บันทึกการเดินเรือของ ${name}`,
     formTitle: '✍️ เขียนบันทึกการเดินเรือ', yourName: 'ชื่อของคุณ',
-    locationPlaceholder: '📍 ระบุสถานที่ (ไม่บังคับ)', messagePlaceholder: 'พูดอะไรสักหน่อย… (ไม่บังคับ)', previewAlt: 'ตัวอย่าง',
+    locationPlaceholder: '📍 ระบุสถานที่ (ไม่บังคับ)',
+    customLocationOption: '✏️ พิมพ์เอง…', customLocationPlaceholder: 'กรอกชื่อสถานที่',
+    messagePlaceholder: 'พูดอะไรสักหน่อย… (ไม่บังคับ)', previewAlt: 'ตัวอย่าง',
     classifying: 'กำลังตรวจสอบว่าภาพนี้อยู่ช่วงเวลาไหน…',
     classifiedEvent: title => `🎉 ภาพนี้จะถูกจัดเข้าการ์ด "${title}"`, classifiedGeneral: '🌊 ภาพนี้จะไปอยู่ในฟีดทั่วไป',
     uploadPhoto: 'อัปโหลดภาพ (ไม่บังคับ)', errNoContent: 'กรุณากรอกข้อความ เลือกสถานที่ หรืออัปโหลดภาพ',
@@ -795,6 +807,7 @@ function PostForm({ onClose, onEditIdentity, lang }: { onClose: () => void; onEd
   const name = localStorage.getItem('msc-username') || t.anonymous;
   const emoji = localStorage.getItem('msc-emoji') || DEFAULT_AVATAR;
   const [location, setLocation]= useState('');
+  const [isCustomLocation, setIsCustomLocation] = useState(false);
   const [message,  setMessage] = useState('');
   const [photo,    setPhoto]   = useState<File | null>(null);
   const [preview,  setPreview] = useState('');
@@ -855,14 +868,30 @@ function PostForm({ onClose, onEditIdentity, lang }: { onClose: () => void; onEd
           <span className="text-[11px] text-[#00a0e3] font-bold flex-shrink-0">{t.changeIdentity}</span>
         </button>
 
-        {/* 地點 */}
+        {/* 地點：可從船上常見地點挑選，也可以切換成自己輸入 */}
         <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3">
           <MapPin className="w-4 h-4 text-[#00a0e3] flex-shrink-0" />
-          <select value={location} onChange={e => setLocation(e.target.value)}
-            className="flex-1 bg-transparent py-2.5 text-sm text-slate-600 border-none focus:outline-none cursor-pointer">
-            <option value="">{t.locationPlaceholder}</option>
-            {locations.map(l => <option key={l} value={l}>{l}</option>)}
-          </select>
+          {isCustomLocation ? (
+            <>
+              <input value={location} onChange={e => setLocation(e.target.value)}
+                placeholder={t.customLocationPlaceholder} autoFocus
+                className="flex-1 bg-transparent py-2.5 text-sm text-slate-600 placeholder:text-slate-400 border-none focus:outline-none min-w-0" />
+              <button type="button" onClick={() => { setIsCustomLocation(false); setLocation(''); }}
+                className="text-slate-400 hover:text-slate-600 flex-shrink-0">
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </>
+          ) : (
+            <select value={location} onChange={e => {
+              if (e.target.value === CUSTOM_LOCATION_VALUE) { setIsCustomLocation(true); setLocation(''); }
+              else setLocation(e.target.value);
+            }}
+              className="flex-1 bg-transparent py-2.5 text-sm text-slate-600 border-none focus:outline-none cursor-pointer">
+              <option value="">{t.locationPlaceholder}</option>
+              {locations.map(l => <option key={l} value={l}>{l}</option>)}
+              <option value={CUSTOM_LOCATION_VALUE}>{t.customLocationOption}</option>
+            </select>
+          )}
         </div>
 
         {/* 快捷標籤 */}
