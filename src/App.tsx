@@ -5,12 +5,13 @@ import {
     AlertTriangle, CheckSquare, ShieldAlert, Ship, Globe,
     Smartphone, MessageCircle, Calendar, Ticket, Coffee,
     Camera, Utensils, Star, MapPin, ShoppingBag, Clock,
-    Sparkles, Trophy, RotateCcw, WifiOff, Download,
+    Sparkles, Trophy, RotateCcw, WifiOff, Download, Volume2, VolumeX,
 } from 'lucide-react';
 import { dictionary, targetDateStr, type Lang } from './data';
 import { Timeline } from './Timeline';
 import { BingoCard } from './BingoCard';
 import { TASK_EVENTS, eventText } from './taskSchedule';
+import { useBackgroundMusic } from './backgroundMusic';
 
 // ─── Icon Map ─────────────────────────────────────────────────────────────────
 const iconMap: Record<string, React.ElementType> = {
@@ -103,7 +104,7 @@ function StandardCard({ item, checkedItems, toggleCheck }: { item: any; checkedI
 }
 
 // ─── Hero Section ──────────────────────────────────────────────────────────────
-function HeroSection({ content, countdown, hasDeparted, lang, onLangChange, isOnline, installPrompt, onInstall }: any) {
+function HeroSection({ content, countdown, hasDeparted, lang, onLangChange, isOnline, installPrompt, onInstall, musicEnabled, onToggleMusic }: any) {
     const [heroError, setHeroError] = useState(false);
     const [heroIdx, setHeroIdx] = useState(0);
     const units = content.timeUnits || ['天', '時', '分', '秒'];
@@ -150,7 +151,12 @@ function HeroSection({ content, countdown, hasDeparted, lang, onLangChange, isOn
                             <span className="text-white/80 text-[11px] font-bold tracking-widest">MSC BELLISSIMA</span>
                         </div>
                     </div>
-                    <div className="flex gap-1.5">
+                    <div className="flex items-center gap-1.5">
+                        <button onClick={onToggleMusic}
+                            aria-label={musicEnabled ? '關閉背景音樂' : '開啟背景音樂'}
+                            className="w-7 h-7 rounded-full bg-white/15 hover:bg-white/25 text-white/80 flex items-center justify-center transition-colors">
+                            {musicEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
+                        </button>
                         {(['zh', 'en', 'id', 'th'] as Lang[]).map(l => (
                             <button key={l} onClick={() => onLangChange(l)}
                                 className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-colors ${lang === l ? 'bg-white text-[#002b5e]' : 'bg-white/15 text-white/70 hover:bg-white/25'}`}>
@@ -266,6 +272,7 @@ export default function App() {
     const [installPrompt, setInstallPrompt] = useState<any>(null);
     const [preloaded, setPreloaded] = useState(() => !!localStorage.getItem('msc-images-cached'));
     const [preloading, setPreloading] = useState(false);
+    const { enabled: musicEnabled, toggle: toggleMusic } = useBackgroundMusic();
 
     const content = dictionary[lang];
     // Merge sections for combined tabs
@@ -352,6 +359,7 @@ export default function App() {
                 content={content} countdown={countdown} hasDeparted={hasDeparted} lang={lang} onLangChange={setLang}
                 isOnline={isOnline} installPrompt={installPrompt}
                 onInstall={() => { installPrompt?.prompt(); installPrompt?.userChoice.then(() => setInstallPrompt(null)); }}
+                musicEnabled={musicEnabled} onToggleMusic={toggleMusic}
             />
 
             {/* Reminder bar（純文字提醒，不含加入手機鬧鐘功能——iOS PWA 獨立模式下反覆無法
