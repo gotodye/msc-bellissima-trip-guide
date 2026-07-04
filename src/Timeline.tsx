@@ -115,13 +115,18 @@ function vibrate(ms = 12) {
   try { navigator.vibrate?.(ms); } catch { /* iOS 不支援，靜默略過 */ }
 }
 
+const DATE_TIME_OPTS: Intl.DateTimeFormatOptions = { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+// 任務卡時段前面的日期（例如 7/9），跟卡片本身設定的行事曆日期一致，不是拍攝時間
+function fmtEventDate(dateStr: string, locale: string): string {
+  return new Date(`${dateStr}T00:00:00`).toLocaleDateString(locale, { month: 'numeric', day: 'numeric' });
+}
 function fmtHM(post: Post, locale: string): string {
   if (post.capturedAt) {
     const d = new Date(post.capturedAt);
-    if (!isNaN(d.getTime())) return d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
+    if (!isNaN(d.getTime())) return d.toLocaleString(locale, DATE_TIME_OPTS);
   }
   if (post.timestamp?.seconds) {
-    return new Date(post.timestamp.seconds * 1000).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
+    return new Date(post.timestamp.seconds * 1000).toLocaleString(locale, DATE_TIME_OPTS);
   }
   return '';
 }
@@ -560,7 +565,7 @@ function EventCard({ event, posts, onOpen, lang }: { event: TaskEvent; posts: Po
         <h3 className="font-bold text-[#002b5e] text-[14px] leading-snug">{et.title}</h3>
         <p className="text-[11px] text-slate-500 mt-1 leading-snug">{et.hint}</p>
         <p className="text-[10px] text-[#00a0e3] font-bold mt-2">
-          {String(event.startHour).padStart(2, '0')}:{String(event.startMin).padStart(2, '0')}–{String(event.endHour).padStart(2, '0')}:{String(event.endMin).padStart(2, '0')}
+          {fmtEventDate(event.date, t.locale)} {String(event.startHour).padStart(2, '0')}:{String(event.startMin).padStart(2, '0')}–{String(event.endHour).padStart(2, '0')}:{String(event.endMin).padStart(2, '0')}
         </p>
       </div>
     </motion.button>
