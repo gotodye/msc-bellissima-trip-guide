@@ -34,17 +34,32 @@ const HERO_IMAGES = [
     'https://images.unsplash.com/photo-1548574505-5e239809ee19?auto=format&fit=crop&q=80&w=1600',
 ];
 
-// ─── ICS download (iOS / 其他裝置的退路：行事曆提醒) ──────────────────────────
-// iOS Safari 對前端自己產生的 Blob/data URI「假下載」支援不完整，常顯示「無法下載
-// 此檔案」；改成導覽到後端 /api/calendar（見 api/calendar.ts），由伺服器真的回應
-// text/calendar，Safari 才會正確辨識並跳出「加入日曆」。
-function downloadICS(message: string, errorMsg: string) {
+// ─── ICS 下載（iOS / 其他裝置的退路：行事曆提醒） ──────────────────────────────
+// 「加到主畫面」的獨立模式（standalone PWA）用的 WebView 比真正的 Safari 分頁限制更多，
+// 不管是原地導覽（location.href）還是開新分頁（window.open）到這種「非網頁內容」的
+// 回應，都可能被整個攔住、完全沒反應。改用 Web Share API：把 /api/calendar 回應的
+// ICS 內容包成檔案，直接呼叫 iOS 原生的分享清單，使用者可以從裡面選「加入日曆」或
+// 用「行事曆」App 開啟——這條路徑不經過「網頁導覽」，不受 PWA 獨立模式限制。
+async function downloadICS(message: string, errorMsg: string) {
     const url = `/api/calendar?msg=${encodeURIComponent(message)}`;
     try {
-        // 「加到主畫面」的獨立模式（standalone PWA）用的 WebView 比真正的 Safari 分頁
-        // 限制更多，原地導覽（location.href）到這種「非網頁內容」的回應常常完全沒反應。
-        // 用 window.open 把這個動作踢出去交給真正的 Safari 處理，系統層級的「加入日曆」
-        // 才會正常跳出來；萬一被攔截（極少見，因為是使用者點擊觸發）才退回原地導覽。
+        const nav = navigator as any;
+        if (nav.canShare) {
+            const res = await fetch(url);
+            if (res.ok) {
+                const text = await res.text();
+                const file = new File([text], 'msc-show-alarm.ics', { type: 'text/calendar' });
+                if (nav.canShare({ files: [file] })) {
+                    try {
+                        await nav.share({ files: [file] });
+                        return;
+                    } catch (shareErr: any) {
+                        if (shareErr?.name === 'AbortError') return; // 使用者自己取消分享，不算失敗
+                    }
+                }
+            }
+        }
+        // 不支援分享檔案的裝置，退回原本的導覽方式
         const win = window.open(url, '_blank');
         if (!win) window.location.href = url;
     } catch { alert(errorMsg); }
