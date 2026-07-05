@@ -30,7 +30,7 @@ const TIMELINE_TEXT: Record<Lang, {
   anonymous: string; routeDepart: string; routeReturn: string; routeNaha: string; pendingUpload: string;
   pendingSyncLabel: (n: number) => string;
   identityTitle: string; identityDesc: string; changeIdentity: string;
-  deleteConfirm: string; deleteError: string; locale: string;
+  deleteConfirm: string; deleteError: string; locale: string; honkListTitle: string;
 }> = {
   zh: {
     writeButton: '寫一篇航海日誌', offline: '⚠️ 離線・顯示快取資料', syncing: '⟳ 同步中…',
@@ -53,6 +53,7 @@ const TIMELINE_TEXT: Record<Lang, {
     pendingSyncLabel: n => `📦 ${n} 則待上傳・恢復連線後自動補傳`,
     identityTitle: '設定你的水手身份', identityDesc: '這個頭像和名字會顯示在你之後的每篇日誌、留言和照片旁邊', changeIdentity: '更換',
     deleteConfirm: '確定要刪除這張照片嗎？刪除後無法復原。', deleteError: '刪除失敗，請確認網路連線', locale: 'zh-TW',
+    honkListTitle: '鳴笛名單',
   },
   en: {
     writeButton: 'Write a Time-Sail Entry', offline: '⚠️ Offline · Showing cached data', syncing: '⟳ Syncing…',
@@ -75,6 +76,7 @@ const TIMELINE_TEXT: Record<Lang, {
     pendingSyncLabel: n => `📦 ${n} pending — will auto-send once back online`,
     identityTitle: 'Set Up Your Sailor Identity', identityDesc: 'This avatar and name will show up next to every entry, comment, and photo you post', changeIdentity: 'Change',
     deleteConfirm: 'Delete this photo? This cannot be undone.', deleteError: 'Failed to delete — please check your connection', locale: 'en-US',
+    honkListTitle: 'Honk List',
   },
   id: {
     writeButton: 'Tulis Catatan Pelayaran', offline: '⚠️ Offline · Menampilkan data tersimpan', syncing: '⟳ Menyinkronkan…',
@@ -97,6 +99,7 @@ const TIMELINE_TEXT: Record<Lang, {
     pendingSyncLabel: n => `📦 ${n} tertunda・akan otomatis terkirim saat kembali online`,
     identityTitle: 'Atur Identitas Pelautmu', identityDesc: 'Avatar dan nama ini akan muncul di setiap catatan, komentar, dan foto yang kamu unggah', changeIdentity: 'Ganti',
     deleteConfirm: 'Hapus foto ini? Tindakan ini tidak bisa dibatalkan.', deleteError: 'Gagal menghapus — periksa koneksi internet Anda', locale: 'id-ID',
+    honkListTitle: 'Daftar Klakson',
   },
   th: {
     writeButton: 'เขียนบันทึกการเดินเรือ', offline: '⚠️ ออฟไลน์ · แสดงข้อมูลที่บันทึกไว้', syncing: '⟳ กำลังซิงค์…',
@@ -119,6 +122,7 @@ const TIMELINE_TEXT: Record<Lang, {
     pendingSyncLabel: n => `📦 ${n} รายการรอส่ง・จะส่งอัตโนมัติเมื่อออนไลน์`,
     identityTitle: 'ตั้งค่าตัวตนกะลาสีของคุณ', identityDesc: 'อวาตาร์และชื่อนี้จะแสดงข้างบันทึก ความคิดเห็น และภาพที่คุณโพสต์ทุกครั้ง', changeIdentity: 'เปลี่ยน',
     deleteConfirm: 'ลบภาพนี้หรือไม่? ไม่สามารถย้อนกลับได้', deleteError: 'ลบไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต', locale: 'th-TH',
+    honkListTitle: 'รายชื่อคนกดแตร',
   },
 };
 
@@ -192,31 +196,105 @@ function playHornSound() {
   } catch { /* Web Audio 不可用時靜默略過 */ }
 }
 
-// ─── ⚓ 鳴笛按鈕（取代讚） ────────────────────────────────────────────────────
-function HornButton({ post, light }: { post: Post; light?: boolean }) {
+// ─── 鳴笛名單彈窗：依按的次數排序，每人一行、次數用 × 標示 ─────────────────────
+function HonkListModal({ honkers, lang, onClose }: {
+  honkers: { name: string; avatar: string; count: number }[]; lang: Lang; onClose: () => void;
+}) {
+  const t = TIMELINE_TEXT[lang];
+  return (
+    <motion.div
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center p-3"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 20, opacity: 0 }}
+        onClick={e => e.stopPropagation()}
+        className="bg-white rounded-2xl w-full max-w-xs max-h-[70vh] overflow-hidden flex flex-col"
+      >
+        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 flex-shrink-0">
+          <h3 className="font-bold text-[#002b5e] text-sm">⚓ {t.honkListTitle}</h3>
+          <button onClick={onClose} className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+        <div className="overflow-y-auto p-3 space-y-0.5">
+          {honkers.map(h => (
+            <div key={h.name} className="flex items-center gap-2.5 px-2 py-1.5 rounded-xl hover:bg-slate-50">
+              <Avatar id={h.avatar} size={28} lang={lang} />
+              <span className="text-sm font-medium text-[#002b5e] flex-1 truncate">{h.name}</span>
+              <span className="text-xs font-bold text-[#00a0e3]">×{h.count}</span>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// 鳴笛名單裡的小頭像，右上角疊一個「次方」樣式的小次數
+function HonkAvatar({ honker, lang, size = 18 }: {
+  honker: { name: string; avatar: string; count: number }; lang: Lang; size?: number;
+}) {
+  return (
+    <span className="relative inline-flex flex-shrink-0 rounded-full bg-white ring-1 ring-white items-center justify-center overflow-hidden" style={{ width: size, height: size }}>
+      <Avatar id={honker.avatar} size={size - 2} lang={lang} />
+      <sup className="absolute -top-1 -right-1.5 text-[8px] font-extrabold text-[#00a0e3] bg-white rounded-full px-0.5 leading-none" style={{ boxShadow: '0 0 0 1px white' }}>
+        {honker.count}
+      </sup>
+    </span>
+  );
+}
+
+// ─── ⚓ 鳴笛按鈕（取代讚）：無限次狂按都算數，名單裡每人只出現一次＋各自次數 ─────
+function HornButton({ post, light, lang }: { post: Post; light?: boolean; lang: Lang }) {
   const [firing, setFiring] = useState(false);
+  const [showList, setShowList] = useState(false);
 
   const honk = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!post.id) return;
+    const name = localStorage.getItem('msc-username');
+    const avatar = localStorage.getItem('msc-emoji') || DEFAULT_AVATAR;
+    if (!name) return;
     setFiring(true);
     playHornSound();
     vibrate(15);
     setTimeout(() => setFiring(false), 350);
-    honkPost(post.id).catch(() => { /* 鳴笛失敗不打斷體驗，安靜略過 */ });
+    honkPost(post.id, name, avatar).catch(() => { /* 鳴笛失敗不打斷體驗，安靜略過 */ });
   };
 
+  const honkers = useMemo(
+    () => Object.values(post.honkedBy || {}).sort((a, b) => b.count - a.count),
+    [post.honkedBy]
+  );
+
   return (
-    <button onClick={honk}
-      className={`flex items-center gap-1 text-[10px] font-bold active:scale-90 transition-transform ${
-        light ? 'text-white' : 'text-[#00a0e3]'
-      }`}>
-      <motion.span
-        animate={firing ? { scale: [1, 1.35, 1], rotate: [0, -10, 10, 0] } : {}}
-        transition={{ duration: 0.35 }}
-        className="text-xs">⚓</motion.span>
-      {post.hornCount ?? 0}
-    </button>
+    <div className="flex items-center gap-1.5" onClick={e => e.stopPropagation()}>
+      <button onClick={honk}
+        className={`flex items-center gap-1 text-[10px] font-bold active:scale-90 transition-transform ${
+          light ? 'text-white' : 'text-[#00a0e3]'
+        }`}>
+        <motion.span
+          animate={firing ? { scale: [1, 1.35, 1], rotate: [0, -10, 10, 0] } : {}}
+          transition={{ duration: 0.35 }}
+          className="text-xs">⚓</motion.span>
+        {post.hornCount ?? 0}
+      </button>
+
+      {honkers.length > 0 && (
+        <button onClick={() => setShowList(true)} className="flex items-center -space-x-1.5">
+          {honkers.slice(0, 3).map(h => <HonkAvatar key={h.name} honker={h} lang={lang} />)}
+          {honkers.length > 3 && (
+            <span className={`text-[9px] font-bold ml-1.5 ${light ? 'text-white/70' : 'text-slate-400'}`}>+{honkers.length - 3}</span>
+          )}
+        </button>
+      )}
+
+      <AnimatePresence>
+        {showList && <HonkListModal honkers={honkers} lang={lang} onClose={() => setShowList(false)} />}
+      </AnimatePresence>
+    </div>
   );
 }
 
@@ -624,7 +702,7 @@ function PostDetailModal({ post, onClose, lang }: { post: Post; onClose: () => v
               </div>
             </div>
             <div className="flex items-center gap-1 flex-shrink-0">
-              <HornButton post={post} />
+              <HornButton post={post} lang={lang} />
               <DeletePostButton post={post} lang={lang} onDeleted={onClose} />
             </div>
           </div>
@@ -659,7 +737,7 @@ function PolaroidCard({ post, lang }: { post: Post & { isPending?: boolean }; la
       )}
       {post.message && <p className="text-[9px] text-slate-400 text-center truncate px-1">{post.message}</p>}
       <div className="flex justify-center mt-1">
-        <HornButton post={post} />
+        <HornButton post={post} lang={lang} />
       </div>
       </motion.div>
       <AnimatePresence>
@@ -772,7 +850,7 @@ function EventModal({ event, posts, onClose, lang }: { event: TaskEvent; posts: 
                   </div>
                 </div>
                 <div className="flex items-center gap-1 flex-shrink-0">
-                  <HornButton post={big} />
+                  <HornButton post={big} lang={lang} />
                   <DeletePostButton post={big} lang={lang} onDeleted={() => setBig(null)} />
                 </div>
               </div>

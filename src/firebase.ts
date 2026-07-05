@@ -5,7 +5,7 @@ import { initializeApp, getApps } from 'firebase/app';
 import {
   getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, increment, query,
   orderBy, onSnapshot, serverTimestamp, limit,
-  enableIndexedDbPersistence,
+  enableIndexedDbPersistence, FieldPath,
 } from 'firebase/firestore';
 import { getStorage, ref, uploadString, getDownloadURL, deleteObject } from 'firebase/storage';
 import { parse as parseExif } from 'exifr';
@@ -44,6 +44,7 @@ export interface Post {
   dayIndex?:    1 | 2 | 3 | 4;
   isTaskPost?:  boolean;
   hornCount?:   number;      // ⚓ 鳴笛數
+  honkedBy?:    Record<string, { name: string; avatar: string; count: number }>; // 誰按過、按了幾次
 }
 
 // 對應規格書「時空錨點」快速勾選位置（4 語言，找不到時退回中文）
@@ -273,9 +274,15 @@ export async function addPost(
   }
 }
 
-// ⚓ 鳴笛（取代讚）
-export async function honkPost(postId: string): Promise<void> {
-  await updateDoc(doc(db, 'posts', postId), { hornCount: increment(1) });
+// ⚓ 鳴笛（取代讚）。無限次數狂按都算數，但名單裡每人只出現一次、疊加各自的次數
+export async function honkPost(postId: string, honkerName: string, honkerAvatar: string): Promise<void> {
+  await updateDoc(
+    doc(db, 'posts', postId),
+    'hornCount', increment(1),
+    new FieldPath('honkedBy', honkerName, 'name'), honkerName,
+    new FieldPath('honkedBy', honkerName, 'avatar'), honkerAvatar,
+    new FieldPath('honkedBy', honkerName, 'count'), increment(1),
+  );
 }
 
 // 刪除自己上傳的貼文（連帶刪除 Storage 裡的照片檔案，避免變成孤兒檔案佔空間）。
