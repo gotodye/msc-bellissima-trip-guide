@@ -34,120 +34,6 @@ const IMG = {
   ship:       'https://images.unsplash.com/photo-1548690312-e3b507d8c110?auto=format&fit=crop&q=80&w=800',
 };
 
-// ─── Shared Bingo Cells (emoji + short label + description) ─────────────────
-// Index 12 (center) is always FREE
-const BINGO_ZH = [
-  { emoji: '🌅', text: '看日出',   desc: '在甲板迎接海上日出' },
-  { emoji: '💎', text: '水晶樓梯', desc: '在水晶樓梯拍到空曠美照' },
-  { emoji: '🦞', text: '龍蝦尾',   desc: '主餐廳點到龍蝦尾' },
-  { emoji: '🍕', text: '深夜披薩', desc: '嚐到自助餐廳深夜現烤披薩' },
-  { emoji: '🎭', text: '大秀演出', desc: '坐進倫敦大劇院看完一場表演' },
-  { emoji: '🛍️', text: '那霸購物', desc: '在國際通買到伴手禮' },
-  { emoji: '⬜', text: '白色派對', desc: '穿全白服裝參加白色派對' },
-  { emoji: '🌊', text: '玩滑水道', desc: '在亞利桑那水上樂園玩滑水道' },
-  { emoji: '🌙', text: '甲板夜景', desc: '在甲板欣賞海上夜景' },
-  { emoji: '💍', text: '免稅掃貨', desc: '在香榭麗舍免稅店購物' },
-  { emoji: '🥂', text: '正裝晚餐', desc: '穿正裝在主餐廳用晚餐' },
-  { emoji: '🧀', text: '現做起司', desc: '找到並嚐到手工莫扎瑞拉起司' },
-  { emoji: '⚓', text: 'FREE',      desc: '登船成功！你已經贏了！' },
-  { emoji: '🏎️', text: 'F1賽車',   desc: '試玩F1模擬賽車' },
-  { emoji: '🥐', text: '陽台早餐', desc: '享用陽台房免費外送早餐' },
-  { emoji: '📱', text: 'APP搶票',   desc: '成功在APP搶到大秀門票' },
-  { emoji: '📸', text: '同事合照', desc: '和公司同事拍一張大合照' },
-  { emoji: '🏃', text: '健步道',   desc: '在船頂健步道跑步或散步一圈' },
-  { emoji: '🍹', text: '喝調酒',   desc: '在特色酒吧點一杯調酒' },
-  { emoji: '⛩️', text: '那霸神社', desc: '參觀波上宮神社' },
-  { emoji: '👨‍✈️', text: '遇到船長', desc: '在船上遇見或拍到船長' },
-  { emoji: '🇮🇹', text: '義大利夜', desc: '盛裝打扮參加義大利主題夜' },
-  { emoji: '🥽', text: '試玩VR',   desc: '體驗VR射擊等虛擬實境遊戲' },
-  { emoji: '🍫', text: '巧克力屋', desc: '光顧Jean-Philippe的巧克力工坊' },
-  { emoji: '🎊', text: '平安返台', desc: '安全完成這趟美好旅程！' },
-];
-
-const BINGO_EN = [
-  { emoji: '🌅', text: 'Sunrise',      desc: 'Watch the sunrise from the deck' },
-  { emoji: '💎', text: 'Crystal Stair',desc: 'Get an empty-staircase photo' },
-  { emoji: '🦞', text: 'Lobster',      desc: 'Order lobster tail at main restaurant' },
-  { emoji: '🍕', text: 'Night Pizza',  desc: 'Taste the late-night fresh-baked pizza' },
-  { emoji: '🎭', text: 'Live Show',    desc: 'Watch a full show at London Theatre' },
-  { emoji: '🛍️', text: 'Naha Shop',   desc: 'Buy a souvenir on Kokusai Dori' },
-  { emoji: '⬜', text: 'White Party',  desc: 'Join the White Party in all-white outfit' },
-  { emoji: '🌊', text: 'Water Slide',  desc: 'Ride Arizona Water Park slides' },
-  { emoji: '🌙', text: 'Night Deck',   desc: 'Enjoy the ocean night view from deck' },
-  { emoji: '💍', text: 'Duty Free',    desc: 'Shop at the Galleria duty-free stores' },
-  { emoji: '🥂', text: 'Formal Night', desc: 'Dress formally for the main restaurant' },
-  { emoji: '🧀', text: 'Mozzarella',   desc: 'Find & taste the handmade mozzarella' },
-  { emoji: '⚓', text: 'FREE',          desc: 'You\'re on board — you already won!' },
-  { emoji: '🏎️', text: 'F1 Race',     desc: 'Try the F1 simulator' },
-  { emoji: '🥐', text: 'Balcony Bfast',desc: 'Enjoy complimentary balcony breakfast' },
-  { emoji: '📱', text: 'Book Show',    desc: 'Successfully book a show via app' },
-  { emoji: '📸', text: 'Team Photo',   desc: 'Take a group photo with colleagues' },
-  { emoji: '🏃', text: 'Track Run',    desc: 'Walk/run the top-deck promenade' },
-  { emoji: '🍹', text: 'Cocktail',     desc: 'Order a cocktail at a specialty bar' },
-  { emoji: '⛩️', text: 'Naminoue',    desc: 'Visit Naminoue Shrine in Naha' },
-  { emoji: '👨‍✈️', text: 'Captain',   desc: 'Spot or meet the ship\'s captain' },
-  { emoji: '🇮🇹', text: 'Italian Nite',desc: 'Dress up for Italian Night' },
-  { emoji: '🥽', text: 'Try VR',       desc: 'Try VR shooting or other VR games' },
-  { emoji: '🍫', text: 'Chocolate',    desc: 'Visit Jean-Philippe\'s chocolate café' },
-  { emoji: '🎊', text: 'Safe Home',    desc: 'Complete this wonderful journey safely!' },
-];
-
-const BINGO_ID = [
-  { emoji: '🌅', text: 'Lihat Sunrise',  desc: 'Saksikan matahari terbit dari dek' },
-  { emoji: '💎', text: 'Tangga Kristal', desc: 'Foto di tangga Swarovski saat sepi' },
-  { emoji: '🦞', text: 'Lobster',        desc: 'Pesan lobster di restoran utama' },
-  { emoji: '🍕', text: 'Pizza Malam',    desc: 'Cicipi pizza panggang tengah malam' },
-  { emoji: '🎭', text: 'Live Show',      desc: 'Nonton pertunjukan di London Theatre' },
-  { emoji: '🛍️', text: 'Belanja Naha',  desc: 'Beli oleh-oleh di Kokusai Dori' },
-  { emoji: '⬜', text: 'White Party',    desc: 'Ikuti pesta serba putih' },
-  { emoji: '🌊', text: 'Water Slide',    desc: 'Main seluncuran di Arizona Water Park' },
-  { emoji: '🌙', text: 'Pemandangan',    desc: 'Nikmati pemandangan malam di dek' },
-  { emoji: '💍', text: 'Duty Free',      desc: 'Belanja di toko bebas bea Galleria' },
-  { emoji: '🥂', text: 'Makan Formal',   desc: 'Makan malam dengan pakaian formal' },
-  { emoji: '🧀', text: 'Mozzarella',     desc: 'Cari & cicipi mozzarella buatan tangan' },
-  { emoji: '⚓', text: 'FREE',            desc: 'Kamu sudah naik kapal — kamu menang!' },
-  { emoji: '🏎️', text: 'Balapan F1',   desc: 'Coba simulator F1' },
-  { emoji: '🥐', text: 'Sarapan Balkoni',desc: 'Nikmati sarapan gratis di balkon' },
-  { emoji: '📱', text: 'Pesan Show',     desc: 'Berhasil pesan tiket show lewat app' },
-  { emoji: '📸', text: 'Foto Bersama',   desc: 'Foto bareng rekan-rekan kantor' },
-  { emoji: '🏃', text: 'Jalan Track',    desc: 'Jalan/lari di promenade atas kapal' },
-  { emoji: '🍹', text: 'Minum Cocktail', desc: 'Pesan cocktail di bar spesial' },
-  { emoji: '⛩️', text: 'Kuil Naminoue', desc: 'Kunjungi Kuil Naminoue di Naha' },
-  { emoji: '👨‍✈️', text: 'Ketemu Kapten',desc: 'Temui atau foto dengan kapten kapal' },
-  { emoji: '🇮🇹', text: 'Malam Italia',  desc: 'Berdandan untuk Malam Italia' },
-  { emoji: '🥽', text: 'Coba VR',        desc: 'Coba game VR shooting atau lainnya' },
-  { emoji: '🍫', text: 'Cokelat',        desc: 'Kunjungi kafe cokelat Jean-Philippe' },
-  { emoji: '🎊', text: 'Pulang Selamat', desc: 'Selesaikan perjalanan indah ini!' },
-];
-
-const BINGO_TH = [
-  { emoji: '🌅', text: 'ชมพระอาทิตย์',     desc: 'ชมพระอาทิตย์ขึ้นบนดาดฟ้า' },
-  { emoji: '💎', text: 'บันไดคริสตัล',     desc: 'ถ่ายรูปบันไดตอนไม่มีคน' },
-  { emoji: '🦞', text: 'กุ้งล็อบสเตอร์',   desc: 'สั่งหางกุ้งล็อบสเตอร์ที่ห้องอาหาร' },
-  { emoji: '🍕', text: 'พิซซ่าดึก',        desc: 'ชิมพิซซ่าอบสดตอนดึก' },
-  { emoji: '🎭', text: 'ดูโชว์',            desc: 'ดูการแสดงที่ London Theatre ครบ' },
-  { emoji: '🛍️', text: 'ช้อปนาฮะ',         desc: 'ซื้อของฝากที่ Kokusai Dori' },
-  { emoji: '⬜', text: 'ปาร์ตี้ขาว',       desc: 'ร่วม White Party ชุดขาวล้วน' },
-  { emoji: '🌊', text: 'สไลเดอร์น้ำ',      desc: 'เล่นสไลเดอร์ที่ Arizona Water Park' },
-  { emoji: '🌙', text: 'ชมวิวกลางคืน',     desc: 'ชมวิวทะเลตอนกลางคืนบนดาดฟ้า' },
-  { emoji: '💍', text: 'ช้อปปลอดภาษี',     desc: 'ช้อปที่ร้าน Duty Free Galleria' },
-  { emoji: '🥂', text: 'มื้อค่ำฟอร์มัล',   desc: 'แต่งตัวฟอร์มัลทานข้าวที่ห้องอาหาร' },
-  { emoji: '🧀', text: 'ชีสมอสซาเรลล่า',   desc: 'หาและชิมชีสทำมือสด' },
-  { emoji: '⚓', text: 'FREE',              desc: 'คุณขึ้นเรือแล้ว — คุณชนะแล้ว!' },
-  { emoji: '🏎️', text: 'รถ F1',            desc: 'ลองซิมูเลเตอร์ F1' },
-  { emoji: '🥐', text: 'อาหารเช้าระเบียง', desc: 'สั่งอาหารเช้าฟรีที่ระเบียง' },
-  { emoji: '📱', text: 'จองโชว์',           desc: 'จองตั๋วโชว์สำเร็จผ่านแอป' },
-  { emoji: '📸', text: 'ถ่ายรูปทีม',       desc: 'ถ่ายรูปหมู่กับเพื่อนร่วมงาน' },
-  { emoji: '🏃', text: 'วิ่งบนดาดฟ้า',     desc: 'เดิน/วิ่งบน promenade ดาดฟ้า' },
-  { emoji: '🍹', text: 'ดื่มค็อกเทล',      desc: 'สั่งค็อกเทลที่บาร์พิเศษ' },
-  { emoji: '⛩️', text: 'ศาลเจ้านามิโนะ',  desc: 'เยี่ยมชม Naminoue Shrine ในนาฮะ' },
-  { emoji: '👨‍✈️', text: 'เจอกัปตัน',    desc: 'เจอหรือถ่ายรูปกับกัปตันเรือ' },
-  { emoji: '🇮🇹', text: 'คืนอิตาลี',       desc: 'แต่งตัวร่วมงาน Italian Night' },
-  { emoji: '🥽', text: 'ลอง VR',            desc: 'ลองเกม VR ยิงปืนหรืออื่นๆ' },
-  { emoji: '🍫', text: 'ช็อกโกแลต',        desc: 'แวะร้านช็อกโกแลตของ Jean-Philippe' },
-  { emoji: '🎊', text: 'กลับบ้านปลอดภัย',  desc: 'เสร็จสิ้นการเดินทางที่สวยงาม!' },
-];
-
 export const dictionary: Record<Lang, any> = {
   zh: {
     header: "MSC 榮耀號 專屬指南",
@@ -165,30 +51,6 @@ export const dictionary: Record<Lang, any> = {
       { id: 'social',   label: "⚓ 航海日誌" },
       { id: 'bingo',    label: "🎴 賓果" },
     ],
-    // ── Together (Bingo + Quick Share) ───────────────────────────────────────
-    together: {
-      bingoTitle: "航程賓果挑戰卡",
-      bingoDesc: "打勾完成5格連線就是 BINGO！截圖傳給同事，看誰最先連線 🎊",
-      bingoWinText: "🎉 BINGO！恭喜達成連線！快截圖傳給大家！",
-      progressUnit: "項已達成（含FREE）",
-      resetBtn: "重新挑戰",
-      shareTitle: "一鍵召喚同事",
-      shareDesc: "選你目前所在地點，複製訊息後貼到 LINE 群組召喚大家！",
-      shareButton: "📋 複製召喚訊息",
-      shareCopied: "✅ 已複製！快貼到 LINE！",
-      shareTemplate: "📍 我現在在 MSC 榮耀號的【{location}】！快來找我！🚢\n（此訊息由榮耀號同事APP生成）",
-      locations: [
-        "15F 自助餐廳 🍕",
-        "6F 水晶樓梯 💎",
-        "15F 水上樂園 🌊",
-        "7F 老船長酒吧 🍺",
-        "6–7F 香榭麗舍大道 🛍️",
-        "5F 服務台 ℹ️",
-        "6F 主餐廳 🍽️",
-        "甲板觀景台 🌅",
-      ],
-      bingoCells: BINGO_ZH,
-    },
     sections: {
       pre: [
         {
@@ -471,7 +333,6 @@ export const dictionary: Record<Lang, any> = {
           text: "藥妝、電器不限重量。但【絕對禁止】攜帶日本當地的肉類、水果、生鮮食品上船，更不可帶回台灣，違者將面臨鉅額罰款！" 
         }
       ],
-      together: [], // rendered via content.together
     }
   },
 
@@ -491,29 +352,6 @@ export const dictionary: Record<Lang, any> = {
       { id: 'social',   label: "⚓ Time-Sail" },
       { id: 'bingo',    label: "🎴 Bingo" },
     ],
-    together: {
-      bingoTitle: "Trip Bingo Challenge",
-      bingoDesc: "Check off 5 in a row for BINGO! Screenshot and share with colleagues 🎊",
-      bingoWinText: "🎉 BINGO! Screenshot it and share with everyone!",
-      progressUnit: "completed (incl. FREE)",
-      resetBtn: "Reset Card",
-      shareTitle: "Quick Summon",
-      shareDesc: "Pick your current location and copy a message to send in the group chat!",
-      shareButton: "📋 Copy Message",
-      shareCopied: "✅ Copied! Paste it in the group chat!",
-      shareTemplate: "📍 I'm at the MSC Bellissima【{location}】! Come find me! 🚢",
-      locations: [
-        "Deck 15 Buffet 🍕",
-        "Deck 6 Crystal Stairs 💎",
-        "Deck 15 Water Park 🌊",
-        "Deck 7 Captain's Bar 🍺",
-        "Decks 6–7 Galleria 🛍️",
-        "Deck 5 Reception ℹ️",
-        "Main Restaurant 🍽️",
-        "Observation Deck 🌅",
-      ],
-      bingoCells: BINGO_EN,
-    },
     sections: {
       pre: [
         {
@@ -792,7 +630,6 @@ export const dictionary: Record<Lang, any> = {
           text: "STRICTLY FORBIDDEN to bring raw meat, fruit, or fresh food onboard or back to Taiwan. Severe fines apply!" 
         }
       ],
-      together: [],
     }
   },
 
@@ -812,29 +649,6 @@ export const dictionary: Record<Lang, any> = {
       { id: 'social',   label: "⚓ Catatan Pelayaran" },
       { id: 'bingo',    label: "🎴 Bingo" },
     ],
-    together: {
-      bingoTitle: "Tantangan Bingo Pelayaran",
-      bingoDesc: "Centang 5 kotak dalam satu baris untuk BINGO! Screenshot dan bagikan ke kolega 🎊",
-      bingoWinText: "🎉 BINGO! Screenshot dan bagikan ke semua orang!",
-      progressUnit: "selesai (termasuk FREE)",
-      resetBtn: "Reset Kartu",
-      shareTitle: "Panggil Kolega Sekarang",
-      shareDesc: "Pilih lokasi Anda dan salin pesan untuk dikirim ke grup chat!",
-      shareButton: "📋 Salin Pesan",
-      shareCopied: "✅ Tersalin! Paste ke grup!",
-      shareTemplate: "📍 Saya sekarang di MSC Bellissima【{location}】! Ayo ke sini! 🚢",
-      locations: [
-        "Dek 15 Buffet 🍕",
-        "Dek 6 Tangga Kristal 💎",
-        "Dek 15 Water Park 🌊",
-        "Dek 7 Captain's Bar 🍺",
-        "Dek 6–7 Galleria 🛍️",
-        "Dek 5 Resepsionis ℹ️",
-        "Restoran Utama 🍽️",
-        "Dek Observasi 🌅",
-      ],
-      bingoCells: BINGO_ID,
-    },
     sections: {
       pre: [
         {
@@ -1107,7 +921,6 @@ export const dictionary: Record<Lang, any> = {
           text: "DILARANG KERAS membawa daging mentah, buah, atau makanan segar Jepang ke kapal atau kembali ke Taiwan!" 
         }
       ],
-      together: [],
     }
   },
 
@@ -1127,29 +940,6 @@ export const dictionary: Record<Lang, any> = {
       { id: 'social',   label: "⚓ บันทึกการเดินเรือ" },
       { id: 'bingo',    label: "🎴 บิงโก" },
     ],
-    together: {
-      bingoTitle: "บิงโกท้าทายการเดินทาง",
-      bingoDesc: "ทำเครื่องหมาย 5 ช่องในแนวเดียวกันเพื่อ BINGO! ถ่ายหน้าจอแชร์ให้เพื่อนร่วมงาน 🎊",
-      bingoWinText: "🎉 BINGO! ถ่ายหน้าจอและแชร์ให้ทุกคน!",
-      progressUnit: "สำเร็จแล้ว (รวม FREE)",
-      resetBtn: "รีเซ็ตการ์ด",
-      shareTitle: "เรียกเพื่อนร่วมงานด่วน",
-      shareDesc: "เลือกตำแหน่งของคุณและคัดลอกข้อความส่งในกลุ่มแชท!",
-      shareButton: "📋 คัดลอกข้อความ",
-      shareCopied: "✅ คัดลอกแล้ว! วางในแชทกลุ่มได้เลย!",
-      shareTemplate: "📍 ตอนนี้ฉันอยู่ที่ MSC Bellissima【{location}】! มาหาฉันเร็วๆ! 🚢",
-      locations: [
-        "ดาดฟ้า 15 บุฟเฟ่ต์ 🍕",
-        "ดาดฟ้า 6 บันไดคริสตัล 💎",
-        "ดาดฟ้า 15 วอเตอร์พาร์ค 🌊",
-        "ดาดฟ้า 7 แคปเทนบาร์ 🍺",
-        "ดาดฟ้า 6–7 Galleria 🛍️",
-        "ดาดฟ้า 5 เคาน์เตอร์บริการ ℹ️",
-        "ห้องอาหารหลัก 🍽️",
-        "ดาดฟ้าชมวิว 🌅",
-      ],
-      bingoCells: BINGO_TH,
-    },
     sections: {
       pre: [
         {
@@ -1421,7 +1211,6 @@ export const dictionary: Record<Lang, any> = {
           text: "ห้ามนำเนื้อสัตว์ ผลไม้ หรืออาหารสดของญี่ปุ่นขึ้นเรือหรือกลับไต้หวันโดยเด็ดขาด!" 
         }
       ],
-      together: [],
     }
   }
 };

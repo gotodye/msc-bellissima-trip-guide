@@ -35,16 +35,6 @@ const HERO_IMAGES = [
     'https://images.unsplash.com/photo-1548574505-5e239809ee19?auto=format&fit=crop&q=80&w=1600',
 ];
 
-// ─── Bingo helpers ─────────────────────────────────────────────────────────────
-function checkBingo(items: Record<string, boolean>, cells: any[]): boolean {
-    const ok = (i: number) => cells[i]?.text === 'FREE' || !!items[`b${i}`];
-    for (let r = 0; r < 5; r++) if ([0, 1, 2, 3, 4].every(c => ok(r * 5 + c))) return true;
-    for (let c = 0; c < 5; c++) if ([0, 1, 2, 3, 4].every(r => ok(r * 5 + c))) return true;
-    if ([0, 6, 12, 18, 24].every(ok)) return true;
-    if ([4, 8, 12, 16, 20].every(ok)) return true;
-    return false;
-}
-
 // ─── Sub-components ────────────────────────────────────────────────────────────
 function HackCard({ item }: { item: any }) {
     return (
@@ -262,10 +252,6 @@ export default function App() {
     const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>(() => {
         try { return JSON.parse(localStorage.getItem('msc-checklist') || '{}'); } catch { return {}; }
     });
-    const [bingoItems, setBingoItems] = useState<Record<string, boolean>>(() => {
-        try { return JSON.parse(localStorage.getItem('msc-bingo') || '{}'); } catch { return {}; }
-    });
-    const [hasBingo, setHasBingo] = useState(false);
     const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
     const [hasDeparted, setHasDeparted] = useState(false);
     const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -308,19 +294,9 @@ export default function App() {
         return () => window.removeEventListener('beforeinstallprompt', h);
     }, []);
 
-    // Bingo win check
-    useEffect(() => {
-        setHasBingo(checkBingo(bingoItems, content.together?.bingoCells || []));
-    }, [bingoItems, lang]);
-
     const toggleCheck = (key: string) => {
         const u = { ...checkedItems, [key]: !checkedItems[key] };
         setCheckedItems(u); localStorage.setItem('msc-checklist', JSON.stringify(u));
-    };
-
-    const toggleBingo = (idx: number) => {
-        const u = { ...bingoItems, [`b${idx}`]: !bingoItems[`b${idx}`] };
-        setBingoItems(u); localStorage.setItem('msc-bingo', JSON.stringify(u));
     };
 
     const preloadImages = async () => {

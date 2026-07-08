@@ -4,7 +4,7 @@ import { Camera, RotateCcw, Trophy, X, AlertCircle } from 'lucide-react';
 import { storage } from './firebase';
 import { ref, uploadString, getDownloadURL } from 'firebase/storage';
 
-// ─── 2 張賓果卡 × 3×3（共18格，含那霸上岸任務）／ 4 語言版本 ──────────────────
+// ─── 2 張賓果卡 × 3×3（共18格）／ 4 語言版本 ──────────────────
 type BingoItem = { id: string; emoji: string; title: string; task: string };
 type BingoDeck = { id: string; title: string; color: string; items: BingoItem[] };
 
@@ -13,15 +13,15 @@ const CARDS_BY_LANG: Record<string, BingoDeck[]> = {
     {
       id: 'explore', title: '🚢 探索號', color: '#002b5e',
       items: [
-        { id:'e1', emoji:'🌅', title:'看日出/落日', task:'在甲板拍下有太陽的海上照片' },
+        { id:'e1', emoji:'🏅', title:'金氏世界紀錄', task:'見證或參與金氏世界紀錄挑戰' },
         { id:'e2', emoji:'💎', title:'水晶樓梯', task:'在水晶樓梯沒人時打卡合照' },
         { id:'e4', emoji:'🎭', title:'看大秀', task:'親眼看完一場表演秀' },
-        { id:'e9', emoji:'🌃', title:'甲板夜景', task:'甲板夜間拍一張夜景' },
+        { id:'e9', emoji:'🧘', title:'瑜珈時刻', task:'參加海景瑜珈療癒課程' },
         { id:'e16', emoji:'🎮', title:'VR F1賽車', task:'體驗 F1 虛擬賽車機' },
         { id:'e20', emoji:'🦋', title:'LED天幕', task:'在 Galleria 拍 LED 天幕照' },
-        { id:'n1', emoji:'⛩️', title:'波上宮打卡', task:'在波上宮或波之上海灘拍照' },
-        { id:'n2', emoji:'🛍️', title:'國際通戰利品', task:'在國際通買到戰利品拍照' },
-        { id:'n3', emoji:'🏯', title:'首里城巡禮', task:'造訪首里城拍一張紀念照' },
+        { id:'n1', emoji:'👨‍✈️', title:'船長合影', task:'近距離與船長合影留念' },
+        { id:'n2', emoji:'💃', title:'舞蹈課程', task:'報名參加船上的專業舞蹈課程' },
+        { id:'n3', emoji:'🏀', title:'籃球競賽', task:'在全天候運動區參加籃球競賽' },
       ]
     },
     {
@@ -43,15 +43,15 @@ const CARDS_BY_LANG: Record<string, BingoDeck[]> = {
     {
       id: 'explore', title: '🚢 Explorer', color: '#002b5e',
       items: [
-        { id:'e1', emoji:'🌅', title:'Sunrise/Sunset', task:'Snap a sea photo with the sun from the deck' },
+        { id:'e1', emoji:'🏅', title:'Guinness World Record', task:'Witness or take part in a Guinness World Record attempt' },
         { id:'e2', emoji:'💎', title:'Crystal Staircase', task:'Photo at the Crystal Staircase when it\'s empty' },
         { id:'e4', emoji:'🎭', title:'Watch a Show', task:'See a full theatre show live' },
-        { id:'e9', emoji:'🌃', title:'Deck at Night', task:'Take a night photo from the deck' },
+        { id:'e9', emoji:'🧘', title:'Yoga Moment', task:'Join the ocean-view yoga wellness class' },
         { id:'e16', emoji:'🎮', title:'VR F1 Racing', task:'Try the F1 racing simulator' },
         { id:'e20', emoji:'🦋', title:'LED Canopy', task:'Photo of the LED canopy in the Galleria' },
-        { id:'n1', emoji:'⛩️', title:'Naminoue Shrine', task:'Photo at Naminoue Shrine or Beach' },
-        { id:'n2', emoji:'🛍️', title:'Kokusai Dori Haul', task:'Photo of what you bought on Kokusai Dori' },
-        { id:'n3', emoji:'🏯', title:'Shuri Castle', task:'Take a memorial photo at Shuri Castle' },
+        { id:'n1', emoji:'👨‍✈️', title:'Captain Photo Op', task:'Get an up-close photo with the Captain' },
+        { id:'n2', emoji:'💃', title:'Dance Class', task:'Join the onboard professional dance class' },
+        { id:'n3', emoji:'🏀', title:'Basketball', task:'Join a basketball match at the all-weather sports zone' },
       ]
     },
     {
@@ -73,15 +73,15 @@ const CARDS_BY_LANG: Record<string, BingoDeck[]> = {
     {
       id: 'explore', title: '🚢 Penjelajah', color: '#002b5e',
       items: [
-        { id:'e1', emoji:'🌅', title:'Matahari Terbit/Terbenam', task:'Foto laut dengan matahari dari dek' },
+        { id:'e1', emoji:'🏅', title:'Rekor Dunia Guinness', task:'Saksikan atau ikut tantangan Rekor Dunia Guinness' },
         { id:'e2', emoji:'💎', title:'Tangga Kristal', task:'Foto di Tangga Kristal saat sepi' },
         { id:'e4', emoji:'🎭', title:'Nonton Pertunjukan', task:'Tonton satu pertunjukan sampai selesai' },
-        { id:'e9', emoji:'🌃', title:'Dek Malam Hari', task:'Foto pemandangan malam dari dek' },
+        { id:'e9', emoji:'🧘', title:'Momen Yoga', task:'Ikut kelas yoga dengan pemandangan laut' },
         { id:'e16', emoji:'🎮', title:'Balapan VR F1', task:'Coba simulator balapan F1' },
         { id:'e20', emoji:'🦋', title:'Kanopi LED', task:'Foto kanopi LED di Galleria' },
-        { id:'n1', emoji:'⛩️', title:'Kuil Naminoue', task:'Foto di Kuil Naminoue atau Pantai' },
-        { id:'n2', emoji:'🛍️', title:'Belanjaan Kokusai Dori', task:'Foto belanjaan dari Kokusai Dori' },
-        { id:'n3', emoji:'🏯', title:'Kastil Shuri', task:'Foto kenangan di Kastil Shuri' },
+        { id:'n1', emoji:'👨‍✈️', title:'Foto Bersama Kapten', task:'Dapatkan foto dekat dengan Kapten' },
+        { id:'n2', emoji:'💃', title:'Kelas Dansa', task:'Ikut kelas dansa profesional di kapal' },
+        { id:'n3', emoji:'🏀', title:'Basket', task:'Ikut pertandingan basket di zona olahraga all-weather' },
       ]
     },
     {
@@ -103,15 +103,15 @@ const CARDS_BY_LANG: Record<string, BingoDeck[]> = {
     {
       id: 'explore', title: '🚢 นักสำรวจ', color: '#002b5e',
       items: [
-        { id:'e1', emoji:'🌅', title:'พระอาทิตย์ขึ้น/ตก', task:'ถ่ายรูปทะเลกับพระอาทิตย์จากดาดฟ้า' },
+        { id:'e1', emoji:'🏅', title:'สถิติโลกกินเนสส์', task:'ร่วมเป็นสักขีพยานหรือท้าทายสถิติโลกกินเนสส์' },
         { id:'e2', emoji:'💎', title:'บันไดคริสตัล', task:'ถ่ายรูปที่บันไดคริสตัลตอนไม่มีคน' },
         { id:'e4', emoji:'🎭', title:'ดูโชว์', task:'ดูการแสดงสดจนจบหนึ่งรอบ' },
-        { id:'e9', emoji:'🌃', title:'ดาดฟ้ายามค่ำคืน', task:'ถ่ายรูปวิวกลางคืนจากดาดฟ้า' },
+        { id:'e9', emoji:'🧘', title:'ช่วงเวลาโยคะ', task:'ร่วมคลาสโยคะวิวทะเล' },
         { id:'e16', emoji:'🎮', title:'แข่งรถ VR F1', task:'ลองเล่นเครื่องจำลองแข่งรถ F1' },
         { id:'e20', emoji:'🦋', title:'หลังคา LED', task:'ถ่ายรูปหลังคา LED ที่ Galleria' },
-        { id:'n1', emoji:'⛩️', title:'ศาลเจ้านามิโนะอุเอะ', task:'ถ่ายรูปที่ศาลเจ้านามิโนะอุเอะหรือชายหาด' },
-        { id:'n2', emoji:'🛍️', title:'ของฝากจาก Kokusai Dori', task:'ถ่ายรูปของที่ซื้อจาก Kokusai Dori' },
-        { id:'n3', emoji:'🏯', title:'ปราสาทชูริ', task:'ถ่ายรูปที่ระลึกที่ปราสาทชูริ' },
+        { id:'n1', emoji:'👨‍✈️', title:'ถ่ายรูปคู่กัปตัน', task:'ถ่ายรูปใกล้ชิดกับกัปตันเรือ' },
+        { id:'n2', emoji:'💃', title:'คลาสเต้น', task:'ร่วมคลาสเต้นมืออาชีพบนเรือ' },
+        { id:'n3', emoji:'🏀', title:'บาสเกตบอล', task:'ร่วมแข่งบาสเกตบอลที่โซนกีฬาออลเวเธอร์' },
       ]
     },
     {
