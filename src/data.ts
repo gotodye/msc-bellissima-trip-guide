@@ -191,9 +191,13 @@ export const dictionary: Record<Lang, any> = {
     },
     sections: {
       pre: [
-        { 
-          icon: 'Sparkles', title: "【接送集合事項】", highlight: true, 
-          text: "請於 7/9 11:45-12:00 至「台北火車站東三門」集合，東南工作人員（藍色背心）將協助點名，12:00 準時發車前往基隆港!" 
+        {
+          icon: 'AlertTriangle', title: "【颱風「巴威」航程異動通知】", highlight: true,
+          text: "受第9號颱風「巴威」影響，船長基於安全考量調整航程：Day2（7/10）、Day3（7/11）那霸/沖繩停靠港取消，改為航海日；基隆出發（7/9 17:30）與返回基隆（7/12 07:00）維持不變。\n💰 船上消費金補償：每艙第1、2位每人50美金、第3、4位每人25美金，直接存入船卡（不可提現、航程結束未用完不予退還）。已預訂的付費岸上觀光費用會自動退回船卡帳戶。\n⚠️ 此為目前預估航程，船長仍可能依實際氣象狀況進一步調整，請以船上最新公告為準。"
+        },
+        {
+          icon: 'Sparkles', title: "【接送集合事項】", highlight: true,
+          text: "請於 7/9 11:45-12:00 至「台北火車站東三門」集合，東南工作人員（藍色背心）將協助點名，12:00 準時發車前往基隆港!"
         },
         { 
           image: IMG.passport,
@@ -272,6 +276,21 @@ export const dictionary: Record<Lang, any> = {
       ],
       // ── HACKS TAB: Blogger Insider Tips ──────────────────────────────────
       hacks: [
+        {
+          category: "🎉 限時優惠",
+          categoryColor: "purple",
+          title: "颱風航海日限定：船上優惠比原行程更划算",
+          tips: [
+            "🍹 家庭/兒童健康飲品限時8折",
+            "🍺 老船長酒吧小食＋啤酒套餐限時優惠",
+            "🍶 SKY Lounge 天空酒廊燒酒、清酒限時8折",
+            "🎤 TV Studio 演播廳家庭卡拉OK雞尾酒買一送一",
+            "🍫 巧克力工坊可麗餅與聖代限時8折",
+            "🛍️ 第一航海日 Guess 低至5折、第二航海日 Valentino 低至7折，消費即可抽獎",
+            "💆 水療美容中心：皮膚、髮質免費檢測諮詢",
+            "🎬 幕後之旅專屬特惠：登船日與第二航海日限時特價"
+          ]
+        },
         {
           category: "📸 拍照聖地",
           categoryColor: "rose",
@@ -497,9 +516,13 @@ export const dictionary: Record<Lang, any> = {
     },
     sections: {
       pre: [
-        { 
-          icon: 'Sparkles', title: "【Pickup & Gathering Arrangements】", highlight: true, 
-          text: "Please gather at Taipei Main Station East Gate 3 between 11:45-12:00 on July 9th. Southeast Travel staff (blue vests) will help with roll call — the bus departs promptly at 12:00 for Keelung Port!" 
+        {
+          icon: 'AlertTriangle', title: "[Typhoon Bawi Itinerary Change Notice]", highlight: true,
+          text: "Due to Super Typhoon Bawi (No. 9), the Captain has adjusted the itinerary for safety: Day 2 (7/10) and Day 3 (7/11) port calls at Naha/Okinawa are cancelled and become sea days; Keelung departure (7/9 17:30) and return (7/12 07:00) are unchanged.\n💰 Onboard credit compensation: USD 50/person for the first 2 guests per cabin, USD 25/person for the 3rd/4th guest, credited directly to your cruise card (non-refundable cash, unused balance forfeited at end of voyage). Prepaid Naha/Okinawa shore excursions will be automatically refunded to your onboard account.\n⚠️ This is the currently estimated itinerary — the Captain may make further adjustments based on actual weather. Please follow the latest onboard announcements."
+        },
+        {
+          icon: 'Sparkles', title: "【Pickup & Gathering Arrangements】", highlight: true,
+          text: "Please gather at Taipei Main Station East Gate 3 between 11:45-12:00 on July 9th. Southeast Travel staff (blue vests) will help with roll call — the bus departs promptly at 12:00 for Keelung Port!"
         },
         { 
           image: IMG.passport,
@@ -576,6 +599,21 @@ export const dictionary: Record<Lang, any> = {
         }
       ],
       hacks: [
+        {
+          category: "🎉 Limited-Time Deals",
+          categoryColor: "purple",
+          title: "Typhoon Sea-Day Special: Better Onboard Deals Than the Original Itinerary",
+          tips: [
+            "🍹 20% off family/kids' health drinks for a limited time",
+            "🍺 Special discount on Captain's Bar snacks + beer combo",
+            "🍶 20% off shochu and sake at SKY Lounge",
+            "🎤 Buy-one-get-one on family karaoke cocktails at TV Studio Lounge",
+            "🍫 20% off crepes and sundaes at the Chocolate Workshop",
+            "🛍️ Guess up to 50% off on the 1st sea day, Valentino up to 30% off on the 2nd — any purchase enters you into a free raffle",
+            "💆 Free skin & hair consultation at the spa",
+            "🎬 Behind-the-Scenes Tour special pricing on embarkation day and the 2nd sea day"
+          ]
+        },
         {
           category: "📸 Photo Spots",
           categoryColor: "rose",
@@ -799,9 +837,13 @@ export const dictionary: Record<Lang, any> = {
     },
     sections: {
       pre: [
-        { 
-          icon: 'Sparkles', title: "【Pengaturan Jemputan & Titik Kumpul】", highlight: true, 
-          text: "Harap berkumpul di Stasiun Taipei Gerbang Timur 3 pukul 11:45-12:00 pada 9 Juli. Staf Southeast Travel (rompi biru) akan membantu absensi — bus berangkat tepat jam 12:00 menuju Pelabuhan Keelung!" 
+        {
+          icon: 'AlertTriangle', title: "[Pemberitahuan Perubahan Rute Topan Bawi]", highlight: true,
+          text: "Akibat Topan Super Bawi (No. 9), Kapten telah menyesuaikan rute demi keselamatan: Hari 2 (7/10) dan Hari 3 (7/11) singgah di Naha/Okinawa dibatalkan dan menjadi hari berlayar; keberangkatan Keelung (7/9 17:30) dan kepulangan (7/12 07:00) tidak berubah.\n💰 Kompensasi kredit kapal: USD 50/orang untuk 2 tamu pertama per kabin, USD 25/orang untuk tamu ke-3/4, langsung masuk ke kartu kapal Anda (tidak bisa dicairkan tunai, sisa yang tidak terpakai hangus di akhir pelayaran). Tur darat Naha/Okinawa yang sudah dibayar akan otomatis dikembalikan ke akun kapal Anda.\n⚠️ Ini adalah rute perkiraan saat ini — Kapten mungkin melakukan penyesuaian lebih lanjut berdasarkan kondisi cuaca aktual. Mohon ikuti pengumuman terbaru di kapal."
+        },
+        {
+          icon: 'Sparkles', title: "【Pengaturan Jemputan & Titik Kumpul】", highlight: true,
+          text: "Harap berkumpul di Stasiun Taipei Gerbang Timur 3 pukul 11:45-12:00 pada 9 Juli. Staf Southeast Travel (rompi biru) akan membantu absensi — bus berangkat tepat jam 12:00 menuju Pelabuhan Keelung!"
         },
         { 
           image: IMG.passport,
@@ -878,6 +920,21 @@ export const dictionary: Record<Lang, any> = {
         }
       ],
       hacks: [
+        {
+          category: "🎉 Promo Terbatas",
+          categoryColor: "purple",
+          title: "Spesial Hari Berlayar Akibat Topan: Promo Kapal Lebih Untung dari Rencana Awal",
+          tips: [
+            "🍹 Diskon 20% minuman sehat keluarga/anak untuk waktu terbatas",
+            "🍺 Diskon spesial camilan + paket bir di Captain's Bar",
+            "🍶 Diskon 20% shochu dan sake di SKY Lounge",
+            "🎤 Beli 1 gratis 1 koktail karaoke keluarga di TV Studio Lounge",
+            "🍫 Diskon 20% crepe dan sundae di Chocolate Workshop",
+            "🛍️ Guess diskon hingga 50% di hari berlayar pertama, Valentino hingga 30% di hari kedua — belanja langsung ikut undian gratis",
+            "💆 Konsultasi kulit & rambut gratis di spa",
+            "🎬 Harga spesial Behind-the-Scenes Tour di hari embarkasi dan hari berlayar kedua"
+          ]
+        },
         {
           category: "📸 Spot Foto",
           categoryColor: "rose",
@@ -1095,9 +1152,13 @@ export const dictionary: Record<Lang, any> = {
     },
     sections: {
       pre: [
-        { 
-          icon: 'Sparkles', title: "【การรับส่งและจุดนัดพบ】", highlight: true, 
-          text: "โปรดมารวมตัวกันที่สถานีรถไฟไทเป ประตูตะวันออก 3 เวลา 11:45-12:00 น. วันที่ 9 กรกฎาคม เจ้าหน้าที่ Southeast Travel (เสื้อกั๊กสีน้ำเงิน) จะช่วยเช็คชื่อ รถจะออกเวลา 12:00 น. ตรง มุ่งหน้าท่าเรือจีหลง!" 
+        {
+          icon: 'AlertTriangle', title: "[ประกาศเปลี่ยนแปลงเส้นทาง ไต้ฝุ่น \"บาวี\"]", highlight: true,
+          text: "เนื่องจากซูเปอร์ไต้ฝุ่นบาวี (ลูกที่ 9) กัปตันได้ปรับเส้นทางเดินเรือเพื่อความปลอดภัย: วันที่ 2 (10 ก.ค.) และวันที่ 3 (11 ก.ค.) การแวะจอดที่นาฮะ/โอกินาว่าถูกยกเลิกและเปลี่ยนเป็นวันล่องทะเล ส่วนการออกเดินทางจากจีหลง (9 ก.ค. 17:30 น.) และกลับถึงจีหลง (12 ก.ค. 07:00 น.) ไม่มีการเปลี่ยนแปลง\n💰 เงินชดเชยเครดิตบนเรือ: 50 ดอลลาร์สหรัฐ/คน สำหรับผู้โดยสาร 2 ท่านแรกต่อห้อง, 25 ดอลลาร์สหรัฐ/คน สำหรับท่านที่ 3/4 เข้าบัตรเรือโดยตรง (ไม่สามารถถอนเป็นเงินสดได้ ยอดที่ใช้ไม่หมดจะไม่ได้รับคืนเมื่อสิ้นสุดการเดินทาง) ทัวร์บนฝั่งที่นาฮะ/โอกินาว่าที่จองไว้จะได้รับเงินคืนเข้าบัญชีบนเรือโดยอัตโนมัติ\n⚠️ นี่คือเส้นทางโดยประมาณในปัจจุบัน กัปตันอาจปรับเปลี่ยนเพิ่มเติมตามสภาพอากาศจริง โปรดติดตามประกาศล่าสุดบนเรือ"
+        },
+        {
+          icon: 'Sparkles', title: "【การรับส่งและจุดนัดพบ】", highlight: true,
+          text: "โปรดมารวมตัวกันที่สถานีรถไฟไทเป ประตูตะวันออก 3 เวลา 11:45-12:00 น. วันที่ 9 กรกฎาคม เจ้าหน้าที่ Southeast Travel (เสื้อกั๊กสีน้ำเงิน) จะช่วยเช็คชื่อ รถจะออกเวลา 12:00 น. ตรง มุ่งหน้าท่าเรือจีหลง!"
         },
         { 
           image: IMG.passport,
@@ -1174,6 +1235,21 @@ export const dictionary: Record<Lang, any> = {
         }
       ],
       hacks: [
+        {
+          category: "🎉 โปรโมชั่นจำกัดเวลา",
+          categoryColor: "purple",
+          title: "พิเศษวันล่องทะเลจากไต้ฝุ่น: โปรบนเรือคุ้มกว่าแผนเดิม",
+          tips: [
+            "🍹 เครื่องดื่มสุขภาพครอบครัว/เด็ก ลด 20% ช่วงเวลาจำกัด",
+            "🍺 ส่วนลดพิเศษ ของว่าง+เบียร์ ที่ Captain's Bar",
+            "🍶 โชจูและสาเก ลด 20% ที่ SKY Lounge",
+            "🎤 ค็อกเทลคาราโอเกะครอบครัว ซื้อ 1 แถม 1 ที่ TV Studio Lounge",
+            "🍫 เครปและซันเดย์ ลด 20% ที่ Chocolate Workshop",
+            "🛍️ Guess ลดสูงสุด 50% วันล่องทะเลแรก, Valentino ลดสูงสุด 30% วันล่องทะเลที่สอง ซื้อสินค้าลุ้นรับรางวัลฟรี",
+            "💆 ตรวจผิวและเส้นผมฟรีที่สปา",
+            "🎬 ราคาพิเศษ Behind-the-Scenes Tour วันขึ้นเรือและวันล่องทะเลที่สอง"
+          ]
+        },
         {
           category: "📸 จุดถ่ายรูป",
           categoryColor: "rose",

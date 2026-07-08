@@ -27,7 +27,7 @@ const TIMELINE_TEXT: Record<Lang, {
   messagePlaceholder: string; previewAlt: string; classifying: string;
   classifiedEvent: (title: string) => string; classifiedGeneral: string; uploadPhoto: string;
   errNoContent: string; errSubmitFail: string; submitting: string; submitButton: string;
-  anonymous: string; routeDepart: string; routeReturn: string; routeNaha: string; pendingUpload: string;
+  anonymous: string; routeDepart: string; routeReturn: string; routeMidpoint: string; pendingUpload: string;
   pendingSyncLabel: (n: number) => string;
   identityTitle: string; identityDesc: string; changeIdentity: string;
   deleteConfirm: string; deleteError: string; locale: string; honkListTitle: string;
@@ -49,7 +49,7 @@ const TIMELINE_TEXT: Record<Lang, {
     classifiedEvent: title => `🎉 這張會歸入大事件卡「${title}」`, classifiedGeneral: '🌊 這張會放進一般航海誌',
     uploadPhoto: '上傳照片（選填）', errNoContent: '請填寫訊息、選地點或上傳照片',
     errSubmitFail: '發佈失敗，請確認網路連線', submitting: '發佈中…', submitButton: '寫入航海日誌',
-    anonymous: '匿名旅客', routeDepart: 'Day1 基隆', routeReturn: 'Day4 基隆', routeNaha: '⛩️那霸', pendingUpload: '待上傳',
+    anonymous: '匿名旅客', routeDepart: 'Day1 基隆', routeReturn: 'Day4 基隆', routeMidpoint: '🌊 航海日', pendingUpload: '待上傳',
     pendingSyncLabel: n => `📦 ${n} 則待上傳・恢復連線後自動補傳`,
     identityTitle: '設定你的水手身份', identityDesc: '這個頭像和名字會顯示在你之後的每篇日誌、留言和照片旁邊', changeIdentity: '更換',
     deleteConfirm: '確定要刪除這張照片嗎？刪除後無法復原。', deleteError: '刪除失敗，請確認網路連線', locale: 'zh-TW',
@@ -72,7 +72,7 @@ const TIMELINE_TEXT: Record<Lang, {
     classifiedEvent: title => `🎉 This will be filed under "${title}"`, classifiedGeneral: '🌊 This will go into the general Time-Sail feed',
     uploadPhoto: 'Upload a photo (optional)', errNoContent: 'Please add a message, location, or photo',
     errSubmitFail: 'Failed to post — please check your connection', submitting: 'Posting…', submitButton: 'Post to Time-Sail',
-    anonymous: 'Anonymous Traveler', routeDepart: 'Day1 Keelung', routeReturn: 'Day4 Keelung', routeNaha: '⛩️Naha', pendingUpload: 'Pending',
+    anonymous: 'Anonymous Traveler', routeDepart: 'Day1 Keelung', routeReturn: 'Day4 Keelung', routeMidpoint: '🌊 At Sea', pendingUpload: 'Pending',
     pendingSyncLabel: n => `📦 ${n} pending — will auto-send once back online`,
     identityTitle: 'Set Up Your Sailor Identity', identityDesc: 'This avatar and name will show up next to every entry, comment, and photo you post', changeIdentity: 'Change',
     deleteConfirm: 'Delete this photo? This cannot be undone.', deleteError: 'Failed to delete — please check your connection', locale: 'en-US',
@@ -95,7 +95,7 @@ const TIMELINE_TEXT: Record<Lang, {
     classifiedEvent: title => `🎉 Foto ini akan masuk ke kartu momen "${title}"`, classifiedGeneral: '🌊 Foto ini akan masuk ke feed umum',
     uploadPhoto: 'Unggah foto (opsional)', errNoContent: 'Mohon isi pesan, lokasi, atau unggah foto',
     errSubmitFail: 'Gagal memposting — periksa koneksi internet Anda', submitting: 'Memposting…', submitButton: 'Posting ke Catatan Pelayaran',
-    anonymous: 'Wisatawan Anonim', routeDepart: 'Hari1 Keelung', routeReturn: 'Hari4 Keelung', routeNaha: '⛩️Naha', pendingUpload: 'Tertunda',
+    anonymous: 'Wisatawan Anonim', routeDepart: 'Hari1 Keelung', routeReturn: 'Hari4 Keelung', routeMidpoint: '🌊 Berlayar', pendingUpload: 'Tertunda',
     pendingSyncLabel: n => `📦 ${n} tertunda・akan otomatis terkirim saat kembali online`,
     identityTitle: 'Atur Identitas Pelautmu', identityDesc: 'Avatar dan nama ini akan muncul di setiap catatan, komentar, dan foto yang kamu unggah', changeIdentity: 'Ganti',
     deleteConfirm: 'Hapus foto ini? Tindakan ini tidak bisa dibatalkan.', deleteError: 'Gagal menghapus — periksa koneksi internet Anda', locale: 'id-ID',
@@ -118,7 +118,7 @@ const TIMELINE_TEXT: Record<Lang, {
     classifiedEvent: title => `🎉 ภาพนี้จะถูกจัดเข้าการ์ด "${title}"`, classifiedGeneral: '🌊 ภาพนี้จะไปอยู่ในฟีดทั่วไป',
     uploadPhoto: 'อัปโหลดภาพ (ไม่บังคับ)', errNoContent: 'กรุณากรอกข้อความ เลือกสถานที่ หรืออัปโหลดภาพ',
     errSubmitFail: 'โพสต์ไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต', submitting: 'กำลังโพสต์…', submitButton: 'โพสต์ลงบันทึกการเดินเรือ',
-    anonymous: 'นักเดินทางนิรนาม', routeDepart: 'วันที่1 จีหลง', routeReturn: 'วันที่4 จีหลง', routeNaha: '⛩️นาฮะ', pendingUpload: 'รอส่ง',
+    anonymous: 'นักเดินทางนิรนาม', routeDepart: 'วันที่1 จีหลง', routeReturn: 'วันที่4 จีหลง', routeMidpoint: '🌊 ล่องทะเล', pendingUpload: 'รอส่ง',
     pendingSyncLabel: n => `📦 ${n} รายการรอส่ง・จะส่งอัตโนมัติเมื่อออนไลน์`,
     identityTitle: 'ตั้งค่าตัวตนกะลาสีของคุณ', identityDesc: 'อวาตาร์และชื่อนี้จะแสดงข้างบันทึก ความคิดเห็น และภาพที่คุณโพสต์ทุกครั้ง', changeIdentity: 'เปลี่ยน',
     deleteConfirm: 'ลบภาพนี้หรือไม่? ไม่สามารถย้อนกลับได้', deleteError: 'ลบไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต', locale: 'th-TH',
@@ -596,10 +596,11 @@ function RouteStrip({ containerRef, lang }: { containerRef: React.RefObject<HTML
       <span className="absolute top-1/2 right-1 -translate-y-1/2 flex items-center gap-0.5 text-[10px] font-bold text-white/90 drop-shadow whitespace-nowrap">
         <LighthouseIcon className="w-3 h-3 flex-shrink-0" />{t.routeReturn}
       </span>
-      {/* 那霸是航程中途的定點標記，固定畫在正中間，跟時間比例無關 */}
+      {/* 中途站固定畫在正中間，跟時間比例無關。原本是「那霸」停靠站，因颱風巴威整段
+          那霸/沖繩行程取消，改為通用的「航海日」標記 */}
       <span
         className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-[10px] font-bold text-white/80 drop-shadow whitespace-nowrap">
-        {t.routeNaha}
+        {t.routeMidpoint}
       </span>
       <motion.div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 text-lg drop-shadow" style={{ left }}>
         🚢

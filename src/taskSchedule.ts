@@ -30,31 +30,31 @@ export const TASK_EVENTS: TaskEvent[] = [
     date: '2026-07-09', startHour: 20, startMin: 0, endHour: 22, endMin: 0,
   },
   {
-    id: 'd2-morning', day: 2, dayLabel: 'Day 2・海上巡航→那霸',
+    id: 'd2-morning', day: 2, dayLabel: 'Day 2・航海日',
     title: '海上陽光！尋找船上最 Chill 的角落',
     hint: '泳池畔曬太陽、海景健身房、豪華自助早餐',
     date: '2026-07-10', startHour: 9, startMin: 0, endHour: 11, endMin: 30,
   },
   {
-    id: 'd2-naha', day: 2, dayLabel: 'Day 2・海上巡航→那霸',
-    title: '沖繩我來了！登陸第一張照片',
-    hint: '那霸港口榮耀號合影／國際通第一口冰淇淋或泡盛',
+    id: 'd2-naha', day: 2, dayLabel: 'Day 2・航海日',
+    title: '近距離接觸！船長合影＋金氏世界紀錄挑戰',
+    hint: '難得機會與船長合影，或見證/挑戰獨一無二的金氏世界紀錄',
     date: '2026-07-10', startHour: 14, startMin: 0, endHour: 17, endMin: 0,
   },
   {
-    id: 'd2-night', day: 2, dayLabel: 'Day 2・海上巡航→那霸',
-    title: '榮耀號的沖繩夜景',
-    hint: '沖繩居酒屋夜生活、那霸夜市，或甲板眺望港口夜景',
+    id: 'd2-night', day: 2, dayLabel: 'Day 2・航海日',
+    title: '世界盃同樂夜！甲板酒吧狂歡',
+    hint: '專屬觀賽區世界盃派對，各式酒水點心，氣氛沸騰',
     date: '2026-07-10', startHour: 21, startMin: 0, endHour: 23, endMin: 59,
   },
   {
-    id: 'd3-shopping', day: 3, dayLabel: 'Day 3・那霸離港→海上巡航',
-    title: '最後血拼／沖繩最後巡禮',
-    hint: '藥妝黑糖採購照，或亞利桑那水上樂園滑水道狂歡照',
+    id: 'd3-shopping', day: 3, dayLabel: 'Day 3・航海日',
+    title: '手作職人時間！義式料理＋手工藝工坊',
+    hint: '跟主廚學道地義式料理手作，或手工藝課程做專屬紀念品',
     date: '2026-07-11', startHour: 10, startMin: 0, endHour: 12, endMin: 30,
   },
   {
-    id: 'd3-gala', day: 3, dayLabel: 'Day 3・那霸離港→海上巡航',
+    id: 'd3-gala', day: 3, dayLabel: 'Day 3・航海日',
     title: '榮耀盛裝派對！今晚我最美/帥',
     hint: '正式裝扮，中庭或主餐廳大合照',
     date: '2026-07-11', startHour: 19, startMin: 0, endHour: 21, endMin: 30,
@@ -73,31 +73,31 @@ const EVENT_TEXT: Record<string, Record<string, EventText>> = {
   en: {
     'd1-depart':   { dayLabel: 'Day 1 · Keelung Departure', title: 'Farewell Taiwan! Deck Departure Party', hint: '17:30 departure — capture the moment with the Keelung skyline' },
     'd1-crystal':  { dayLabel: 'Day 1 · Keelung Departure', title: 'Shine On! Crystal Staircase / Sky Show Debut', hint: '6F Swarovski crystal staircase / LED Galleria ceiling light show' },
-    'd2-morning':  { dayLabel: 'Day 2 · At Sea → Naha', title: "Sunny Days at Sea! Find the Ship's Chillest Spot", hint: 'Poolside sunbathing, ocean-view gym, or the lavish breakfast buffet' },
-    'd2-naha':     { dayLabel: 'Day 2 · At Sea → Naha', title: 'Okinawa, Here We Come! Your First Shore Photo', hint: 'Photo with the ship at Naha port / first ice cream or awamori on Kokusai Street' },
-    'd2-night':    { dayLabel: 'Day 2 · At Sea → Naha', title: 'Okinawa Nights from the Bellissima', hint: 'Okinawan izakaya nightlife, Naha night market, or the harbor view from the deck' },
-    'd3-shopping': { dayLabel: 'Day 3 · Naha Departure → At Sea', title: 'Last Call to Shop! Final Okinawa Highlights', hint: 'Drugstore & brown sugar haul, or splashing down the waterpark slides' },
-    'd3-gala':     { dayLabel: 'Day 3 · Naha Departure → At Sea', title: 'Glamour Night! Dressed to Impress', hint: 'Formal wear, group photo in the atrium or main dining room' },
+    'd2-morning':  { dayLabel: 'Day 2 · At Sea', title: "Sunny Days at Sea! Find the Ship's Chillest Spot", hint: 'Poolside sunbathing, ocean-view gym, or the lavish breakfast buffet' },
+    'd2-naha':     { dayLabel: 'Day 2 · At Sea', title: 'Up Close! Captain Photo Op + Guinness World Record Challenge', hint: 'A rare photo with the Captain, or witness/join a one-of-a-kind Guinness World Record attempt' },
+    'd2-night':    { dayLabel: 'Day 2 · At Sea', title: 'World Cup Party Night! Deck Bar Bash', hint: 'World Cup viewing party in the dedicated lounge, with drinks and snacks and a buzzing atmosphere' },
+    'd3-shopping': { dayLabel: 'Day 3 · At Sea', title: "Artisan Hour! Italian Cooking + Handicraft Workshops", hint: "Learn authentic Italian cooking from the chef, or make your own souvenir in the handicraft workshop" },
+    'd3-gala':     { dayLabel: 'Day 3 · At Sea', title: 'Glamour Night! Dressed to Impress', hint: 'Formal wear, group photo in the atrium or main dining room' },
     'd4-farewell': { dayLabel: 'Day 4 · Back to Keelung', title: 'Farewell Bellissima! One Last Look Back', hint: 'Your favorite photo from the trip, or all your souvenirs together' },
   },
   id: {
     'd1-depart':   { dayLabel: 'Hari 1 · Keberangkatan Keelung', title: 'Selamat Tinggal Taiwan! Pesta Keberangkatan di Dek', hint: 'Berangkat 17:30 — abadikan momen dengan latar Keelung' },
     'd1-crystal':  { dayLabel: 'Hari 1 · Keberangkatan Keelung', title: 'Bersinar! Tangga Kristal / Debut Pertunjukan Langit', hint: 'Tangga kristal Swarovski lantai 6 / pertunjukan lampu langit-langit LED Galleria' },
-    'd2-morning':  { dayLabel: 'Hari 2 · Berlayar → Naha', title: 'Hari Cerah di Laut! Cari Sudut Paling Santai di Kapal', hint: 'Berjemur di kolam renang, gym dengan pemandangan laut, atau sarapan prasmanan mewah' },
-    'd2-naha':     { dayLabel: 'Hari 2 · Berlayar → Naha', title: 'Okinawa, Kami Datang! Foto Pertama di Darat', hint: 'Foto dengan kapal di pelabuhan Naha / es krim atau awamori pertama di Kokusai Street' },
-    'd2-night':    { dayLabel: 'Hari 2 · Berlayar → Naha', title: 'Malam Okinawa dari Bellissima', hint: 'Kehidupan malam izakaya Okinawa, pasar malam Naha, atau pemandangan pelabuhan dari dek' },
-    'd3-shopping': { dayLabel: 'Hari 3 · Keberangkatan Naha → Berlayar', title: 'Belanja Terakhir! Jelajah Terakhir Okinawa', hint: 'Belanja apotek & gula merah, atau seru-seruan di perosotan taman air Arizona' },
-    'd3-gala':     { dayLabel: 'Hari 3 · Keberangkatan Naha → Berlayar', title: 'Pesta Gemerlap! Tampil Terbaik Malam Ini', hint: 'Busana formal, foto bersama di atrium atau restoran utama' },
+    'd2-morning':  { dayLabel: 'Hari 2 · Berlayar', title: 'Hari Cerah di Laut! Cari Sudut Paling Santai di Kapal', hint: 'Berjemur di kolam renang, gym dengan pemandangan laut, atau sarapan prasmanan mewah' },
+    'd2-naha':     { dayLabel: 'Hari 2 · Berlayar', title: 'Momen Dekat! Foto Bersama Kapten + Tantangan Rekor Guinness', hint: 'Foto langka bersama Kapten, atau saksikan/ikut tantangan Rekor Dunia Guinness yang unik' },
+    'd2-night':    { dayLabel: 'Hari 2 · Berlayar', title: 'Malam Pesta Piala Dunia! Keriuhan di Bar Dek', hint: 'Pesta nonton Piala Dunia di lounge khusus, lengkap dengan minuman, camilan, dan suasana meriah' },
+    'd3-shopping': { dayLabel: 'Hari 3 · Berlayar', title: 'Waktunya Berkarya! Lokakarya Masak Italia + Kerajinan Tangan', hint: 'Belajar masakan Italia otentik dari chef, atau buat suvenir sendiri di lokakarya kerajinan tangan' },
+    'd3-gala':     { dayLabel: 'Hari 3 · Berlayar', title: 'Pesta Gemerlap! Tampil Terbaik Malam Ini', hint: 'Busana formal, foto bersama di atrium atau restoran utama' },
     'd4-farewell': { dayLabel: 'Hari 4 · Kembali ke Keelung', title: 'Selamat Tinggal Bellissima! Kilas Balik Terakhir', hint: 'Foto favoritmu selama 4 hari, atau kumpulan oleh-oleh' },
   },
   th: {
     'd1-depart':   { dayLabel: 'วันที่ 1 · ออกเดินทางจากจีหลง', title: 'ลาก่อนไต้หวัน! ปาร์ตี้ออกเรือบนดาดฟ้า', hint: 'ออกเรือ 17:30 น. — เก็บภาพประทับใจกับฉากหลังจีหลง' },
     'd1-crystal':  { dayLabel: 'วันที่ 1 · ออกเดินทางจากจีหลง', title: 'ประกายแห่งความรุ่งโรจน์! บันไดคริสตัล/โชว์แสงเพดานครั้งแรก', hint: 'บันไดคริสตัล Swarovski ชั้น 6 / โชว์แสงเพดาน LED ที่ Galleria' },
-    'd2-morning':  { dayLabel: 'วันที่ 2 · ล่องทะเล → นาฮะ', title: 'แดดสวยกลางทะเล! ตามหามุมชิลที่สุดบนเรือ', hint: 'อาบแดดริมสระ ยิมวิวทะเล หรือมื้อเช้าบุฟเฟต์สุดหรู' },
-    'd2-naha':     { dayLabel: 'วันที่ 2 · ล่องทะเล → นาฮะ', title: 'โอกินาว่ามาแล้ว! ภาพแรกบนฝั่ง', hint: 'ถ่ายรูปกับเรือที่ท่านาฮะ / ไอศกรีมหรืออาวาโมริแก้วแรกที่ถนนโคคุไซ' },
-    'd2-night':    { dayLabel: 'วันที่ 2 · ล่องทะเล → นาฮะ', title: 'ค่ำคืนโอกินาว่าจาก Bellissima', hint: 'ชีวิตกลางคืนอิซากายะโอกินาว่า ตลาดกลางคืนนาฮะ หรือวิวท่าเรือยามค่ำจากดาดฟ้า' },
-    'd3-shopping': { dayLabel: 'วันที่ 3 · ออกจากนาฮะ → ล่องทะเล', title: 'ช้อปครั้งสุดท้าย! เที่ยวโอกินาว่าครั้งสุดท้าย', hint: 'ช้อปยาและน้ำตาลทรายแดง หรือสนุกกับสไลเดอร์สวนน้ำ Arizona' },
-    'd3-gala':     { dayLabel: 'วันที่ 3 · ออกจากนาฮะ → ล่องทะเล', title: 'ค่ำคืนแกลม! แต่งตัวสวยเด่นที่สุด', hint: 'ชุดทางการ ถ่ายรูปหมู่ที่ห้องโถงหรือห้องอาหารหลัก' },
+    'd2-morning':  { dayLabel: 'วันที่ 2 · ล่องทะเล', title: 'แดดสวยกลางทะเล! ตามหามุมชิลที่สุดบนเรือ', hint: 'อาบแดดริมสระ ยิมวิวทะเล หรือมื้อเช้าบุฟเฟต์สุดหรู' },
+    'd2-naha':     { dayLabel: 'วันที่ 2 · ล่องทะเล', title: 'ใกล้ชิดกัปตัน! ถ่ายรูปคู่กัปตัน + ท้าทายสถิติโลกกินเนสส์', hint: 'โอกาสหายากถ่ายรูปคู่กัปตัน หรือร่วมเป็นสักขีพยาน/ท้าทายสถิติโลกกินเนสส์สุดพิเศษ' },
+    'd2-night':    { dayLabel: 'วันที่ 2 · ล่องทะเล', title: 'คืนปาร์ตี้ฟุตบอลโลก! สนุกสุดเหวี่ยงที่บาร์ดาดฟ้า', hint: 'ปาร์ตี้ชมฟุตบอลโลกในโซนพิเศษ พร้อมเครื่องดื่มและของว่าง บรรยากาศคึกคักสุดๆ' },
+    'd3-shopping': { dayLabel: 'วันที่ 3 · ล่องทะเล', title: 'ช่วงเวลาช่างฝีมือ! เวิร์กช็อปทำอาหารอิตาเลียน + งานฝีมือ', hint: 'เรียนทำอาหารอิตาเลียนแท้จากเชฟ หรือทำของที่ระลึกของตัวเองในเวิร์กช็อปงานฝีมือ' },
+    'd3-gala':     { dayLabel: 'วันที่ 3 · ล่องทะเล', title: 'ค่ำคืนแกลม! แต่งตัวสวยเด่นที่สุด', hint: 'ชุดทางการ ถ่ายรูปหมู่ที่ห้องโถงหรือห้องอาหารหลัก' },
     'd4-farewell': { dayLabel: 'วันที่ 4 · กลับถึงจีหลง', title: 'ลาก่อน Bellissima! มองย้อนครั้งสุดท้ายก่อนลงเรือ', hint: 'ภาพโปรดตลอด 4 วัน หรือรวมของฝากทั้งหมด' },
   },
 };
@@ -127,8 +127,3 @@ export function eventById(id: string | null | undefined): TaskEvent | undefined 
 /** 整趟航程的起訖，用於橫向時間軸換算滑動進度（0~1）。 */
 export const TRIP_START = new Date('2026-07-09T16:00:00');
 export const TRIP_END = new Date('2026-07-12T10:00:00');
-
-/** 那霸抵達時刻在整趟航程中的進度比例（0~1），航線圖上用來畫「那霸」定點標記。 */
-const nahaEvent = TASK_EVENTS.find(e => e.id === 'd2-naha')!;
-const nahaArrival = new Date(`${nahaEvent.date}T${String(nahaEvent.startHour).padStart(2, '0')}:${String(nahaEvent.startMin).padStart(2, '0')}:00`);
-export const NAHA_PROGRESS = (nahaArrival.getTime() - TRIP_START.getTime()) / (TRIP_END.getTime() - TRIP_START.getTime());
